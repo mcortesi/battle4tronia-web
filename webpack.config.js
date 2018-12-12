@@ -8,6 +8,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const DISTPATH = path.join(__dirname, 'dist');
+const PUBLICPATH = path.join(__dirname, 'public');
 const SRCPATH = path.join(__dirname, 'src');
 module.exports = {
   mode: 'development',
@@ -121,6 +122,6 @@ module.exports = {
   ],
 
   devServer: {
-    contentBase: DISTPATH,
+    contentBase: PUBLICPATH,
   },
 };

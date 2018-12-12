@@ -6,7 +6,10 @@
     "interface-name": false,
     "ordered-imports": false,
     "jsx-no-lambda": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "max-classes-per-file": false,
+    "member-access": false,
+    "no-console": false
   },
   "rulesDirectory": []
 }

@@ -5,7 +5,7 @@
 // import { createAppStore } from './ducks/root';
 
 import './styles.css';
-import { BattleGround } from './pixi-app';
+import { BattleApp, loadAssets } from './pixi-app';
 
 // const store = createAppStore();
 // ReactDOM.render(
@@ -15,5 +15,7 @@ import { BattleGround } from './pixi-app';
 //   document.getElementById('app')
 // );
 
-const pixiApp = new BattleGround();
-pixiApp.start();
+loadAssets(() => {
+  const pixiApp = new BattleApp();
+  pixiApp.start();
+});
