@@ -1,7 +1,7 @@
-import { Container, Graphics, extras, filters, Texture } from 'pixi.js';
-import { Position, newContainer, getTexture, rndInt, genArray, iter } from './commons';
-import { LineChoice } from './model';
 import * as Tween from '@tweenjs/tween.js';
+import { Container, extras, filters, Graphics, Texture } from 'pixi.js';
+import { genArray, getTexture, newContainer, Position, rndInt } from './commons';
+import { LineChoice } from './model';
 
 const BG_SELECTED_COLOR = 0xd8d8d8;
 const BG_COLOR = 0x979797;

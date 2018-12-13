@@ -1,12 +1,12 @@
-import * as PIXI from 'pixi.js';
 import * as Tween from '@tweenjs/tween.js';
-import { createButton, Dimension, Position } from './pixi/commons';
+import * as PIXI from 'pixi.js';
+import { Button, Dimension, Position } from './pixi/commons';
 import { Layout } from './pixi/constants';
 import { BoostChoice, LineChoice } from './pixi/model';
 import { createScoreBox, ScoresUI } from './pixi/score-view';
 import { BoostSelector, LinesSelector, SelectorUI } from './pixi/selectors';
 import { ReelsUI } from './pixi/slots';
-import SoundManager from './pixi/sounds';
+import { SpinBtn } from './pixi/SpinBtn';
 
 export function loadAssets(onLoad: () => void) {
   const loader = PIXI.loader;
@@ -112,6 +112,7 @@ export class BattleUI {
   private betSelectorUI: SelectorUI<BoostChoice>;
   private linesSelectorUI: SelectorUI<LineChoice>;
   private reelsUI: ReelsUI;
+  private spinBtn: Button;
 
   public setup(boardState: BoardState, handlers: Handlers): void {
     this.app = new PIXI.Application({
@@ -188,20 +189,15 @@ export class BattleUI {
       setValue: handlers.setLines,
     });
 
-    const spinBtn = createButton({
-      x: 0,
-      y: 520,
-      texture: PIXI.loader.resources.btnSpin.texture,
+    this.spinBtn = SpinBtn({
+      parent: stage,
       onClick: () => {
-        SoundManager.playSpin();
-        this.reelsUI.animateReels();
+        this.spinBtn.disable = true;
+        this.reelsUI.animateReels(() => {
+          this.spinBtn.disable = false;
+        });
       },
     });
-    spinBtn.anchor.set(0.5, 0);
-    spinBtn.x = stage.width / 2;
-    spinBtn.alpha = 0.5;
-    spinBtn.hitArea = new PIXI.Rectangle(-103, 7, 207, 115);
-    stage.addChild(spinBtn);
 
     stage.addChild(drawRules([643, 643 + 95], [305, 400]));
   }
@@ -250,22 +246,20 @@ function createVillain(opts: Position & Dimension) {
 function createGlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
   const container = new PIXI.Container();
   container.position.set(opts.x, opts.y);
-  container.addChild(
-    createButton({
-      x: 0,
-      y: 0,
-      texture: PIXI.loader.resources.icoHelp.texture,
-      onClick: opts.onHelp,
-    })
-  );
-  container.addChild(
-    createButton({
-      x: 49,
-      y: 0,
-      texture: PIXI.loader.resources.icoClose.texture,
-      onClick: opts.onClose,
-    })
-  );
+
+  new Button({
+    x: 0,
+    y: 0,
+    texture: 'icoHelp',
+    onClick: opts.onHelp,
+  }).addTo(container);
+  new Button({
+    x: 49,
+    y: 0,
+    texture: 'icoClose',
+    onClick: opts.onClose,
+  }).addTo(container);
+
   return container;
 }
 

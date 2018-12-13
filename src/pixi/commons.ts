@@ -1,5 +1,4 @@
-import { Container, Sprite, Graphics, loader, Texture } from 'pixi.js';
-import { openSync } from 'fs';
+import { Container, Graphics, loader, Rectangle, Sprite, Texture } from 'pixi.js';
 
 export interface Position {
   x: number;
@@ -13,8 +12,9 @@ export interface Dimension {
 
 export interface ButtonOpts extends Position {
   onClick: () => void;
-  texture?: Texture;
+  texture?: Texture | string;
   sprite?: Sprite;
+  hitArea?: Rectangle;
 }
 export class Button {
   readonly stage: Sprite;
@@ -24,35 +24,29 @@ export class Button {
       throw new Error('Button: define either texture or sprite');
     }
 
-    this.stage = opts.texture ? new Sprite(opts.texture) : opts.sprite!;
+    this.stage = opts.texture ? newSprite(opts.texture) : opts.sprite!;
     this.stage.position.set(opts.x, opts.y);
     this.stage.buttonMode = true;
     this.stage.interactive = true;
+    if (opts.hitArea) {
+      this.stage.hitArea = opts.hitArea;
+    }
     this.stage.on('click', opts.onClick);
   }
 
   addTo(container: Container) {
     container.addChild(this.stage);
+    return this;
   }
 
   get disable() {
     return this.stage.buttonMode;
   }
   set disable(value: boolean) {
-    console.log('setting disabled to ', value);
     this.stage.alpha = value ? 0.6 : 1;
     this.stage.buttonMode = !value;
     this.stage.interactive = !value;
   }
-}
-
-export function createButton(opts: Position & { onClick: () => void; texture: PIXI.Texture }) {
-  const btn = new Sprite(opts.texture);
-  btn.position.set(opts.x, opts.y);
-  btn.buttonMode = true;
-  btn.interactive = true;
-  btn.on('click', opts.onClick);
-  return btn;
 }
 
 export function newContainer(x = 0, y = 0) {
