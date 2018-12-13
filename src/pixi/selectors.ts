@@ -1,7 +1,8 @@
-import { Container, loader, Text, Texture, Sprite } from 'pixi.js';
-import { createButton, newContainer, Position } from './commons';
+import { Container, loader, Sprite, Text, Texture } from 'pixi.js';
+import { Button, newContainer, newSprite, Position } from './commons';
 import { ThickFont, ThinFont } from './constants';
 import { BoostChoice, LineChoice } from './model';
+import SoundManager from './sounds';
 
 export interface SelectorUI<T> {
   readonly choices: T[];
@@ -81,9 +82,11 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
   idx: number;
   readonly choices: T[];
   private renderer: Renderer<T>;
+  private prevBtn: Button;
+  private nextBtn: Button;
 
   constructor(
-    opts: Position & {
+    private readonly opts: Position & {
       parent: Container;
       textSpace: number;
       choices: T[];
@@ -97,27 +100,29 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.idx = opts.initValue;
     this.choices = opts.choices;
 
-    const leftArrow = createButton({
-      x: 0,
+    const leftArrowSprite = newSprite(this.getTexture());
+    leftArrowSprite.scale.x = -1;
+
+    this.prevBtn = new Button({
+      x: leftArrowSprite.width,
+      y: 20,
+      sprite: leftArrowSprite,
+      onClick: this.prev,
+    });
+    this.prevBtn.addTo(this.view);
+
+    this.nextBtn = new Button({
+      x: this.prevBtn.stage.width + opts.textSpace,
       y: 20,
       texture: this.getTexture(),
-      onClick: this.valueUpdater(opts.setValue, -1),
+      onClick: this.next,
     });
-    leftArrow.scale.x = -1;
-    leftArrow.x = leftArrow.width;
-    this.view.addChild(leftArrow);
 
-    this.view.addChild(
-      createButton({
-        x: leftArrow.width + opts.textSpace,
-        y: 20,
-        texture: this.getTexture(),
-        onClick: this.valueUpdater(opts.setValue, 1),
-      })
-    );
+    this.nextBtn.addTo(this.view);
 
     this.renderer = this.createRenderer(this.view);
-    this.renderer.update(this.currentValue);
+
+    this.update(this.idx);
   }
 
   abstract createRenderer(parent: Container): Renderer<T>;
@@ -130,18 +135,29 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
   update = (idx: number) => {
     this.idx = idx;
     this.renderer.update(this.currentValue);
+    this.prevBtn.disable = !this.hasPrev();
+    this.nextBtn.disable = !this.hasNext();
   };
 
-  private valueUpdater = (setValue: (x: number) => void, delta: number) => {
-    return () => {
-      if (this.isValidValue(this.idx + delta)) {
-        setValue(this.idx + delta);
-      }
-    };
+  next = () => {
+    if (this.hasNext()) {
+      SoundManager.playBet();
+      this.opts.setValue(this.idx + 1);
+    }
   };
 
-  private isValidValue(x: number) {
-    return x >= 0 && x < this.choices.length;
+  prev = () => {
+    if (this.hasPrev()) {
+      SoundManager.playBet();
+      this.opts.setValue(this.idx - 1);
+    }
+  };
+
+  private hasNext() {
+    return this.idx + 1 < this.choices.length;
+  }
+  private hasPrev() {
+    return this.idx - 1 >= 0;
   }
 }
 

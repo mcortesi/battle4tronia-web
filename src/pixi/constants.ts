@@ -55,9 +55,11 @@ export const Layout = {
     y: 100,
     rows: 3,
     columns: 5,
-    rowSeparation: 13,
+    colSeparation: 13,
     cellWidth: 140,
     cellHeight: 125,
+    symbolWidth: 109,
+    symbolHeight: 109,
   },
   hero: {
     width: 300,

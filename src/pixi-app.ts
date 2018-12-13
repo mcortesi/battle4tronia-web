@@ -1,10 +1,12 @@
 import * as PIXI from 'pixi.js';
+import * as Tween from '@tweenjs/tween.js';
 import { createButton, Dimension, Position } from './pixi/commons';
 import { Layout } from './pixi/constants';
 import { BoostChoice, LineChoice } from './pixi/model';
 import { createScoreBox, ScoresUI } from './pixi/score-view';
 import { BoostSelector, LinesSelector, SelectorUI } from './pixi/selectors';
 import { ReelsUI } from './pixi/slots';
+import SoundManager from './pixi/sounds';
 
 export function loadAssets(onLoad: () => void) {
   const loader = PIXI.loader;
@@ -20,9 +22,9 @@ export function loadAssets(onLoad: () => void) {
   loader.add('icoFame', '/assets/ico-fame.png');
   loader.add('icoClose', '/assets/ico-close.png');
   loader.add('icoHelp', '/assets/ico-help.png');
-  loader.add('ficha1', '/assets/ficha1.png');
-  loader.add('ficha2', '/assets/ficha2.png');
-  loader.add('ficha3', '/assets/ficha3.png');
+  loader.add('symbol1', '/assets/ficha1.png');
+  loader.add('symbol2', '/assets/ficha2.png');
+  loader.add('symbol3', '/assets/ficha3.png');
   loader.load(onLoad);
 }
 
@@ -191,11 +193,13 @@ export class BattleUI {
       y: 520,
       texture: PIXI.loader.resources.btnSpin.texture,
       onClick: () => {
-        console.log('spinnnnnnnn');
+        SoundManager.playSpin();
+        this.reelsUI.animateReels();
       },
     });
     spinBtn.anchor.set(0.5, 0);
     spinBtn.x = stage.width / 2;
+    spinBtn.alpha = 0.5;
     spinBtn.hitArea = new PIXI.Rectangle(-103, 7, 207, 115);
     stage.addChild(spinBtn);
 
@@ -204,6 +208,9 @@ export class BattleUI {
 
   start() {
     document.body.appendChild(this.app.view);
+    this.app.ticker.add(delta => {
+      Tween.update();
+    });
     this.app.start();
   }
 

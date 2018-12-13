@@ -2,7 +2,7 @@ export class BoostChoice {
   static ALL: BoostChoice[] = [
     new BoostChoice('Normal', 10),
     new BoostChoice('Strong', 50),
-    new BoostChoice('Max Effort', 100),
+    new BoostChoice('Max', 100),
   ];
 
   static DEFAULT = BoostChoice.ALL[0];
