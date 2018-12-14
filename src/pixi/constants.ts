@@ -1,3 +1,5 @@
+import { ReelSize } from '../model/reel';
+
 export const Layout = {
   screen: { w: 1366, h: 688 },
   bgCoatofarms: {
@@ -21,16 +23,18 @@ export const Layout = {
   betRigthArrow: { x: 475, y: 643 },
 
   energyBar: {
+    color: 0x05bcec,
     x: 305,
     y: 486,
-    w: 285,
-    h: 20,
+    width: 285,
+    height: 20,
   },
   hpBar: {
+    color: 0xff3300,
     x: 1057 - 285,
     y: 486,
-    w: 285,
-    h: 20,
+    width: 285,
+    height: 20,
   },
 
   betSelector: {
@@ -53,8 +57,8 @@ export const Layout = {
   reels: {
     x: 305,
     y: 100,
-    rows: 3,
-    columns: 5,
+    rows: ReelSize.rows,
+    columns: ReelSize.columns,
     colSeparation: 13,
     cellWidth: 140,
     cellHeight: 125,

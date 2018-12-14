@@ -1,11 +1,14 @@
 import * as Tween from '@tweenjs/tween.js';
 import * as PIXI from 'pixi.js';
+import { Game } from './model/game';
 import { Button, Dimension, Position } from './pixi/commons';
 import { Layout } from './pixi/constants';
+import { newContainer, newSprite } from './pixi/helpers';
 import { BoostChoice, LineChoice } from './pixi/model';
-import { createScoreBox, ScoresUI } from './pixi/score-view';
+import { ReelsUI } from './pixi/Reels';
+import { Bar } from './pixi/scoreBars';
+import { ScoreBox } from './pixi/ScoreBox';
 import { BoostSelector, LinesSelector, SelectorUI } from './pixi/selectors';
-import { ReelsUI } from './pixi/slots';
 import { SpinBtn } from './pixi/SpinBtn';
 
 export function loadAssets(onLoad: () => void) {
@@ -22,23 +25,17 @@ export function loadAssets(onLoad: () => void) {
   loader.add('icoFame', '/assets/ico-fame.png');
   loader.add('icoClose', '/assets/ico-close.png');
   loader.add('icoHelp', '/assets/ico-help.png');
-  loader.add('symbol1', '/assets/ficha1.png');
-  loader.add('symbol2', '/assets/ficha2.png');
-  loader.add('symbol3', '/assets/ficha3.png');
+  loader.add('symbol-attack1', '/assets/symbol-attack1.png');
+  loader.add('symbol-attack2', '/assets/symbol-attack2.png');
+  loader.add('symbol-attack3', '/assets/symbol-attack3.png');
   loader.load(onLoad);
 }
 
-export interface BoardState {
-  troniumBalance: number;
-  fameBalance: number;
+export interface UIState {
   boostIdx: number;
   boostChoices: BoostChoice[];
   linesIdx: number;
   linesChoices: LineChoice[];
-  villain: {
-    maxHP: number;
-    hp: number;
-  };
 }
 
 export interface Handlers {
@@ -49,72 +46,28 @@ export interface Handlers {
 }
 
 export class BattleApp {
-  private boardState: BoardState;
-  private battleUI: BattleUI;
-
-  constructor() {
-    this.battleUI = new BattleUI();
-    this.boardState = {
-      fameBalance: 100,
-      troniumBalance: 100,
-      boostIdx: 0,
-      boostChoices: BoostChoice.ALL,
-      linesIdx: 0,
-      linesChoices: LineChoice.ALL,
-      villain: {
-        hp: 300,
-        maxHP: 300,
-      },
-    };
-
-    this.battleUI.setup(this.boardState, {
-      setBoost: this.updater(this.setBoost),
-      setLines: this.updater(this.setLines),
-      onClose: () => {
-        console.log('closeee');
-      },
-      onHelp: () => {
-        console.log('Helpee');
-      },
-    });
-  }
-
-  public start() {
-    this.battleUI.start();
-  }
-
-  setBoost = (boostIdx: number) => {
-    this.boardState = {
-      ...this.boardState,
-      boostIdx,
-    };
-  };
-  setLines = (linesIdx: number) => {
-    this.boardState = {
-      ...this.boardState,
-      linesIdx,
-    };
+  private uiState: UIState = {
+    boostIdx: 0,
+    boostChoices: BoostChoice.ALL,
+    linesIdx: 0,
+    linesChoices: LineChoice.ALL,
   };
 
-  updater(f: (...args: any[]) => void) {
-    return (...args: any[]) => {
-      f(...args);
-      this.battleUI.update(this.boardState);
-    };
-  }
-}
+  private game: Game = new Game();
 
-export class BattleUI {
   private app: PIXI.Application;
-  private scoresUI: ScoresUI;
-  private energyBarUI: MetricBar;
-  private hpBarUI: MetricBar;
+  private scoresUI: ScoreBox;
+  private energyBarUI: Bar;
+  private hpBarUI: Bar;
   private betSelectorUI: SelectorUI<BoostChoice>;
   private linesSelectorUI: SelectorUI<LineChoice>;
   private reelsUI: ReelsUI;
   private spinBtn: Button;
 
-  public setup(boardState: BoardState, handlers: Handlers): void {
+  public constructor() {
+    // FIXME
+    this.game.startMatch();
+
     this.app = new PIXI.Application({
       height: Layout.screen.h,
       width: Layout.screen.w,
@@ -131,43 +84,36 @@ export class BattleUI {
       })
     );
 
-    this.scoresUI = createScoreBox({
-      fame: boardState.fameBalance,
-      tronium: boardState.troniumBalance,
-    });
-    stage.addChild(this.scoresUI.view);
-
-    this.reelsUI = new ReelsUI(Layout.reels);
-    this.reelsUI.selectLines(boardState.linesChoices[boardState.linesIdx]);
-    stage.addChild(this.reelsUI.stage);
+    this.scoresUI = new ScoreBox({
+      ...Layout.scoreBox,
+      initFame: this.game.player.fame,
+      initTronium: this.game.player.tronium,
+    }).addTo(stage);
+    this.reelsUI = new ReelsUI(Layout.reels).addTo(stage);
+    this.reelsUI.selectLines(this.uiState.linesChoices[this.uiState.linesIdx]);
 
     stage.addChild(createHero(Layout.hero));
     stage.addChild(createVillain(Layout.villain));
 
-    this.energyBarUI = createEnergyBar({
-      color: 0x05bcec,
-      x: Layout.energyBar.x,
-      y: Layout.energyBar.y,
-      width: Layout.energyBar.w,
-      height: Layout.energyBar.h,
-    });
-    stage.addChild(this.energyBarUI.view);
+    this.energyBarUI = new Bar({
+      ...Layout.energyBar,
+      maxValue: 1000,
+      initValue: Math.min(1000, this.game.player.tronium),
+      leftToRight: true,
+    }).addTo(stage);
 
-    this.hpBarUI = createHPBar({
-      color: 0xff3300,
-      x: Layout.hpBar.x,
-      y: Layout.hpBar.y,
-      width: Layout.hpBar.w,
-      height: Layout.hpBar.h,
-    });
-    stage.addChild(this.hpBarUI.view);
+    this.hpBarUI = new Bar({
+      ...Layout.hpBar,
+      maxValue: this.game.match.villain.maxHp,
+      initValue: this.game.match.villain.hp,
+    }).addTo(stage);
 
     stage.addChild(
       createGlobalButtons({
         x: 1260,
         y: 27,
-        onClose: handlers.onClose,
-        onHelp: handlers.onHelp,
+        onClose: this.onClose,
+        onHelp: this.onHelp,
       })
     );
 
@@ -175,31 +121,26 @@ export class BattleUI {
     this.betSelectorUI = new BoostSelector({
       ...Layout.betSelector,
       parent: stage,
-      initValue: boardState.boostIdx,
-      choices: boardState.boostChoices,
-      setValue: handlers.setBoost,
+      initValue: this.uiState.boostIdx,
+      choices: this.uiState.boostChoices,
+      setValue: this.setBoost,
     });
 
     // Lines Controls
     this.linesSelectorUI = new LinesSelector({
       ...Layout.linesSelector,
       parent: stage,
-      initValue: boardState.linesIdx,
-      choices: boardState.linesChoices,
-      setValue: handlers.setLines,
+      initValue: this.uiState.linesIdx,
+      choices: this.uiState.linesChoices,
+      setValue: this.setLines,
     });
 
     this.spinBtn = SpinBtn({
       parent: stage,
-      onClick: () => {
-        this.spinBtn.disable = true;
-        this.reelsUI.animateReels(() => {
-          this.spinBtn.disable = false;
-        });
-      },
+      onClick: this.onSpin,
     });
 
-    stage.addChild(drawRules([643, 643 + 95], [305, 400]));
+    // stage.addChild(drawRules([643, 643 + 95], [305, 400]));
   }
 
   start() {
@@ -210,17 +151,58 @@ export class BattleUI {
     this.app.start();
   }
 
-  public update(boardState: BoardState): void {
-    this.scoresUI.setFame(boardState.fameBalance);
-    this.scoresUI.setTronium(boardState.troniumBalance);
-    this.betSelectorUI.update(boardState.boostIdx);
-    this.linesSelectorUI.update(boardState.linesIdx);
-    this.reelsUI.selectLines(boardState.linesChoices[boardState.linesIdx]);
-  }
+  onClose = () => {
+    console.log('onClose');
+  };
+
+  onHelp = () => {
+    console.log('onHelp');
+  };
+
+  onSpin = async () => {
+    this.spinBtn.disable = true;
+    const bet = this.uiState.boostChoices[this.uiState.boostIdx].value;
+
+    this.scoresUI.setTronium(this.game.player.tronium - bet);
+    this.energyBarUI.updateValue(Math.min(1000, this.game.player.tronium - bet));
+
+    this.reelsUI.startAnimation();
+
+    console.time('GOT Result');
+    const res = await this.game.move({
+      bet,
+      lines: this.uiState.linesChoices[this.uiState.linesIdx].value,
+    });
+    console.timeEnd('GOT Result');
+    await this.reelsUI.stopAnimation(res);
+
+    this.scoresUI.setFame(this.game.player.fame);
+    this.scoresUI.setTronium(this.game.player.tronium);
+    this.energyBarUI.updateValue(Math.min(1000, this.game.player.tronium));
+    this.hpBarUI.updateValue(this.game.match.villain.hp);
+    this.spinBtn.disable = false;
+  };
+
+  setBoost = (boostIdx: number) => {
+    this.uiState = {
+      ...this.uiState,
+      boostIdx,
+    };
+    this.betSelectorUI.update(this.uiState.boostIdx);
+  };
+
+  setLines = (linesIdx: number) => {
+    this.uiState = {
+      ...this.uiState,
+      linesIdx,
+    };
+    this.linesSelectorUI.update(this.uiState.linesIdx);
+    this.reelsUI.selectLines(this.uiState.linesChoices[this.uiState.linesIdx]);
+  };
 }
 
 function createBackground(opts: Dimension) {
-  const bg = new PIXI.Sprite(PIXI.loader.resources.battleground.texture);
+  const bg = newSprite('battleground');
   bg.width = opts.width;
   bg.height = opts.height;
   bg.tint = 0x999999;
@@ -228,7 +210,7 @@ function createBackground(opts: Dimension) {
 }
 
 function createHero(opts: Position & Dimension) {
-  const hero = new PIXI.Sprite(PIXI.loader.resources.hero.texture);
+  const hero = newSprite('hero');
   hero.position.set(opts.x, opts.y);
   hero.width = opts.width;
   hero.height = opts.height;
@@ -236,7 +218,7 @@ function createHero(opts: Position & Dimension) {
 }
 
 function createVillain(opts: Position & Dimension) {
-  const villain = new PIXI.Sprite(PIXI.loader.resources.villain.texture);
+  const villain = newSprite('villain');
   villain.position.set(opts.x, opts.y);
   villain.width = opts.width;
   villain.height = opts.height;
@@ -244,8 +226,7 @@ function createVillain(opts: Position & Dimension) {
 }
 
 function createGlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
-  const container = new PIXI.Container();
-  container.position.set(opts.x, opts.y);
+  const container = newContainer(opts.x, opts.y);
 
   new Button({
     x: 0,
@@ -261,63 +242,4 @@ function createGlobalButtons(opts: Position & { onClose: () => void; onHelp: () 
   }).addTo(container);
 
   return container;
-}
-
-function drawRules(horizontal: number[], vertical: number[]) {
-  const line = new PIXI.Graphics();
-  line.lineStyle(1, 0x0000ff);
-
-  vertical.forEach(x => {
-    line.moveTo(x, 0).lineTo(x, Layout.screen.h);
-  });
-  horizontal.forEach(y => {
-    line.moveTo(0, y).lineTo(Layout.screen.w, y);
-  });
-  return line;
-}
-
-function createBar(opts: { color: number } & Position & Dimension) {
-  const bar = new PIXI.Container();
-  bar.position.set(opts.x, opts.y);
-
-  const bgBar = new PIXI.Graphics();
-  bgBar.lineStyle(1, 0xffffff);
-  bgBar.drawRect(0, 0, opts.width, opts.height);
-  bar.addChild(bgBar);
-
-  const outerBar = new PIXI.Graphics();
-  outerBar.beginFill(opts.color);
-  outerBar.drawRect(0, 0, opts.width, opts.height);
-  outerBar.endFill();
-  bar.addChild(outerBar);
-
-  return {
-    view: bar,
-    outer: outerBar,
-  };
-}
-
-export interface MetricBar {
-  view: PIXI.Container;
-  setFillPercentage: (x: number) => void;
-}
-function createEnergyBar(opts: { color: number } & Position & Dimension): MetricBar {
-  const bar = createBar(opts);
-
-  return {
-    view: bar.view,
-    setFillPercentage: (x: number) => {
-      bar.outer.width = opts.width * x;
-    },
-  };
-}
-
-function createHPBar(opts: { color: number } & Position & Dimension): MetricBar {
-  const bar = createBar(opts);
-  return {
-    view: bar.view,
-    setFillPercentage: (x: number) => {
-      bar.outer.width = opts.width * x;
-    },
-  };
 }
