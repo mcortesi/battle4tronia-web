@@ -60,9 +60,9 @@ function nearMissBuilder(): SpinResultRow {
   };
 }
 
-export class SpinResult {
-  static ALL: Array<{ max: number; result: SpinResult }> = [];
-  static FullAttack1 = new SpinResult({
+export class ReelResult {
+  static ALL: Array<{ max: number; result: ReelResult }> = [];
+  static FullAttack1 = new ReelResult({
     label: 'FullAttack1',
     probability: 0.01,
     troniumPayout: 5000,
@@ -70,7 +70,7 @@ export class SpinResult {
     hpPayout: 200,
     builder: fullAttackCreator(SlotSymbol.Attack1),
   });
-  static FullAttack2 = new SpinResult({
+  static FullAttack2 = new ReelResult({
     label: 'FullAttack2',
     probability: 0.2,
     troniumPayout: 50,
@@ -78,7 +78,7 @@ export class SpinResult {
     hpPayout: 2,
     builder: fullAttackCreator(SlotSymbol.Attack2),
   });
-  static FullAttack3 = new SpinResult({
+  static FullAttack3 = new ReelResult({
     label: 'FullAttack3',
     probability: 0.3,
     troniumPayout: 5,
@@ -87,7 +87,7 @@ export class SpinResult {
     builder: fullAttackCreator(SlotSymbol.Attack3),
   });
 
-  static Miss = new SpinResult({
+  static Miss = new ReelResult({
     label: 'Miss',
     probability: 0.29,
     troniumPayout: 5,
@@ -95,7 +95,7 @@ export class SpinResult {
     hpPayout: 2,
     builder: missBuilder,
   });
-  static NearMiss = new SpinResult({
+  static NearMiss = new ReelResult({
     label: 'NearMiss',
     probability: 0.2,
     troniumPayout: 5,
@@ -104,21 +104,25 @@ export class SpinResult {
     builder: nearMissBuilder,
   });
 
-  static spin(): SpinResult {
+  static spin(): ReelResult {
     const diceResult = Math.random();
-    const result = SpinResult.ALL.find(x => x.max > diceResult);
+    return ReelResult.fromDice(diceResult);
+  }
+
+  static fromDice(diceResult: number): ReelResult {
+    const result = ReelResult.ALL.find(x => x.max > diceResult);
     if (result == null) {
       throw new Error('Logic Error: cant find result for ' + diceResult);
     }
-
     return result.result;
   }
-  private static add(s: SpinResult) {
-    if (SpinResult.ALL.length === 0) {
-      SpinResult.ALL.push({ max: s.probability, result: s });
+
+  private static add(s: ReelResult) {
+    if (ReelResult.ALL.length === 0) {
+      ReelResult.ALL.push({ max: s.probability, result: s });
     } else {
-      const prevMax = SpinResult.ALL[SpinResult.ALL.length - 1].max;
-      SpinResult.ALL.push({ max: s.probability + prevMax, result: s });
+      const prevMax = ReelResult.ALL[ReelResult.ALL.length - 1].max;
+      ReelResult.ALL.push({ max: s.probability + prevMax, result: s });
     }
   }
 
@@ -144,7 +148,7 @@ export class SpinResult {
     this.hpPayout = opts.hpPayout;
     this.builder = opts.builder;
 
-    SpinResult.add(this);
+    ReelResult.add(this);
   }
 
   isWin() {

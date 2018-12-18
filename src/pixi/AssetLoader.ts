@@ -1,6 +1,6 @@
 import { loader } from 'pixi.js';
 import WebFont from 'webfontloader';
-import { GlobalDispatcher } from './actions';
+import { GlobalDispatcher } from './GlobalDispatcher';
 
 const ResouceMap = {
   battleground: '/assets/bgBattle.jpg',
@@ -22,7 +22,7 @@ const ResouceMap = {
   'symbol-attack3': '/assets/symbol-attack3.png',
 };
 
-export class ResourceManager {
+export class AssetLoader {
   private loadProgress = 0;
   private gd: GlobalDispatcher;
 

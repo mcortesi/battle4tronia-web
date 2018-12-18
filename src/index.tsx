@@ -5,9 +5,11 @@
 // import { createAppStore } from './ducks/root';
 
 import './styles.css';
-import { GlobalDispatcher } from './pixi/actions';
-import { MainManager } from './pixi/main';
-import { ResourceManager } from './pixi/ResourceManager';
+import { GlobalDispatcher } from './pixi/GlobalDispatcher';
+import { Orchestrator } from './pixi/Orchestrator';
+import { AssetLoader } from './pixi/AssetLoader';
+import { FakeApi } from './model/api';
+import { GameClient } from './model/game';
 
 // const store = createAppStore();
 // ReactDOM.render(
@@ -18,14 +20,11 @@ import { ResourceManager } from './pixi/ResourceManager';
 // );
 
 export async function startApp() {
+  const gameClient = new GameClient(new FakeApi());
   const gd = new GlobalDispatcher();
-  // @ts-ignore
-  const mainManager = new MainManager(gd);
-  const rm = new ResourceManager(gd);
-
-  gd.enterLoading();
-  await rm.loadAll();
-  gd.enterTitle();
+  const rm = new AssetLoader(gd);
+  const orchestrator = new Orchestrator(gd, gameClient, rm);
+  await orchestrator.start();
 }
 
 startApp().catch(err => {

@@ -9,7 +9,8 @@
     "object-literal-sort-keys": false,
     "max-classes-per-file": false,
     "member-access": false,
-    "no-console": false
+    "no-console": false,
+    "variable-name": false
   },
   "rulesDirectory": []
 }

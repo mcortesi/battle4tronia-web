@@ -1,6 +1,6 @@
-import { Position, Dimension, UIComponent } from './commons';
+import { Position, Dimension, UIComponent } from '../commons';
 import { Container, Graphics } from 'pixi.js';
-import { newContainer } from './helpers';
+import { newContainer } from '../utils';
 import { Tween } from '@tweenjs/tween.js';
 
 export interface BarOpts extends Position, Dimension {

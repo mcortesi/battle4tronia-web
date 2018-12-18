@@ -2,7 +2,7 @@ import { ReelSize } from '../model/reel';
 import { TextStyle } from 'pixi.js';
 
 export const Layout = {
-  screen: { w: 1366, h: 688 },
+  screen: { width: 1366, height: 688 },
   bgCoatofarms: {
     x: 579,
     y: 507,

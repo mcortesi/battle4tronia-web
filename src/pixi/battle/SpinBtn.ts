@@ -1,7 +1,7 @@
-import { Button } from './commons';
+import { Button } from '../utils/Button';
 import { Container, Rectangle } from 'pixi.js';
-import SoundManager from './sounds';
-import { newSprite } from './helpers';
+import SoundManager from '../SoundManager';
+import { newSprite } from '../utils';
 
 export function SpinBtn(opts: { parent: Container; onClick: () => void }) {
   const spinSprite = newSprite('btnSpin');

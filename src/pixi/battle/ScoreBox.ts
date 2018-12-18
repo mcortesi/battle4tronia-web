@@ -1,6 +1,6 @@
-import { TextStyles } from './constants';
-import { UIComponent, Position } from './commons';
-import { newContainer, newSprite } from './helpers';
+import { TextStyles } from '../constants';
+import { UIComponent, Position } from '../commons';
+import { newContainer, newSprite } from '../utils';
 import { Container, Text } from 'pixi.js';
 import { Tween, Easing } from '@tweenjs/tween.js';
 

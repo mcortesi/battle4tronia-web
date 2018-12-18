@@ -1,116 +1,83 @@
-import { SpinResult } from './reel';
-import { wait, rndInt } from '../utils';
+import { API, Bet, GameStatus, Player, Battle } from './api';
 
-export interface Player {
-  readonly name: string;
-  readonly tronium: number;
-  readonly fame: number;
-}
+export class GameClient {
+  private api: API;
+  private status: GameStatus = GameStatus.INSTALL_TRONLINK;
+  private _player: null | Player = null;
+  private _battle: null | Battle = null;
 
-export interface Villain {
-  readonly hp: number;
-  readonly maxHp: number;
-}
+  constructor(api: API) {
+    this.api = api;
 
-export interface Match {
-  villain: Villain;
-  score: number;
-}
-
-export interface Move {
-  bet: number;
-  lines: number;
-}
-
-export interface WinCombination {
-  row: number;
-  columns: number[];
-  fame: number;
-  tronium: number;
-  villainHp: number;
-}
-
-export interface MoveResult {
-  move: Move;
-  rows: SpinResult[];
-}
-
-export class Game {
-  player: Player;
-  match: Match;
-
-  constructor() {
-    this.player = {
-      name: 'Cono',
-      tronium: 1100,
-      fame: 100,
-    };
+    setInterval(async () => {
+      this.status = await this.api.getStatus();
+    }, 1000);
   }
 
-  async startMatch() {
-    this.match = {
-      villain: {
-        maxHp: 300,
-        hp: 300,
-      },
-      score: 0,
-    };
+  get player() {
+    if (this._player == null) {
+      throw new Error('not current player!');
+    }
+    return this._player;
   }
 
-  async move(move: Move): Promise<MoveResult> {
-    await wait(rndInt(500, 2000));
-    const result: MoveResult = {
-      move,
-      rows: [SpinResult.spin(), SpinResult.spin(), SpinResult.spin()],
-    };
-
-    this.apply(move, result);
-    return result;
+  get battle() {
+    if (this._battle == null) {
+      throw new Error('not current battle!');
+    }
+    return this._battle;
   }
 
-  private apply(move: Move, res: MoveResult) {
-    if (isWin(res)) {
-      const winnings = totalWins(res);
+  get connected() {
+    return this.status === GameStatus.NOT_ENOUGH_BALANCE || this.status === GameStatus.READY;
+  }
 
-      this.player = {
-        ...this.player,
-        fame: this.player.fame + winnings.fame,
-        tronium: this.player.tronium + winnings.tronium - move.bet,
-      };
+  async refreshPlayer() {
+    this._player = await this.api.getPlayer();
+    return this._player;
+  }
 
-      this.match = {
-        villain: {
-          ...this.match.villain,
-          hp: this.match.villain.hp - winnings.villainHp,
-        },
-        score: this.match.score + winnings.fame,
-      };
+  async refreshStatus() {
+    this.status = await this.api.getStatus();
+    return this.status;
+  }
+
+  async init() {
+    await this.refreshStatus();
+    switch (this.status) {
+      case GameStatus.INSTALL_TRONLINK:
+      case GameStatus.LOGIN_TRONLINK:
+      case GameStatus.NO_CHANNEL_OPENED:
+        break;
+      case GameStatus.NOT_ENOUGH_BALANCE:
+      case GameStatus.READY:
+        this._player = await this.api.getPlayer();
+        break;
+      case GameStatus.ERROR:
+        break;
     }
   }
-}
 
-function totalWins(res: MoveResult): { tronium: number; fame: number; villainHp: number } {
-  return getBettedRows(res).reduce(
-    (acc, wc) => {
-      acc.fame += wc.famePayout;
-      acc.tronium += wc.troniumPayout;
-      acc.villainHp += wc.hpPayout;
-      return acc;
-    },
-    { tronium: 0, fame: 0, villainHp: 0 }
-  );
-}
-
-function getBettedRows(mr: MoveResult) {
-  if (mr.move.lines === 1) {
-    return [mr.rows[1]];
-  } else if (mr.move.lines === 2) {
-    return [mr.rows[0], mr.rows[2]];
-  } else {
-    return mr.rows;
+  async connect() {
+    if (!this.connected) {
+      await this.api.openChannel(1000);
+      await this.refreshStatus();
+      if (this.connected) {
+        await this.refreshPlayer();
+      }
+    }
+    return this.connected;
   }
-}
 
-export function isWin(res: MoveResult) {
-  return getBettedRows(res).some(sr => sr.isWin());
+  async getCurrentBattle() {
+    this._battle = await this.api.getCurrentBattle();
+    return this._battle;
+  }
+
+  async spin(bet: Bet) {
+    const res = await this.api.spin(bet);
+    this._player = res.player;
+    this._battle = res.currentBattle;
+    return res;
+  }
 }

@@ -1,5 +1,5 @@
 import { Container, Texture, Sprite, utils } from 'pixi.js';
-import { Dimension, Position } from './commons';
+import { Dimension, Position } from '../commons';
 
 export function newContainer(x = 0, y = 0) {
   const container = new Container();
@@ -8,7 +8,6 @@ export function newContainer(x = 0, y = 0) {
 }
 
 export function getTexture(name: string): Texture {
-  console.log('tx', utils.TextureCache);
   if (utils.TextureCache[name] == null) {
     throw new Error(`Texture with name ${name} is not loaded`);
   }

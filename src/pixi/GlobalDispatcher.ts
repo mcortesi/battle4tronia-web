@@ -1,18 +1,5 @@
-import { BoostChoice, LineChoice } from './model';
-import { MoveResult, Player, Match } from '../model/game';
-
-export interface ScreenActions {
-  enterLoading(): void;
-  enterTitle(): void;
-  enterHome(player: Player): void;
-  enterBattle(initialState: {
-    player: Player;
-    battle: Match;
-    boost: BoostChoice;
-    attack: LineChoice;
-  }): void;
-  exitBattle(): void;
-}
+import { SpinResult } from '../model/api';
+import { BoostChoice, LineChoice } from '../model/base';
 
 export interface HowToPlayActions {
   showHowToPlay(): void;
@@ -45,6 +32,7 @@ export interface ModelActions {
   requestGeneralStats(): void;
   requestPlayerStats(): void;
   requestSpin(): void;
+  exitBattle(): void;
 }
 
 export interface LoadScreenActions {
@@ -58,13 +46,12 @@ export interface SpinResult {
   newTronium: number;
   newScore: number;
   newVillainHP: number;
-  moveResult: MoveResult;
+  moveResult: SpinResult;
 }
 
 type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
 
 type AllActions =
-  | ScreenActions
   | HowToPlayActions
   | TitleScreenActions
   | HomeScreenActions
@@ -75,7 +62,6 @@ type AllActions =
 
 export class GlobalDispatcher
   implements
-    ScreenActions,
     HowToPlayActions,
     TitleScreenActions,
     HomeScreenActions,
@@ -83,7 +69,6 @@ export class GlobalDispatcher
     BattleScreenActions,
     LoadScreenActions,
     ModelActions {
-  private screenListeners: ScreenActions[] = [];
   private howToPlayListeners: HowToPlayActions[] = [];
   private titleScreenListeners: TitleScreenActions[] = [];
   private loadScreenListeners: LoadScreenActions[] = [];
@@ -92,12 +77,6 @@ export class GlobalDispatcher
   private battleModelListeners: BattleModelActions[] = [];
   private modelListeners: ModelActions[] = [];
 
-  registerForScreen(listener: ScreenActions): () => void {
-    this.screenListeners.push(listener);
-    return () => {
-      this.screenListeners = this.screenListeners.filter(x => x !== listener);
-    };
-  }
   registerForHowToPlay(listener: HowToPlayActions): () => void {
     this.howToPlayListeners.push(listener);
     return () => {
@@ -184,27 +163,8 @@ export class GlobalDispatcher
     this.fireEvent(this.modelListeners, 'requestSpin');
   }
 
-  enterLoading(): void {
-    this.fireEvent(this.screenListeners, 'enterLoading');
-  }
-  enterTitle(): void {
-    this.fireEvent(this.screenListeners, 'enterTitle');
-  }
-  enterHome(player: Player): void {
-    this.fireEvent(this.screenListeners, 'enterHome', player);
-  }
-
-  enterBattle(initialState: {
-    player: Player;
-    battle: Match;
-    boost: BoostChoice;
-    attack: LineChoice;
-  }): void {
-    this.fireEvent(this.screenListeners, 'enterBattle', initialState);
-  }
-
   exitBattle(): void {
-    this.fireEvent(this.screenListeners, 'exitBattle');
+    this.fireEvent(this.modelListeners, 'exitBattle');
   }
 
   setPlayerStats(): void {

@@ -1,9 +1,10 @@
 import { Container, filters, Point, Rectangle } from 'pixi.js';
-import { Player } from '../model/game';
-import { GlobalDispatcher } from './actions';
-import { Button, Dimension, Position } from './commons';
-import { newContainer, newSprite } from './helpers';
-import { Unloadable } from './main';
+import { GlobalDispatcher } from './GlobalDispatcher';
+import { Dimension, Position } from './commons';
+import { Button } from './utils/Button';
+import { newContainer, newSprite } from './utils';
+import { Disposable } from './MainUI';
+import { Player } from '../model/api';
 
 interface TitleScreenProps {
   size: Dimension;
@@ -11,7 +12,7 @@ interface TitleScreenProps {
   parent: Container;
 }
 
-export function TitleScreen(opts: TitleScreenProps): Unloadable {
+export function TitleScreen(opts: TitleScreenProps): Disposable {
   const stage = newContainer();
 
   const btn = ConnectBtn({
@@ -27,7 +28,7 @@ export function TitleScreen(opts: TitleScreenProps): Unloadable {
   opts.parent.addChild(stage);
 
   return {
-    unload: () => {
+    dispose: () => {
       opts.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
@@ -41,7 +42,7 @@ interface HomeScreenProps {
   player: Player;
 }
 
-export function HomeScreen(opts: HomeScreenProps): Unloadable {
+export function HomeScreen(opts: HomeScreenProps): Disposable {
   const stage = newContainer();
 
   const btn = ToBattleBtn({
@@ -57,7 +58,7 @@ export function HomeScreen(opts: HomeScreenProps): Unloadable {
   opts.parent.addChild(stage);
 
   return {
-    unload: () => {
+    dispose: () => {
       opts.parent.removeChild(stage);
       stage.destroy({ children: true });
     },

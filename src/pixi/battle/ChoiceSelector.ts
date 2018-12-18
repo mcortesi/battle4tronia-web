@@ -1,9 +1,10 @@
 import { Container, loader, Sprite, Text, Texture } from 'pixi.js';
-import { Button, Position } from './commons';
-import { TextStyles } from './constants';
-import { BoostChoice, LineChoice } from './model';
-import SoundManager from './sounds';
-import { newContainer, newSprite } from './helpers';
+import { Position } from '../commons';
+import { Button } from '../utils/Button';
+import { TextStyles } from '../constants';
+import { BoostChoice, LineChoice } from '../../model/base';
+import SoundManager from '../SoundManager';
+import { newContainer, newSprite } from '../utils';
 
 export interface SelectorUI<T> {
   readonly choices: T[];

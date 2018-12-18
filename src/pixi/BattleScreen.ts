@@ -1,16 +1,17 @@
 import { Container } from 'pixi.js';
-import { Match, Player } from '../model/game';
-import { GlobalDispatcher } from './actions';
-import { Button, Dimension, Position } from './commons';
+import { Battle, Player } from '../model/api';
+import { GlobalDispatcher } from './GlobalDispatcher';
+import { Dimension, Position } from './commons';
+import { Button } from './utils/Button';
 import { Layout } from './constants';
-import { newContainer, newSprite } from './helpers';
-import { Unloadable } from './main';
-import { BoostChoice, LineChoice } from './model';
-import { ReelsUI } from './Reels';
-import { Bar } from './scoreBars';
-import { ScoreBox } from './scoreBox';
-import { BoostSelector, LinesSelector } from './selectors';
-import { SpinBtn } from './SpinBtn';
+import { newContainer, newSprite } from './utils';
+import { Disposable } from './MainUI';
+import { BoostChoice, LineChoice } from '../model/base';
+import { ReelsUI } from './battle/Reels';
+import { Bar } from './battle/Bars';
+import { ScoreBox } from './battle/ScoreBox';
+import { BoostSelector, LinesSelector } from './battle/ChoiceSelector';
+import { SpinBtn } from './battle/SpinBtn';
 
 export interface UIState {
   boostIdx: number;
@@ -20,7 +21,7 @@ export interface UIState {
 
 export interface BattleScreenProps {
   player: Player;
-  battle: Match;
+  battle: Battle;
   size: Dimension;
   parent: Container;
   gd: GlobalDispatcher;
@@ -28,7 +29,7 @@ export interface BattleScreenProps {
   boost: BoostChoice;
 }
 
-export function BattleScreen(opts: BattleScreenProps): Unloadable {
+export function BattleScreen(opts: BattleScreenProps): Disposable {
   const stage = newContainer(0, 0);
   opts.parent.addChild(stage);
   stage.addChild(Background(opts.size));
@@ -116,18 +117,18 @@ export function BattleScreen(opts: BattleScreenProps): Unloadable {
       reelsUI.startAnimation();
     },
     endSpinning: async result => {
-      await reelsUI.stopAnimation(result.moveResult);
+      await reelsUI.stopAnimation(result);
 
-      scoresUI.setFame(result.newFame);
-      scoresUI.setTronium(result.newTronium);
-      energyBarUI.updateValue(Math.min(1000, result.newTronium));
-      hpBarUI.updateValue(result.newVillainHP);
+      scoresUI.setFame(result.player.fame);
+      scoresUI.setTronium(result.player.tronium);
+      energyBarUI.updateValue(Math.min(1000, result.player.tronium));
+      hpBarUI.updateValue(result.currentBattle.villain.hp);
       spinBtn.disable = false;
     },
   });
 
   return {
-    unload: () => {
+    dispose: () => {
       unregister1();
       unregister2();
       opts.parent.removeChild(stage);

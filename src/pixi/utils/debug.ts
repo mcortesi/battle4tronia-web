@@ -1,5 +1,5 @@
 import { Container, Graphics } from 'pixi.js';
-import { Layout } from './constants';
+import { Layout } from '../constants';
 
 export function drawBorder(container: Container) {
   const g = new Graphics();
@@ -15,10 +15,10 @@ export function drawRules(horizontal: number[], vertical: number[]) {
   line.lineStyle(1, 0x0000ff);
 
   vertical.forEach(x => {
-    line.moveTo(x, 0).lineTo(x, Layout.screen.h);
+    line.moveTo(x, 0).lineTo(x, Layout.screen.height);
   });
   horizontal.forEach(y => {
-    line.moveTo(0, y).lineTo(Layout.screen.w, y);
+    line.moveTo(0, y).lineTo(Layout.screen.width, y);
   });
   return line;
 }

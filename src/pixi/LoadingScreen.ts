@@ -1,11 +1,11 @@
 import { Container, Text, Sprite, Texture } from 'pixi.js';
-import { newContainer, newSprite, getTexture } from './helpers';
+import { newContainer, newSprite, getTexture } from './utils';
 import { Dimension } from './commons';
 import { TextStyles } from './constants';
-import { GlobalDispatcher } from './actions';
-import { Unloadable } from './main';
+import { GlobalDispatcher } from './GlobalDispatcher';
+import { Disposable } from './MainUI';
 
-export class LoadingScreen implements Unloadable {
+export class LoadingScreen implements Disposable {
   stage: Container;
   parent: Container;
   unregister: () => void;
@@ -31,7 +31,7 @@ export class LoadingScreen implements Unloadable {
     this.unregister = opts.gd.registerForLoadScreen(this);
   }
 
-  unload(): void {
+  dispose(): void {
     this.parent.removeChild(this.stage);
     this.stage.destroy({ children: true });
   }
