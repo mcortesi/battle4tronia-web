@@ -196,9 +196,9 @@ export class FakeApi implements API {
     const winnings = computeWinnings(bet, lineResults);
 
     this.player.fame += winnings.fame;
-    this.player.tronium += winnings.tronium;
+    this.player.tronium += winnings.tronium - bet.tronium * bet.lines;
 
-    this.battle.villain.hp -= winnings.villainHp;
+    this.battle.villain.hp = Math.max(this.battle.villain.hp - winnings.villainHp, 0);
 
     this.battle.status = this.battle.villain.hp <= 0 ? BattleStatus.FINISHED : BattleStatus.ONGOING;
 

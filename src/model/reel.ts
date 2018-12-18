@@ -90,17 +90,17 @@ export class ReelResult {
   static Miss = new ReelResult({
     label: 'Miss',
     probability: 0.29,
-    troniumPayout: 5,
-    famePayout: 5,
-    hpPayout: 2,
+    troniumPayout: 0,
+    famePayout: 0,
+    hpPayout: 0,
     builder: missBuilder,
   });
   static NearMiss = new ReelResult({
     label: 'NearMiss',
     probability: 0.2,
-    troniumPayout: 5,
-    famePayout: 5,
-    hpPayout: 2,
+    troniumPayout: 0,
+    famePayout: 0,
+    hpPayout: 0,
     builder: nearMissBuilder,
   });
 

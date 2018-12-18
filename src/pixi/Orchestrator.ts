@@ -71,7 +71,9 @@ export class Orchestrator implements ModelActions {
   };
 
   requestSpin = async () => {
-    this.gd.startSpinning(this.game.player.tronium - this.currentBoost.value);
+    this.gd.startSpinning(
+      this.game.player.tronium - this.currentBoost.value * this.currentAttack.value
+    );
     const res = await this.game.spin({
       tronium: this.currentBoost.value,
       lines: this.currentAttack.value,
