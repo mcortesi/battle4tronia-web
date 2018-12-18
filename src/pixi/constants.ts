@@ -1,4 +1,5 @@
 import { ReelSize } from '../model/reel';
+import { TextStyle } from 'pixi.js';
 
 export const Layout = {
   screen: { w: 1366, h: 688 },
@@ -79,32 +80,35 @@ export const Layout = {
   },
 };
 
-export const ThickFont = new PIXI.TextStyle({
-  fontFamily: 'Helvetica',
-  fontSize: 30,
-  fill: 'white',
-  fontWeight: 'bold',
-  // stroke: 'white',
-  // stroke: '#ff3300',
-  // strokeThickness: 1,
-  // dropShadow: true,
-  // dropShadowColor: '#000000',
-  // dropShadowBlur: 4,
-  // dropShadowAngle: Math.PI / 6,
-  // dropShadowDistance: 6,
-});
-
-export const ThinFont = new PIXI.TextStyle({
-  fontFamily: 'Helvetica',
-  fontSize: 14,
-  fill: 'white',
-  // fontWeight: 'bold'
-  // stroke: 'white',
-  // stroke: '#ff3300',
-  // strokeThickness: 1,
-  // dropShadow: true,
-  // dropShadowColor: '#000000',
-  // dropShadowBlur: 4,
-  // dropShadowAngle: Math.PI / 6,
-  // dropShadowDistance: 6,
-});
+export const TextStyles = {
+  H1: new TextStyle({
+    fontFamily: 'Exo 2',
+    fontSize: 40,
+    fontWeight: '900',
+    fill: 'white',
+  }),
+  H2: new TextStyle({
+    fontFamily: 'Exo 2',
+    fontSize: 30,
+    fontWeight: '900',
+    fill: 'white',
+  }),
+  H3: new TextStyle({
+    fontFamily: 'Exo 2',
+    fontSize: 24,
+    fontWeight: '900',
+    fill: 'white',
+  }),
+  Body1: new TextStyle({
+    fontFamily: 'Exo 2',
+    fontSize: 18,
+    fontWeight: '400',
+    fill: 'white',
+  }),
+  Body2: new TextStyle({
+    fontFamily: 'Exo 2',
+    fontSize: 18,
+    fontWeight: '400',
+    fill: 'white',
+  }),
+};

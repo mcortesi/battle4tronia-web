@@ -1,4 +1,4 @@
-import { ThinFont, ThickFont } from './constants';
+import { TextStyles } from './constants';
 import { UIComponent, Position } from './commons';
 import { newContainer, newSprite } from './helpers';
 import { Container, Text } from 'pixi.js';
@@ -52,8 +52,8 @@ export class ScoreBox extends UIComponent {
 
   private renderScore(labelText: string, value: number, texture: string, yPos: number) {
     const container = newContainer(0, yPos);
-    const score = new PIXI.Text(value.toString(), ThickFont);
-    const label = new PIXI.Text(labelText, ThinFont);
+    const score = new PIXI.Text(value.toString(), TextStyles.H2);
+    const label = new PIXI.Text(labelText, TextStyles.Body2);
     const icon = newSprite(texture);
     container.addChild(icon);
     container.addChild(score);

@@ -5,7 +5,9 @@
 // import { createAppStore } from './ducks/root';
 
 import './styles.css';
-import { BattleApp, loadAssets } from './pixi-app';
+import { GlobalDispatcher } from './pixi/actions';
+import { MainManager } from './pixi/main';
+import { ResourceManager } from './pixi/ResourceManager';
 
 // const store = createAppStore();
 // ReactDOM.render(
@@ -15,7 +17,17 @@ import { BattleApp, loadAssets } from './pixi-app';
 //   document.getElementById('app')
 // );
 
-loadAssets(() => {
-  const pixiApp = new BattleApp();
-  pixiApp.start();
+export async function startApp() {
+  const gd = new GlobalDispatcher();
+  // @ts-ignore
+  const mainManager = new MainManager(gd);
+  const rm = new ResourceManager(gd);
+
+  gd.enterLoading();
+  await rm.loadAll();
+  gd.enterTitle();
+}
+
+startApp().catch(err => {
+  console.error('booom', err);
 });

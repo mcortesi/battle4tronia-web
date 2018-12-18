@@ -1,6 +1,6 @@
 import { Container, loader, Sprite, Text, Texture } from 'pixi.js';
 import { Button, Position } from './commons';
-import { ThickFont, ThinFont } from './constants';
+import { TextStyles } from './constants';
 import { BoostChoice, LineChoice } from './model';
 import SoundManager from './sounds';
 import { newContainer, newSprite } from './helpers';
@@ -21,9 +21,9 @@ class BoostChoiceRenderer implements Renderer<BoostChoice> {
   desc: Text;
 
   constructor(readonly parent: Container) {
-    const title = new Text('Boost', ThinFont);
-    this.label = new Text('XXX', ThickFont);
-    this.desc = new Text('XXX', ThinFont);
+    const title = new Text('Boost', TextStyles.Body1);
+    this.label = new Text('XXX', TextStyles.H2);
+    this.desc = new Text('XXX', TextStyles.H3);
     const troniumIcon = new Sprite(loader.resources.icoTronium.texture);
     troniumIcon.width = 24;
     troniumIcon.height = 24;
@@ -55,9 +55,9 @@ class LineChoiceRenderer implements Renderer<BoostChoice> {
   desc: Text;
 
   constructor(readonly parent: Container) {
-    const title = new Text('Attack', ThinFont);
-    this.label = new Text('XXX', ThickFont);
-    this.desc = new Text('XXX', ThinFont);
+    const title = new Text('Attack', TextStyles.Body1);
+    this.label = new Text('XXX', TextStyles.H2);
+    this.desc = new Text('XXX', TextStyles.H3);
 
     title.anchor.set(0.5, 0);
     this.label.anchor.set(0.5, 0);
