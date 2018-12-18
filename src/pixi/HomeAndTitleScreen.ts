@@ -14,18 +14,17 @@ interface TitleScreenProps {
 
 export function TitleScreen(opts: TitleScreenProps): Disposable {
   const stage = newContainer();
+  opts.parent.addChild(stage);
 
   const btn = ConnectBtn({
     position: {
       x: opts.size.width / 2,
-      y: opts.size.height - 50,
+      y: 538,
     },
     anchor: new Point(0.5, 0),
     onClick: () => opts.gd.requestConnect(),
   });
   stage.addChild(btn.stage);
-
-  opts.parent.addChild(stage);
 
   return {
     dispose: () => {
@@ -44,18 +43,17 @@ interface HomeScreenProps {
 
 export function HomeScreen(opts: HomeScreenProps): Disposable {
   const stage = newContainer();
+  opts.parent.addChild(stage);
 
   const btn = ToBattleBtn({
     position: {
       x: opts.size.width / 2,
-      y: opts.size.height - 50,
+      y: 538,
     },
     anchor: new Point(0.5, 0),
     onClick: () => opts.gd.requestBattle(),
   });
   stage.addChild(btn.stage);
-
-  opts.parent.addChild(stage);
 
   return {
     dispose: () => {
@@ -66,11 +64,25 @@ export function HomeScreen(opts: HomeScreenProps): Disposable {
 }
 
 export function MainBackground(size: Dimension) {
-  const s = newSprite('bgHome', { size });
+  const container = newContainer();
+
+  const bg = newSprite('bgHome', { size });
   const blurFilter = new filters.BlurFilter();
-  s.tint = 0xcccccc;
   blurFilter.blur = 3;
-  return s;
+  bg.filters = [blurFilter];
+  bg.tint = 0xcccccc;
+  container.addChild(bg);
+
+  const titleLabel = newSprite('imgTitle', {
+    position: {
+      x: size.width / 2,
+      y: 50,
+    },
+    anchor: new Point(0.5, 0),
+  });
+  container.addChild(titleLabel);
+
+  return container;
 }
 
 function ConnectBtn(opts: { position: Position; anchor: Point; onClick: () => void }) {
@@ -78,7 +90,7 @@ function ConnectBtn(opts: { position: Position; anchor: Point; onClick: () => vo
   btnSprite.anchor.set(opts.anchor.x, opts.anchor.y);
   const btn = new Button({
     ...opts.position,
-    hitArea: new Rectangle(-103, 7, 207, 115),
+    hitArea: new Rectangle(-125, 0, 250, 106),
     sprite: btnSprite,
     onClick: opts.onClick,
   });
@@ -91,7 +103,7 @@ function ToBattleBtn(opts: { position: Position; anchor: Point; onClick: () => v
   btnSprite.anchor.set(opts.anchor.x, opts.anchor.y);
   const btn = new Button({
     ...opts.position,
-    hitArea: new Rectangle(-103, 7, 207, 115),
+    hitArea: new Rectangle(-125, 0, 250, 106),
     sprite: btnSprite,
     onClick: opts.onClick,
   });

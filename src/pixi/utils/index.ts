@@ -1,4 +1,4 @@
-import { Container, Texture, Sprite, utils } from 'pixi.js';
+import { Container, Texture, Sprite, utils, Point } from 'pixi.js';
 import { Dimension, Position } from '../commons';
 
 export function newContainer(x = 0, y = 0) {
@@ -16,7 +16,7 @@ export function getTexture(name: string): Texture {
 
 export function newSprite(
   texture: string | Texture,
-  opts: { position?: Position; size?: Dimension } = {}
+  opts: { position?: Position | Point; size?: Dimension; anchor?: Point } = {}
 ): Sprite {
   const s = new Sprite(typeof texture === 'string' ? getTexture(texture) : texture);
   if (opts.position) {
@@ -25,6 +25,9 @@ export function newSprite(
   if (opts.size) {
     s.width = opts.size.width;
     s.height = opts.size.height;
+  }
+  if (opts.anchor) {
+    s.anchor.set(opts.anchor.x, opts.anchor.y);
   }
   return s;
 }

@@ -1,50 +1,53 @@
-import { Container, Text, Sprite, Texture } from 'pixi.js';
-import { newContainer, newSprite, getTexture } from './utils';
+import { Container, Point, Text, Texture } from 'pixi.js';
 import { Dimension } from './commons';
 import { TextStyles } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
+import { getTexture, newContainer, newSprite } from './utils';
 
-export class LoadingScreen implements Disposable {
-  stage: Container;
+export interface LoadingScreenProps {
+  size: Dimension;
+  gd: GlobalDispatcher;
   parent: Container;
-  unregister: () => void;
+}
 
-  bgSprite: Sprite;
-  loadText: Text;
+export function LoadingScreen({ size, parent, gd }: LoadingScreenProps): Disposable {
+  const stage = newContainer(0, 0);
+  parent.addChild(stage);
 
-  constructor(opts: { size: Dimension; gd: GlobalDispatcher; parent: Container }) {
-    this.stage = newContainer(0, 0);
-    this.parent = opts.parent;
-    this.parent.addChild(this.stage);
+  const loadText = new Text('0%', TextStyles.H1);
+  loadText.anchor.set(0.5, 0.5);
+  loadText.position.set(size.width / 2, size.height / 2);
 
-    this.loadText = new Text('0%', TextStyles.H1);
-    this.loadText.anchor.set(0.5, 0.5);
-    this.loadText.position.set(opts.size.width / 2, opts.size.height / 2);
+  const bgSprite = newSprite(Texture.WHITE, { size });
 
-    this.bgSprite = newSprite(Texture.WHITE);
-    this.bgSprite.width = opts.size.width;
-    this.bgSprite.height = opts.size.height;
+  stage.addChild(bgSprite, loadText);
 
-    this.stage.addChild(this.bgSprite, this.loadText);
+  const unregister = gd.registerForLoadScreen({
+    setLoadPercentage: (x: number) => {
+      loadText.text = `${x}%`;
+    },
 
-    this.unregister = opts.gd.registerForLoadScreen(this);
-  }
+    fontsLoaded: () => {
+      loadText.dirty = true;
+    },
 
-  dispose(): void {
-    this.parent.removeChild(this.stage);
-    this.stage.destroy({ children: true });
-  }
+    bgLoaded: () => {
+      bgSprite.texture = getTexture('bgHome');
+      stage.addChild(
+        newSprite('imgTitle', {
+          position: new Point(size.width / 2, 50),
+          anchor: new Point(0.5, 0),
+        })
+      );
+    },
+  });
 
-  setLoadPercentage = (x: number) => {
-    this.loadText.text = `${x}%`;
-  };
-
-  fontsLoaded = () => {
-    this.loadText.dirty = true;
-  };
-
-  bgLoaded = () => {
-    this.bgSprite.texture = getTexture('bgHome');
+  return {
+    dispose: () => {
+      unregister();
+      parent.removeChild(stage);
+      stage.destroy({ children: true });
+    },
   };
 }

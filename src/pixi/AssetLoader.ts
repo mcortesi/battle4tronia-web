@@ -56,6 +56,7 @@ export class AssetLoader {
   private loadLoadingStageResources() {
     return new Promise((resolve, reject) => {
       loader.add('bgHome', '/assets/bgHome.jpg');
+      loader.add('imgTitle', '/assets/imgTitle.png');
       loader.load(() => {
         this.progressDelta(5);
         this.gd.bgLoaded();

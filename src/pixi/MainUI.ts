@@ -34,7 +34,7 @@ export class MainUI {
     this.app.start();
   }
   enterLoading() {
-    this.setScreen(new LoadingScreen(this.ctx));
+    this.setScreen(LoadingScreen(this.ctx));
   }
   enterTitle() {
     this.ensureMainBackground();
