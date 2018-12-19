@@ -1,5 +1,5 @@
-import { SpinResult } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
+import { ClientSpinResult } from '../model/game';
 
 export interface HowToPlayActions {
   showHowToPlay(): void;
@@ -18,7 +18,7 @@ export interface HomeScreenActions {
 
 export interface BattleScreenActions {
   startSpinning(tronium: number): void;
-  endSpinning(result: SpinResult): void;
+  endSpinning(result: ClientSpinResult): void;
   canBetWithCurrentBalance(isEnough: boolean): void;
 }
 
@@ -40,14 +40,6 @@ export interface LoadScreenActions {
   setLoadPercentage(x: number): void;
   bgLoaded(): void;
   fontsLoaded(): void;
-}
-
-export interface SpinResult {
-  newFame: number;
-  newTronium: number;
-  newScore: number;
-  newVillainHP: number;
-  moveResult: SpinResult;
 }
 
 type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
@@ -138,7 +130,7 @@ export class GlobalDispatcher
   startSpinning(tronium: number): void {
     this.fireEvent(this.battleScreenListeners, 'startSpinning', tronium);
   }
-  endSpinning(result: SpinResult): void {
+  endSpinning(result: ClientSpinResult): void {
     this.fireEvent(this.battleScreenListeners, 'endSpinning', result);
   }
   canBetWithCurrentBalance(isEnough: boolean): void {

@@ -1,4 +1,11 @@
-import { API, Bet, GameStatus, Player, Battle } from './api';
+import { API, Battle, Bet, GameStatus, Player, SpinResult } from './api';
+import { BetResult, RowCombination, toBetResult } from './reel';
+export interface ClientSpinResult {
+  player: Player;
+  bet: Bet;
+  result: BetResult;
+  currentBattle: Battle;
+}
 
 export class GameClient {
   private api: API;
@@ -74,10 +81,13 @@ export class GameClient {
     return this._battle;
   }
 
-  async spin(bet: Bet) {
-    const res = await this.api.spin(bet);
+  async spin(bet: Bet): Promise<ClientSpinResult> {
+    const res: SpinResult = await this.api.spin(bet);
     this._player = res.player;
     this._battle = res.currentBattle;
-    return res;
+    return {
+      ...res,
+      result: toBetResult(bet, res.result.map(RowCombination.fromDice)),
+    };
   }
 }

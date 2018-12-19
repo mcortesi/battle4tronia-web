@@ -19,7 +19,7 @@ export function LoadingScreen({ size, parent, gd }: LoadingScreenProps): Disposa
   loadText.anchor.set(0.5, 0.5);
   loadText.position.set(size.width / 2, size.height / 2);
 
-  const bgSprite = newSprite(Texture.WHITE, { size });
+  const bgSprite = newSprite(Texture.EMPTY, { size });
 
   stage.addChild(bgSprite, loadText);
 

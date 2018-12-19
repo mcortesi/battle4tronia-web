@@ -1,4 +1,5 @@
-import { computeWinnings } from './base';
+import { genArray } from '../utils';
+import { RowCombination, winningsFor } from './reel';
 
 export type Address = string;
 
@@ -44,13 +45,8 @@ export interface Battle {
 export interface SpinResult {
   player: Player;
   bet: Bet;
-  result: LineResult[];
+  result: number[];
   currentBattle: Battle;
-}
-
-export interface LineResult {
-  line: 0 | 1 | 2;
-  random: number;
 }
 
 export const enum GameStatus {
@@ -60,6 +56,23 @@ export const enum GameStatus {
   NOT_ENOUGH_BALANCE = 'NOT_ENOUGH_BALANCE',
   READY = 'READY',
   ERROR = 'ERROR',
+}
+
+export interface FightStats {
+  famePoints: number;
+  troniums: number;
+  seconds: number;
+}
+
+export interface PlayerStats {
+  bestFight: FightStats;
+  villainsDefeated: number;
+}
+
+export interface GlobalStats {
+  allTime: FightStats[]; // sorted by famepoints descending
+  villainsDefeated: number; // total
+  bestFightWeek: FightStats;
 }
 
 export interface API {
@@ -88,6 +101,10 @@ export interface API {
   closeChannel(): Promise<boolean>;
 
   spin(bet: Bet): Promise<SpinResult>;
+
+  getGlobalStats(): Promise<GlobalStats>;
+
+  getPlayerStats(): Promise<PlayerStats>;
 }
 
 function clonePlayer(player: Player) {
@@ -188,18 +205,16 @@ export class FakeApi implements API {
       throw new Error('Not in battle');
     }
 
-    const lineResults: LineResult[] = [
-      { line: 0, random: Math.random() },
-      { line: 1, random: Math.random() },
-      { line: 2, random: Math.random() },
-    ];
-    const winnings = computeWinnings(bet, lineResults);
+    const lineResults = genArray(bet.lines, () => Math.random());
+    const winnings = winningsFor(bet.tronium, lineResults.map(x => RowCombination.fromDice(x)));
 
-    this.player.fame += winnings.fame;
-    this.player.tronium += winnings.tronium - bet.tronium * bet.lines;
+    this.player.tronium += winnings.troniumPayout - bet.lines * bet.tronium;
+    this.player.fame += winnings.damage;
 
-    this.battle.villain.hp = Math.max(this.battle.villain.hp - winnings.villainHp, 0);
+    this.battle.tronium += winnings.troniumPayout - bet.lines * bet.tronium;
+    this.battle.score += winnings.damage;
 
+    this.battle.villain.hp = Math.max(this.battle.villain.hp - winnings.damage, 0);
     this.battle.status = this.battle.villain.hp <= 0 ? BattleStatus.FINISHED : BattleStatus.ONGOING;
 
     return {
@@ -208,6 +223,14 @@ export class FakeApi implements API {
       currentBattle: cloneBattle(this.battle),
       bet,
     };
+  }
+
+  async getGlobalStats(): Promise<GlobalStats> {
+    return null as any;
+  }
+
+  async getPlayerStats(): Promise<PlayerStats> {
+    return null as any;
   }
 }
 

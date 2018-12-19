@@ -14,6 +14,7 @@ export class MainUI {
   private mainBg: Container | null = null;
   private ctx: ScreenContext;
   private app: Application;
+
   constructor(gd: GlobalDispatcher, size: Dimension) {
     this.app = new Application({
       height: Layout.screen.height,

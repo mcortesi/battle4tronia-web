@@ -20,6 +20,12 @@ const ResouceMap = {
   'symbol-attack1': '/assets/symbol-attack1.png',
   'symbol-attack2': '/assets/symbol-attack2.png',
   'symbol-attack3': '/assets/symbol-attack3.png',
+  'symbol-attack4': '/assets/symbol-attack4.png',
+  'symbol-trash1': '/assets/symbol-trash1.png',
+  'symbol-trash2': '/assets/symbol-trash2.png',
+  'symbol-trash3': '/assets/symbol-trash3.png',
+  'symbol-trash4': '/assets/symbol-trash4.png',
+  'symbol-trash5': '/assets/symbol-trash5.png',
 };
 
 export class AssetLoader {

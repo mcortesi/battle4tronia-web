@@ -1,11 +1,10 @@
 import * as Tween from '@tweenjs/tween.js';
 import { Container, extras, filters, Graphics } from 'pixi.js';
-import { SlotSymbol, SpinResultRow, ReelResult } from '../../model/reel';
+import { LineChoice } from '../../model/base';
+import { BetResult, SlotSymbol } from '../../model/reel';
 import { genArray } from '../../utils';
 import { Position, UIComponent } from '../commons';
 import { getTexture, newContainer } from '../utils';
-import { LineChoice, hasWon } from '../../model/base';
-import { SpinResult } from '../../model/api';
 
 const BG_SELECTED_COLOR = 0xd8d8d8;
 const BG_COLOR = 0x979797;
@@ -61,15 +60,14 @@ export class ReelsUI extends UIComponent {
     }
   }
 
-  animeWin(result: SpinResult, rows: SpinResultRow[]) {
+  animeWin(betResult: BetResult) {
     const blur = new filters.BlurFilter();
     blur.blur = 8;
 
     const g = new Graphics();
     g.lineStyle(10, 0xff0000);
-    for (let r = 0; r < rows.length; r++) {
-      const winningCols = rows[r].winningCols;
-      if (winningCols.length > 0 && isBettedRow(result.bet.lines, r)) {
+    for (let r = 0; r < betResult.rowWinStatus.length; r++) {
+      if (betResult.rowWinStatus[r]) {
         g.drawRect(
           0,
           r * this.opts.cellHeight,
@@ -123,20 +121,8 @@ export class ReelsUI extends UIComponent {
       .start();
   }
 
-  public async stopAnimation(result: SpinResult) {
-    const lastColSymbols = genArray(this.opts.columns, () => [] as SlotSymbol[]);
-
-    const resultRows = result.result
-      .slice(0)
-      .sort((a, b) => a.line - b.line)
-      .map(lr => ReelResult.fromDice(lr.random).build());
-
-    // const resultRows = result.rows.map(sr => sr.build());
-    resultRows.forEach(rowSymbols => {
-      rowSymbols.symbols.forEach((symbol, i) => {
-        lastColSymbols[i].push(symbol);
-      });
-    });
+  public async stopAnimation(result: BetResult) {
+    const lastColSymbols = result.reels;
 
     const positionsToMove = 5;
     const baseTime = 800;
@@ -170,8 +156,8 @@ export class ReelsUI extends UIComponent {
     // const g = new Tween.Group();
     // tweens.forEach( t=> g.add(t));
 
-    if (hasWon(result.bet, result.result)) {
-      tweens[tweens.length - 1].chain(this.animeWin(result, resultRows));
+    if (result.rowWinStatus.some(x => x)) {
+      tweens[tweens.length - 1].chain(this.animeWin(result));
     }
 
     return new Promise(resolve => {
@@ -297,18 +283,5 @@ export class ReelsUI extends UIComponent {
     }
 
     this.stage.addChild(...this.rowGraphics);
-  }
-}
-
-function isBettedRow(lines: number, r: number) {
-  switch (lines) {
-    case 1:
-      return r === 1;
-    case 2:
-      return r === 0 || r === 2;
-    case 3:
-      return true;
-    default:
-      return true;
   }
 }

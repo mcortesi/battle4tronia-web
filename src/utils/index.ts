@@ -43,3 +43,18 @@ export function iter(n: number, f: (i: number) => void) {
 export function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export function transpose<A>(matrix: A[][]): A[][] {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+
+  const newMatrix: A[][] = [];
+  for (let i = 0; i < cols; i++) {
+    const xs: A[] = [];
+    for (let j = 0; j < rows; j++) {
+      xs.push(matrix[j][i]);
+    }
+    newMatrix.push(xs);
+  }
+  return newMatrix;
+}

@@ -150,7 +150,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
       ui.reelsUI.startAnimation();
     },
     endSpinning: async result => {
-      await ui.reelsUI.stopAnimation(result);
+      await ui.reelsUI.stopAnimation(result.result);
 
       ui.scoresUI.setFame(result.player.fame);
       updateTronium(result.player.tronium);
