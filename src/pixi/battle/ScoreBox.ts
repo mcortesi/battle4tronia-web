@@ -21,49 +21,77 @@ export class ScoreBox extends UIComponent {
   readonly stage: Container;
   private troniumText: Text;
   private fameText: Text;
+  private troniumIncrease: Text;
+  private currentFame: number;
+  private currentTronium: number;
 
   constructor(private readonly opts: ScoreBoxOpts) {
     super();
     this.stage = newContainer(opts.x, opts.y);
 
-    this.troniumText = this.renderScore('Tronium', opts.initTronium, 'icoTronium', 0);
-    this.fameText = this.renderScore('Fame', opts.initFame, 'icoFame', this.opts.fameY);
+    this.currentFame = opts.initFame;
+    this.currentTronium = opts.initTronium;
+    this.troniumText = this.createScoreRender('Tronium', opts.initTronium, 'icoTronium', 0);
+    this.fameText = this.createScoreRender('Fame', opts.initFame, 'icoFame', this.opts.fameY);
+
+    this.troniumIncrease = new PIXI.Text('', TextStyles.H2);
+    this.troniumIncrease.x = this.troniumText.x + this.troniumText.width + 30;
+    this.troniumIncrease.tint = 0x00c03b;
+    this.troniumIncrease.visible = false;
+    this.stage.addChild(this.troniumIncrease);
   }
 
   setFame(newFame: number) {
-    new Tween({ val: parseInt(this.fameText.text, 10) })
-      .to({ val: newFame }, 300)
-      .onUpdate(x => {
-        this.fameText.text = Math.floor(x.val).toString();
-      })
-      .easing(Easing.Cubic.InOut)
-      .start();
+    animateText(this.fameText, this.currentFame, newFame);
+
+    this.currentFame = newFame;
   }
 
   setTronium(newTronium: number) {
-    new Tween({ val: parseInt(this.troniumText.text, 10) })
-      .to({ val: newTronium }, 300)
-      .onUpdate(x => {
-        this.troniumText.text = Math.floor(x.val).toString();
-      })
-      .easing(Easing.Cubic.InOut)
-      .start();
+    animateText(this.troniumText, this.currentTronium, newTronium);
+    if (newTronium > this.currentTronium) {
+      this.troniumIncrease.text = `+${newTronium - this.currentTronium}`;
+      this.troniumIncrease.x = this.troniumText.x + this.troniumText.width + 30;
+      animateIncrease(this.troniumIncrease);
+    }
+
+    this.currentTronium = newTronium;
   }
 
-  private renderScore(labelText: string, value: number, texture: string, yPos: number) {
+  private createScoreRender(labelText: string, value: number, texture: string, yPos: number) {
     const container = newContainer(0, yPos);
     const score = new PIXI.Text(value.toString(), TextStyles.H2);
     const label = new PIXI.Text(labelText, TextStyles.Body2);
     const icon = newSprite(texture);
-    container.addChild(icon);
-    container.addChild(score);
-    container.addChild(label);
+    container.addChild(icon, score, label);
 
-    // icon.scale.set(0.75, 0.75);
     score.position.set(this.opts.textX, 0);
     label.position.set(this.opts.textX, this.opts.labelY);
 
     this.stage.addChild(container);
     return score;
   }
+}
+
+function animateIncrease(label: Text) {
+  label.alpha = 0;
+  label.visible = true;
+  const showAnimation = new Tween(label).to({ alpha: 1 }, 400);
+  const hideAnimation = new Tween(label)
+    .to({ alpha: 0 }, 400)
+    .delay(800)
+    .onComplete(() => {
+      label.visible = false;
+    });
+
+  return showAnimation.chain(hideAnimation).start();
+}
+function animateText(label: Text, from: number, to: number) {
+  return new Tween({ val: from })
+    .to({ val: to }, 300)
+    .onUpdate(x => {
+      label.text = Math.floor(x.val).toString();
+    })
+    .easing(Easing.Cubic.InOut)
+    .start();
 }
