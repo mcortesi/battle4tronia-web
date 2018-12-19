@@ -1,5 +1,5 @@
 import { genArray } from '../utils';
-import { RowCombination, winningsFor } from './reel';
+import { Move, winningsFor } from './reel';
 
 export type Address = string;
 
@@ -206,7 +206,7 @@ export class FakeApi implements API {
     }
 
     const lineResults = genArray(bet.lines, () => Math.random());
-    const winnings = winningsFor(bet.tronium, lineResults.map(x => RowCombination.fromDice(x)));
+    const winnings = winningsFor(bet.tronium, lineResults.map(x => Move.fromDice(x)));
 
     this.player.tronium += winnings.troniumPayout - bet.lines * bet.tronium;
     this.player.fame += winnings.damage;

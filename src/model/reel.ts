@@ -1,4 +1,4 @@
-import { genArray, rndElem, transpose } from '../utils';
+import { genArray, rndElem, transpose, shuffle } from '../utils';
 import { Bet } from './api';
 
 export const ReelSize = {
@@ -14,21 +14,21 @@ export const enum SymbolKind {
   Joker,
 }
 
-export class SlotSymbol {
-  static ALL: SlotSymbol[] = [];
-  static ALL_BYKIND: Map<SymbolKind, SlotSymbol[]> = new Map();
-  static AttackA = new SlotSymbol('symbol-attack1', SymbolKind.Attack);
-  static AttackB = new SlotSymbol('symbol-attack2', SymbolKind.Attack);
-  static AttackC = new SlotSymbol('symbol-attack3', SymbolKind.Attack);
-  static AttackD = new SlotSymbol('symbol-attack4', SymbolKind.Attack);
-  static TrashA = new SlotSymbol('symbol-trash1', SymbolKind.Trash);
-  static TrashB = new SlotSymbol('symbol-trash2', SymbolKind.Trash);
-  static TrashC = new SlotSymbol('symbol-trash3', SymbolKind.Trash);
-  static TrashD = new SlotSymbol('symbol-trash4', SymbolKind.Trash);
-  static TrashE = new SlotSymbol('symbol-trash5', SymbolKind.Trash);
+export class Card {
+  static ALL: Card[] = [];
+  static ALL_BYKIND: Map<SymbolKind, Card[]> = new Map();
+  static HeroA = new Card('symbol-attack1', SymbolKind.Attack);
+  static HeroB = new Card('symbol-attack2', SymbolKind.Attack);
+  static HeroC = new Card('symbol-attack3', SymbolKind.Attack);
+  static HeroD = new Card('symbol-attack4', SymbolKind.Attack);
+  static TrashA = new Card('symbol-trash1', SymbolKind.Trash);
+  static TrashB = new Card('symbol-trash2', SymbolKind.Trash);
+  static TrashC = new Card('symbol-trash3', SymbolKind.Trash);
+  static TrashD = new Card('symbol-trash4', SymbolKind.Trash);
+  static TrashE = new Card('symbol-trash5', SymbolKind.Trash);
 
-  static rnd(): SlotSymbol {
-    return rndElem(SlotSymbol.ALL);
+  static rnd(): Card {
+    return rndElem(Card.ALL);
   }
 
   static rndOfKind(kind: SymbolKind) {
@@ -38,13 +38,13 @@ export class SlotSymbol {
   readonly idx: number;
 
   private constructor(readonly id: string, readonly kind: SymbolKind) {
-    this.idx = SlotSymbol.ALL.length;
+    this.idx = Card.ALL.length;
 
-    SlotSymbol.ALL.push(this);
-    if (!SlotSymbol.ALL_BYKIND.has(this.kind)) {
-      SlotSymbol.ALL_BYKIND.set(this.kind, []);
+    Card.ALL.push(this);
+    if (!Card.ALL_BYKIND.has(this.kind)) {
+      Card.ALL_BYKIND.set(this.kind, []);
     }
-    SlotSymbol.ALL_BYKIND.get(this.kind)!.push(this);
+    Card.ALL_BYKIND.get(this.kind)!.push(this);
   }
 
   toString() {
@@ -52,20 +52,24 @@ export class SlotSymbol {
   }
 }
 
-function same5Of(symbol: SlotSymbol): () => SlotSymbol[] {
+function b5of(symbol: Card): () => Card[] {
   return () => genArray(5, () => symbol);
 }
-function same4Of(symbol: SlotSymbol): () => SlotSymbol[] {
-  return () => genArray(4, () => symbol).concat([SlotSymbol.rndOfKind(SymbolKind.Trash)]);
+function b4of(symbol: Card): () => Card[] {
+  return () => shuffle(genArray(4, () => symbol).concat([Card.rndOfKind(SymbolKind.Trash)]));
 }
 
-function same3Of(symbol: SlotSymbol): () => SlotSymbol[] {
+function b3of(symbol: Card): () => Card[] {
   return () =>
-    genArray(4, () => symbol).concat(genArray(2, () => SlotSymbol.rndOfKind(SymbolKind.Trash)));
+    shuffle(genArray(4, () => symbol).concat(genArray(2, () => Card.rndOfKind(SymbolKind.Trash))));
 }
 
-function missBuilder(): SlotSymbol[] {
-  return genArray(5, () => SlotSymbol.rndOfKind(SymbolKind.Trash));
+function b3and2(symbol3: Card, symbol2: Card): () => Card[] {
+  return () => shuffle(genArray(3, () => symbol3).concat(genArray(2, () => symbol2)));
+}
+
+function missBuilder(): Card[] {
+  return genArray(5, () => Card.rndOfKind(SymbolKind.Trash));
 }
 
 // function nearMissBuilder(): SlotSymbol[] {
@@ -74,46 +78,59 @@ function missBuilder(): SlotSymbol[] {
 //   return win;
 // }
 
-export class RowCombination {
-  static ALL: Array<{ max: number; result: RowCombination }> = [];
+export class Move {
+  static ALL: Array<{ max: number; result: Move }> = [];
 
-  static A3 = new RowCombination('A3', 0.0715, 0.5, 1, same3Of(SlotSymbol.AttackA));
-  static B3 = new RowCombination('B3', 0.0358, 1, 2, same3Of(SlotSymbol.AttackB));
-  static C3 = new RowCombination('C3', 0.0072, 5, 3, same3Of(SlotSymbol.AttackC));
-  static D3 = new RowCombination('D3', 0.0036, 10, 4, same3Of(SlotSymbol.AttackD));
+  static A3 = new Move('3A2T', 0.0715, 0.5, 1, b3of(Card.HeroA));
+  static B3 = new Move('3B2T', 0.0358, 1, 2, b3of(Card.HeroB));
+  static C3 = new Move('3C2T', 0.0072, 5, 3, b3of(Card.HeroC));
+  static D3 = new Move('3D2T', 0.0036, 10, 4, b3of(Card.HeroD));
 
-  static A4 = new RowCombination('A4', 0.0358, 1, 4, same4Of(SlotSymbol.AttackA));
-  static B4 = new RowCombination('B4', 0.0179, 2, 5, same4Of(SlotSymbol.AttackB));
-  static C4 = new RowCombination('C4', 0.0036, 10, 6, same4Of(SlotSymbol.AttackC));
-  static D4 = new RowCombination('D4', 0.0018, 20, 7, same4Of(SlotSymbol.AttackD));
+  static A4 = new Move('4A1T', 0.0358, 1, 4, b4of(Card.HeroA));
+  static B4 = new Move('4B1T', 0.0179, 2, 5, b4of(Card.HeroB));
+  static C4 = new Move('4C1T', 0.0036, 10, 6, b4of(Card.HeroC));
+  static D4 = new Move('4D1T', 0.0018, 20, 7, b4of(Card.HeroD));
 
-  static A5 = new RowCombination('A5', 0.0143, 2.5, 7, same5Of(SlotSymbol.AttackA));
-  static B5 = new RowCombination('B5', 0.0072, 5, 8, same5Of(SlotSymbol.AttackB));
-  static C5 = new RowCombination('C5', 0.0015, 25, 9, same5Of(SlotSymbol.AttackC));
-  static D5 = new RowCombination('D5', 0.0008, 50, 10, same5Of(SlotSymbol.AttackD));
+  static A5 = new Move('5A', 0.0143, 2.5, 7, b5of(Card.HeroA));
+  static B5 = new Move('5B', 0.0072, 5, 8, b5of(Card.HeroB));
+  static C5 = new Move('5C', 0.0015, 25, 9, b5of(Card.HeroC));
+  static D5 = new Move('5D', 0.0008, 50, 10, b5of(Card.HeroD));
 
-  static Miss = new RowCombination('Miss', 1 - 0.201, 0, 0, missBuilder);
+  static A3B2 = new Move('3A2B', 0.0358, 1, 2, b3and2(Card.HeroA, Card.HeroB));
+  static A3C2 = new Move('3A2C', 0.012, 3, 3, b3and2(Card.HeroA, Card.HeroC));
+  static A3D2 = new Move('3A2D', 0.0065, 5.5, 4, b3and2(Card.HeroA, Card.HeroD));
+  static B3A2 = new Move('3B2A', 0.0275, 1.3, 2, b3and2(Card.HeroB, Card.HeroA));
+  static B3C2 = new Move('3B2C', 0.006, 6, 4, b3and2(Card.HeroB, Card.HeroC));
+  static B3D2 = new Move('3B2D', 0.006, 6, 5, b3and2(Card.HeroB, Card.HeroD));
+  static C3A2 = new Move('3C2A', 0.0068, 5.3, 4, b3and2(Card.HeroC, Card.HeroA));
+  static C3B2 = new Move('3C2B', 0.0065, 5.5, 5, b3and2(Card.HeroC, Card.HeroB));
+  static C3D2 = new Move('3C2D', 0.0036, 10, 6, b3and2(Card.HeroC, Card.HeroD));
+  static D3A2 = new Move('3D2A', 0.0035, 10.3, 5, b3and2(Card.HeroD, Card.HeroA));
+  static D3B2 = new Move('3D2B', 0.0035, 10.5, 6, b3and2(Card.HeroD, Card.HeroB));
+  static D3C2 = new Move('3D2C', 0.0029, 12.5, 7, b3and2(Card.HeroD, Card.HeroC));
+
+  static Miss = new Move('Miss', 1 - 0.3216, 0, 0, missBuilder);
   // static NearMiss = new RowCombination('NearMiss', 0.3, 0, 0, nearMissBuilder);
 
   static rnd() {
-    return RowCombination.fromDice(Math.random());
+    return Move.fromDice(Math.random());
   }
-  static fromDice(diceResult: number): RowCombination {
-    const result = RowCombination.ALL.find(x => x.max > diceResult);
+  static fromDice(diceResult: number): Move {
+    const result = Move.ALL.find(x => x.max > diceResult);
     if (result == null) {
       throw new Error('Logic Error: cant find result for ' + diceResult);
     }
     return result.result;
   }
 
-  private static add(s: RowCombination) {
-    if (RowCombination.ALL.length === 0) {
-      RowCombination.ALL.push({ max: s.probability, result: s });
+  private static add(s: Move) {
+    if (Move.ALL.length === 0) {
+      Move.ALL.push({ max: s.probability, result: s });
     } else {
-      const prevMax = RowCombination.ALL[RowCombination.ALL.length - 1].max;
-      RowCombination.ALL.push({ max: s.probability + prevMax, result: s });
+      const prevMax = Move.ALL[Move.ALL.length - 1].max;
+      Move.ALL.push({ max: s.probability + prevMax, result: s });
     }
-    if (RowCombination.ALL[RowCombination.ALL.length - 1].max > 1) {
+    if (Move.ALL[Move.ALL.length - 1].max > 1) {
       throw new Error('Bad RowCombination probabilities. Bigger than 1');
     }
   }
@@ -123,16 +140,16 @@ export class RowCombination {
     readonly probability: number,
     readonly troniumPayout: number,
     readonly damage: number,
-    private builder: () => SlotSymbol[]
+    private builder: () => Card[]
   ) {
-    RowCombination.add(this);
+    Move.add(this);
   }
 
   isWin() {
     return this.damage + this.troniumPayout > 0;
   }
 
-  build(): SlotSymbol[] {
+  build(): Card[] {
     return this.builder();
   }
 
@@ -154,11 +171,11 @@ export interface Winnings {
 
 export interface BetResult {
   winnings: Winnings;
-  reels: SlotSymbol[][];
+  reels: Card[][];
   rowWinStatus: boolean[];
 }
 
-export function winningsFor(bet: number, combinations: RowCombination[]) {
+export function winningsFor(bet: number, combinations: Move[]) {
   const baseWinnings = combinations.filter(c => c.isWin()).reduce(
     (acc, c) => {
       acc.troniumPayout = c.troniumPayout;
@@ -177,24 +194,20 @@ export function winningsFor(bet: number, combinations: RowCombination[]) {
   };
 }
 
-export function toBetResult(bet: Bet, combinations: RowCombination[]): BetResult {
+export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
   const winnings = winningsFor(bet.tronium, combinations);
 
   switch (bet.lines) {
     case 1:
       return {
         winnings,
-        reels: transpose(
-          [RowCombination.rnd(), combinations[0], RowCombination.rnd()].map(c => c.build())
-        ),
+        reels: transpose([Move.rnd(), combinations[0], Move.rnd()].map(c => c.build())),
         rowWinStatus: [false, combinations[0].isWin(), false],
       };
     case 2:
       return {
         winnings,
-        reels: transpose(
-          [combinations[0], RowCombination.rnd(), combinations[1]].map(c => c.build())
-        ),
+        reels: transpose([combinations[0], Move.rnd(), combinations[1]].map(c => c.build())),
         rowWinStatus: [combinations[0].isWin(), false, combinations[1].isWin()],
       };
     case 3:

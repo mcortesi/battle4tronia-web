@@ -1,5 +1,5 @@
 import { API, Battle, Bet, GameStatus, Player, SpinResult } from './api';
-import { BetResult, RowCombination, toBetResult } from './reel';
+import { BetResult, Move, toBetResult } from './reel';
 export interface ClientSpinResult {
   player: Player;
   bet: Bet;
@@ -87,7 +87,7 @@ export class GameClient {
     this._battle = res.currentBattle;
     return {
       ...res,
-      result: toBetResult(bet, res.result.map(RowCombination.fromDice)),
+      result: toBetResult(bet, res.result.map(Move.fromDice)),
     };
   }
 }

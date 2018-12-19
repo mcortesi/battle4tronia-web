@@ -1,7 +1,7 @@
 import * as Tween from '@tweenjs/tween.js';
 import { Container, extras, filters, Graphics } from 'pixi.js';
 import { LineChoice } from '../../model/base';
-import { BetResult, SlotSymbol } from '../../model/reel';
+import { BetResult, Card } from '../../model/reel';
 import { genArray } from '../../utils';
 import { Position, UIComponent } from '../commons';
 import { getTexture, newContainer } from '../utils';
@@ -110,7 +110,7 @@ export class ReelsUI extends UIComponent {
         for (const o of curr.sprites) {
           o.y += delta;
           if (o.y >= MAX) {
-            o.gotoAndStop(SlotSymbol.rnd().idx);
+            o.gotoAndStop(Card.rnd().idx);
             o.width = this.opts.symbolWidth;
             o.height = this.opts.symbolHeight;
             o.y = o.y % MAX;
@@ -171,7 +171,7 @@ export class ReelsUI extends UIComponent {
 
   private createSingleReelAnimation(
     reel: Reel,
-    endPositions: SlotSymbol[],
+    endPositions: Card[],
     positionsToMove: number,
     time: number
   ) {
@@ -191,9 +191,9 @@ export class ReelsUI extends UIComponent {
         ? topMargin - currentDisplacement + (positionsToMove - 1) * this.opts.cellHeight
         : topMargin - currentDisplacement + positionsToMove * this.opts.cellHeight;
 
-    const symbolQueue = [SlotSymbol.rnd()].concat(
+    const symbolQueue = [Card.rnd()].concat(
       endPositions,
-      genArray(positionsToMove - endPositions.length - 1, () => SlotSymbol.rnd())
+      genArray(positionsToMove - endPositions.length - 1, () => Card.rnd())
     );
     const MAX = (this.opts.rows + 1) * this.opts.cellHeight;
     const initialPositions = sprites.map(s => s.y);
@@ -242,11 +242,11 @@ export class ReelsUI extends UIComponent {
 
       const sprites = genArray(rows + 1, row => {
         // we use a sprite with all potential texture and then just change the frame to show with `gotoAndStop()`
-        const s = new AnimatedSprite(SlotSymbol.ALL.map(ss => getTexture(ss.id)));
+        const s = new AnimatedSprite(Card.ALL.map(ss => getTexture(ss.id)));
 
         s.filters = [blur];
 
-        s.gotoAndStop(SlotSymbol.rnd().idx);
+        s.gotoAndStop(Card.rnd().idx);
         // const s = new Sprite(nextSymbol());
         s.width = this.opts.symbolWidth;
         s.height = this.opts.symbolHeight;
