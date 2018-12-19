@@ -29,10 +29,11 @@ export interface BattleScreenProps {
   boost: BoostChoice;
 }
 
-export function BattleScreen(opts: BattleScreenProps): Disposable {
+function createUI(opts: BattleScreenProps) {
   const stage = newContainer(0, 0);
   opts.parent.addChild(stage);
-  stage.addChild(Background(opts.size));
+
+  stage.addChild(BattleBackground(opts.size));
 
   const scoresUI = new ScoreBox({
     ...Layout.scoreBox,
@@ -62,12 +63,8 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
     GlobalButtons({
       x: 1260,
       y: 27,
-      onClose: () => {
-        opts.gd.exitBattle();
-      },
-      onHelp: () => {
-        opts.gd.showHowToPlay();
-      },
+      onClose: opts.gd.exitBattle.bind(opts.gd),
+      onHelp: opts.gd.showHowToPlay.bind(opts.gd),
     })
   );
 
@@ -95,9 +92,7 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
 
   const spinBtn = SpinBtn({
     parent: stage,
-    onClick: () => {
-      opts.gd.requestSpin();
-    },
+    onClick: opts.gd.requestSpin.bind(opts.gd),
   });
 
   const lowBalanceText = new Text('Need more tronium', TextStyles.Body2);
@@ -107,41 +102,59 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
   lowBalanceText.y = 645;
   lowBalanceText.visible = false;
 
-  const unregister1 = opts.gd.registerForBattleModel({
+  return {
+    dispose: () => {
+      opts.parent.removeChild(stage);
+      stage.destroy({ children: true });
+    },
+    spinBtn,
+    linesSelectorUI,
+    betSelectorUI,
+    hpBarUI,
+    energyBarUI,
+    scoresUI,
+    lowBalanceText,
+    reelsUI,
+  };
+}
+
+function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher) {
+  let isSpinning = false;
+  let lowBalance = false;
+
+  const updateTronium = (tronium: number) => {
+    ui.scoresUI.setTronium(tronium);
+    ui.energyBarUI.updateValue(Math.min(1000, tronium));
+  };
+
+  const handleSpinButton = () => {
+    ui.spinBtn.disable = isSpinning || lowBalance;
+    ui.lowBalanceText.visible = lowBalance;
+  };
+
+  const unregister1 = gd.registerForBattleModel({
     setAttackChoice: (attack: LineChoice) => {
-      linesSelectorUI.update(LineChoice.indexOf(attack));
-      reelsUI.selectLines(attack);
+      ui.linesSelectorUI.update(LineChoice.indexOf(attack));
+      ui.reelsUI.selectLines(attack);
     },
     setBoostChoice: (boost: BoostChoice) => {
-      betSelectorUI.update(BoostChoice.indexOf(boost));
+      ui.betSelectorUI.update(BoostChoice.indexOf(boost));
     },
   });
 
-  const updateTronium = (tronium: number) => {
-    scoresUI.setTronium(tronium);
-    energyBarUI.updateValue(Math.min(1000, tronium));
-  };
-
-  let isSpinning = false;
-  let lowBalance = false;
-  const handleSpinButton = () => {
-    spinBtn.disable = isSpinning || lowBalance;
-    lowBalanceText.visible = lowBalance;
-  };
-
-  const unregister2 = opts.gd.registerForBattleScreen({
+  const unregister2 = gd.registerForBattleScreen({
     startSpinning: (tronium: number) => {
       isSpinning = true;
       handleSpinButton();
       updateTronium(tronium);
-      reelsUI.startAnimation();
+      ui.reelsUI.startAnimation();
     },
     endSpinning: async result => {
-      await reelsUI.stopAnimation(result);
+      await ui.reelsUI.stopAnimation(result);
 
-      scoresUI.setFame(result.player.fame);
+      ui.scoresUI.setFame(result.player.fame);
       updateTronium(result.player.tronium);
-      hpBarUI.updateValue(result.currentBattle.villain.hp);
+      ui.hpBarUI.updateValue(result.currentBattle.villain.hp);
       isSpinning = false;
       handleSpinButton();
     },
@@ -151,21 +164,28 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
     },
   });
 
+  return () => {
+    unregister1();
+    unregister2();
+  };
+}
+
+export function BattleScreen(opts: BattleScreenProps): Disposable {
+  const ui = createUI(opts);
+  const detach = attachController(ui, opts.gd);
   return {
     dispose: () => {
-      unregister1();
-      unregister2();
-      opts.parent.removeChild(stage);
-      stage.destroy({ children: true });
+      detach();
+      ui.dispose();
     },
   };
   // stage.addChild(drawRules([643, 643 + 95], [305, 400]));
 }
 
-function Background(opts: Dimension) {
+function BattleBackground(size: Dimension) {
   const bg = newSprite('battleground');
-  bg.width = opts.width;
-  bg.height = opts.height;
+  bg.width = size.width;
+  bg.height = size.height;
   bg.tint = 0x999999;
   return bg;
 }
