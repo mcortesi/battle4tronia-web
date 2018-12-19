@@ -28,9 +28,11 @@ export class Orchestrator implements ModelActions {
     gd.registerForBattleModel({
       setAttackChoice: (attack: LineChoice) => {
         this.currentAttack = attack;
+        this.updateBetBalanceCheck();
       },
       setBoostChoice: (boost: BoostChoice) => {
         this.currentBoost = boost;
+        this.updateBetBalanceCheck();
       },
     });
   }
@@ -79,7 +81,13 @@ export class Orchestrator implements ModelActions {
       lines: this.currentAttack.value,
     });
     this.gd.endSpinning(res);
+    this.updateBetBalanceCheck();
   };
+
+  updateBetBalanceCheck() {
+    const bet = this.currentBoost.value * this.currentAttack.value;
+    this.gd.canBetWithCurrentBalance(bet <= this.game.player.tronium);
+  }
 
   exitBattle = () => this.ui.enterHome(this.game.player);
 }

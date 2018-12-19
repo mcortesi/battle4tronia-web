@@ -1,17 +1,17 @@
-import { Container } from 'pixi.js';
+import { Container, Text } from 'pixi.js';
 import { Battle, Player } from '../model/api';
-import { GlobalDispatcher } from './GlobalDispatcher';
-import { Dimension, Position } from './commons';
-import { Button } from './utils/Button';
-import { Layout } from './constants';
-import { newContainer, newSprite } from './utils';
-import { Disposable } from './MainUI';
 import { BoostChoice, LineChoice } from '../model/base';
-import { ReelsUI } from './battle/Reels';
 import { Bar } from './battle/Bars';
-import { ScoreBox } from './battle/ScoreBox';
 import { BoostSelector, LinesSelector } from './battle/ChoiceSelector';
+import { ReelsUI } from './battle/Reels';
+import { ScoreBox } from './battle/ScoreBox';
 import { SpinBtn } from './battle/SpinBtn';
+import { Dimension, Position } from './commons';
+import { Layout, TextStyles } from './constants';
+import { GlobalDispatcher } from './GlobalDispatcher';
+import { Disposable } from './MainUI';
+import { newContainer, newSprite } from './utils';
+import { Button } from './utils/Button';
 
 export interface UIState {
   boostIdx: number;
@@ -100,6 +100,13 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
     },
   });
 
+  const lowBalanceText = new Text('Need more tronium', TextStyles.Body2);
+  stage.addChild(lowBalanceText);
+  lowBalanceText.anchor.x = 0.5;
+  lowBalanceText.x = opts.size.width / 2;
+  lowBalanceText.y = 645;
+  lowBalanceText.visible = false;
+
   const unregister1 = opts.gd.registerForBattleModel({
     setAttackChoice: (attack: LineChoice) => {
       linesSelectorUI.update(LineChoice.indexOf(attack));
@@ -110,20 +117,37 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
     },
   });
 
+  const updateTronium = (tronium: number) => {
+    scoresUI.setTronium(tronium);
+    energyBarUI.updateValue(Math.min(1000, tronium));
+  };
+
+  let isSpinning = false;
+  let lowBalance = false;
+  const handleSpinButton = () => {
+    spinBtn.disable = isSpinning || lowBalance;
+    lowBalanceText.visible = lowBalance;
+  };
+
   const unregister2 = opts.gd.registerForBattleScreen({
     startSpinning: (tronium: number) => {
-      scoresUI.setTronium(tronium);
-      energyBarUI.updateValue(Math.min(1000, tronium));
+      isSpinning = true;
+      handleSpinButton();
+      updateTronium(tronium);
       reelsUI.startAnimation();
     },
     endSpinning: async result => {
       await reelsUI.stopAnimation(result);
 
       scoresUI.setFame(result.player.fame);
-      scoresUI.setTronium(result.player.tronium);
-      energyBarUI.updateValue(Math.min(1000, result.player.tronium));
+      updateTronium(result.player.tronium);
       hpBarUI.updateValue(result.currentBattle.villain.hp);
-      spinBtn.disable = false;
+      isSpinning = false;
+      handleSpinButton();
+    },
+    canBetWithCurrentBalance: isEnough => {
+      lowBalance = !isEnough;
+      handleSpinButton();
     },
   });
 

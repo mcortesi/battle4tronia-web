@@ -19,6 +19,7 @@ export interface HomeScreenActions {
 export interface BattleScreenActions {
   startSpinning(tronium: number): void;
   endSpinning(result: SpinResult): void;
+  canBetWithCurrentBalance(isEnough: boolean): void;
 }
 
 export interface BattleModelActions {
@@ -140,9 +141,14 @@ export class GlobalDispatcher
   endSpinning(result: SpinResult): void {
     this.fireEvent(this.battleScreenListeners, 'endSpinning', result);
   }
+  canBetWithCurrentBalance(isEnough: boolean): void {
+    this.fireEvent(this.battleScreenListeners, 'canBetWithCurrentBalance', isEnough);
+  }
+
   setBoostChoice(boostChoice: BoostChoice): void {
     this.fireEvent(this.battleModelListeners, 'setBoostChoice', boostChoice);
   }
+
   setAttackChoice(attackChoice: LineChoice): void {
     this.fireEvent(this.battleModelListeners, 'setAttackChoice', attackChoice);
   }
