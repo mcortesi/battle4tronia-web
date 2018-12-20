@@ -1,11 +1,10 @@
-import { TextStyles } from '../constants';
-import { UIComponent, Position } from '../commons';
-import { newContainer, newSprite } from '../utils';
+import { Easing, Tween } from '@tweenjs/tween.js';
 import { Container, Text } from 'pixi.js';
-import { Tween, Easing } from '@tweenjs/tween.js';
+import { Position, UIComponent } from '../commons';
+import { newContainer, newSprite, newText } from '../utils';
 
 export interface ScoresUI {
-  view: PIXI.Container;
+  view: Container;
   setFame: (x: number) => void;
   setTronium: (x: number) => void;
 }
@@ -34,7 +33,7 @@ export class ScoreBox extends UIComponent {
     this.troniumText = this.createScoreRender('Tronium', opts.initTronium, 'icoTronium', 0);
     this.fameText = this.createScoreRender('Fame', opts.initFame, 'icoFame', this.opts.fameY);
 
-    this.troniumIncrease = new PIXI.Text('', TextStyles.H2);
+    this.troniumIncrease = newText('', 'H2');
     this.troniumIncrease.x = this.troniumText.x + this.troniumText.width + 30;
     this.troniumIncrease.tint = 0x00c03b;
     this.troniumIncrease.visible = false;
@@ -60,8 +59,8 @@ export class ScoreBox extends UIComponent {
 
   private createScoreRender(labelText: string, value: number, texture: string, yPos: number) {
     const container = newContainer(0, yPos);
-    const score = new PIXI.Text(value.toString(), TextStyles.H2);
-    const label = new PIXI.Text(labelText, TextStyles.Body2);
+    const score = newText(value.toString(), 'H2');
+    const label = newText(labelText, 'Body2');
     const icon = newSprite(texture);
     container.addChild(icon, score, label);
 

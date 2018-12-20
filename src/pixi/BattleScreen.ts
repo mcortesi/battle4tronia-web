@@ -1,4 +1,4 @@
-import { Container, Text } from 'pixi.js';
+import { Container } from 'pixi.js';
 import { Battle, Player } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
 import { Bar } from './battle/Bars';
@@ -7,10 +7,10 @@ import { ReelsUI } from './battle/Reels';
 import { ScoreBox } from './battle/ScoreBox';
 import { SpinBtn } from './battle/SpinBtn';
 import { Dimension, Position } from './commons';
-import { Layout, TextStyles } from './constants';
+import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
-import { newContainer, newSprite } from './utils';
+import { newContainer, newSprite, newText } from './utils';
 import { Button } from './utils/Button';
 
 export interface UIState {
@@ -95,7 +95,7 @@ function createUI(opts: BattleScreenProps) {
     onClick: opts.gd.requestSpin.bind(opts.gd),
   });
 
-  const lowBalanceText = new Text('Need more tronium', TextStyles.Body2);
+  const lowBalanceText = newText('Need more tronium', 'Body2');
   stage.addChild(lowBalanceText);
   lowBalanceText.anchor.x = 0.5;
   lowBalanceText.x = opts.size.width / 2;

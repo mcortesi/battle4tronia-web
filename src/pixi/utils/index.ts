@@ -1,5 +1,6 @@
-import { Container, Texture, Sprite, utils, Point } from 'pixi.js';
+import { Container, Point, Sprite, Text, Texture, utils } from 'pixi.js';
 import { Dimension, Position } from '../commons';
+import { TextStyles } from '../constants';
 
 export function newContainer(x = 0, y = 0) {
   const container = new Container();
@@ -30,4 +31,12 @@ export function newSprite(
     s.anchor.set(opts.anchor.x, opts.anchor.y);
   }
   return s;
+}
+
+export function newText(txt: string, style: keyof typeof TextStyles) {
+  const text = new Text(txt, TextStyles[style]);
+  if (window.devicePixelRatio === 2) {
+    text.scale.set(0.5, 0.5);
+  }
+  return text;
 }

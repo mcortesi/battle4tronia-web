@@ -1,10 +1,9 @@
 import { Container, loader, Sprite, Text, Texture } from 'pixi.js';
-import { Position } from '../commons';
-import { Button } from '../utils/Button';
-import { TextStyles } from '../constants';
 import { BoostChoice, LineChoice } from '../../model/base';
+import { Position } from '../commons';
 import SoundManager from '../SoundManager';
-import { newContainer, newSprite } from '../utils';
+import { newContainer, newSprite, newText } from '../utils';
+import { Button } from '../utils/Button';
 
 export interface SelectorUI<T> {
   readonly choices: T[];
@@ -22,9 +21,9 @@ class BoostChoiceRenderer implements Renderer<BoostChoice> {
   desc: Text;
 
   constructor(readonly parent: Container) {
-    const title = new Text('Boost', TextStyles.Body1);
-    this.label = new Text('XXX', TextStyles.H2);
-    this.desc = new Text('XXX', TextStyles.H3);
+    const title = newText('Boost', 'Body1');
+    this.label = newText('XXX', 'H2');
+    this.desc = newText('XXX', 'H3');
     const troniumIcon = new Sprite(loader.resources.icoTronium.texture);
     troniumIcon.width = 24;
     troniumIcon.height = 24;
@@ -56,9 +55,9 @@ class LineChoiceRenderer implements Renderer<BoostChoice> {
   desc: Text;
 
   constructor(readonly parent: Container) {
-    const title = new Text('Attack', TextStyles.Body1);
-    this.label = new Text('XXX', TextStyles.H2);
-    this.desc = new Text('XXX', TextStyles.H3);
+    const title = newText('Attack', 'Body1');
+    this.label = newText('XXX', 'H2');
+    this.desc = newText('XXX', 'H3');
 
     title.anchor.set(0.5, 0);
     this.label.anchor.set(0.5, 0);

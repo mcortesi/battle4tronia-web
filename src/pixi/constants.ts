@@ -83,31 +83,31 @@ export const Layout = {
 export const TextStyles = {
   H1: new TextStyle({
     fontFamily: 'Exo 2',
-    fontSize: 40,
+    fontSize: 40 * window.devicePixelRatio,
     fontWeight: '900',
     fill: 'white',
   }),
   H2: new TextStyle({
     fontFamily: 'Exo 2',
-    fontSize: 30,
+    fontSize: 30 * window.devicePixelRatio,
     fontWeight: '900',
     fill: 'white',
   }),
   H3: new TextStyle({
     fontFamily: 'Exo 2',
-    fontSize: 24,
+    fontSize: 24 * window.devicePixelRatio,
     fontWeight: '900',
     fill: 'white',
   }),
   Body1: new TextStyle({
     fontFamily: 'Exo 2',
-    fontSize: 18,
+    fontSize: 18 * window.devicePixelRatio,
     fontWeight: '400',
     fill: 'white',
   }),
   Body2: new TextStyle({
     fontFamily: 'Exo 2',
-    fontSize: 18,
+    fontSize: 12 * window.devicePixelRatio,
     fontWeight: '400',
     fill: 'white',
   }),

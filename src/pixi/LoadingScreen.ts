@@ -1,9 +1,8 @@
-import { Container, Point, Text, Texture } from 'pixi.js';
+import { Container, Point, Texture } from 'pixi.js';
 import { Dimension } from './commons';
-import { TextStyles } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
-import { getTexture, newContainer, newSprite } from './utils';
+import { getTexture, newContainer, newSprite, newText } from './utils';
 
 export interface LoadingScreenProps {
   size: Dimension;
@@ -15,7 +14,7 @@ export function LoadingScreen({ size, parent, gd }: LoadingScreenProps): Disposa
   const stage = newContainer(0, 0);
   parent.addChild(stage);
 
-  const loadText = new Text('0%', TextStyles.H1);
+  const loadText = newText('0%', 'H1');
   loadText.anchor.set(0.5, 0.5);
   loadText.position.set(size.width / 2, size.height / 2);
 

@@ -1,12 +1,11 @@
-import { Container, Point, Rectangle, Text, Graphics } from 'pixi.js';
+import { Container, Graphics, Point, Rectangle } from 'pixi.js';
+import { iter } from '../utils';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
-import { newContainer, newSprite } from './utils';
-import { Button } from './utils/Button';
-import { TextStyles } from './constants';
-import { iter } from '../utils';
 import { MainStatBox } from './StatBox';
+import { newContainer, newSprite, newText } from './utils';
+import { Button } from './utils/Button';
 
 interface TitleScreenProps {
   size: Dimension;
@@ -72,7 +71,7 @@ function GeneralRanks(opts: { position: Point }) {
 
   const stage = newContainer(opts.position.x, opts.position.y);
 
-  const title = new Text('ALL TIME FIGHTS', TextStyles.H3);
+  const title = newText('ALL TIME FIGHTS', 'H3');
   title.x = Width / 2;
   title.anchor.x = 0.5;
   stage.addChild(title);
@@ -95,9 +94,9 @@ function RankEntry(opts: { idx: number; epicness: number; playerName: string }) 
     .lineTo(300, 0);
   stage.addChild(g);
 
-  const idxText = new Text(`${opts.idx + 1}`, TextStyles.Body1);
-  const epicnessText = new Text(`${opts.epicness} EPICNESS`, TextStyles.Body1);
-  const playerText = new Text(opts.playerName, TextStyles.Body2);
+  const idxText = newText(`${opts.idx + 1}`, 'Body1');
+  const epicnessText = newText(`${opts.epicness} EPICNESS`, 'Body1');
+  const playerText = newText(opts.playerName, 'Body2');
 
   idxText.y = epicnessText.y = 10;
   epicnessText.x = playerText.x = 24;

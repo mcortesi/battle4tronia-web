@@ -1,6 +1,5 @@
-import { newContainer } from './utils';
-import { Point, Text } from 'pixi.js';
-import { TextStyles } from './constants';
+import { Point } from 'pixi.js';
+import { newContainer, newText } from './utils';
 
 export function MainStatBox(opts: {
   position: Point;
@@ -10,9 +9,9 @@ export function MainStatBox(opts: {
 }) {
   const stage = newContainer(opts.position.x, opts.position.y);
   stage.name = 'MainStatBox';
-  const headerText = new Text(opts.header, TextStyles.Body2);
-  const footerText = new Text(opts.footer, TextStyles.Body2);
-  const valueText = new Text(opts.value, TextStyles.H1);
+  const headerText = newText(opts.header, 'Body2');
+  const footerText = newText(opts.footer, 'Body2');
+  const valueText = newText(opts.value, 'H1');
   stage.addChild(headerText, footerText, valueText);
 
   const maxWidth = Math.max(headerText.width, valueText.width, footerText.width);
@@ -33,9 +32,9 @@ export function SecondaryStatBox(opts: {
 }) {
   const stage = newContainer(opts.position.x, opts.position.y);
   stage.name = 'MainStatBox';
-  const headerText = new Text(opts.header, TextStyles.Body2);
-  const footerText = new Text(opts.footer, TextStyles.Body2);
-  const valueText = new Text(opts.value, TextStyles.H1);
+  const headerText = newText(opts.header, 'Body2');
+  const footerText = newText(opts.footer, 'Body2');
+  const valueText = newText(opts.value, 'H1');
   stage.addChild(headerText, footerText, valueText);
 
   const maxWidth = Math.max(headerText.width, valueText.width, footerText.width);

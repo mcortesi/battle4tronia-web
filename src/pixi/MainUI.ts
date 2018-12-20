@@ -19,12 +19,14 @@ export class MainUI {
   private ctx: ScreenContext;
   private app: Application;
   private mainStage: Container;
+  private resolution = 1;
+  // private resolution = window.devicePixelRatio;
 
   constructor(gd: GlobalDispatcher, size: Dimension) {
     this.app = new Application({
-      height: window.innerHeight / window.devicePixelRatio,
-      width: window.innerWidth / window.devicePixelRatio,
-      resolution: window.devicePixelRatio,
+      height: window.innerHeight / this.resolution,
+      width: window.innerWidth / this.resolution,
+      resolution: this.resolution,
       antialias: true,
     });
     this.mainStage = newContainer();
@@ -101,8 +103,8 @@ export class MainUI {
   }
 
   private refreshScale = () => {
-    const deviceWidth = window.innerWidth / window.devicePixelRatio;
-    const deviceHeight = window.innerHeight / window.devicePixelRatio;
+    const deviceWidth = window.innerWidth / this.resolution;
+    const deviceHeight = window.innerHeight / this.resolution;
     this.app.renderer.resize(deviceWidth, deviceHeight);
     const scale = Math.min(deviceWidth / Layout.screen.width, deviceHeight / Layout.screen.height);
     this.mainStage.scale.set(scale, scale);
