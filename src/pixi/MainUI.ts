@@ -5,35 +5,48 @@ import { BattleScreen } from './BattleScreen';
 import { Dimension } from './commons';
 import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
-import { HomeScreen, MainBackground, TitleScreen } from './HomeAndTitleScreen';
+import { TitleScreen } from './TitleScreen';
+import { HomeScreen } from './HomeScreen';
 import { LoadingScreen } from './LoadingScreen';
 import * as Tween from '@tweenjs/tween.js';
+import { MainBackground } from './backgrounds';
+import { newContainer } from './utils';
+import debounce from 'lodash.debounce';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
   private mainBg: Container | null = null;
   private ctx: ScreenContext;
   private app: Application;
+  private mainStage: Container;
 
   constructor(gd: GlobalDispatcher, size: Dimension) {
     this.app = new Application({
-      height: Layout.screen.height,
-      width: Layout.screen.width,
+      height: window.innerHeight / window.devicePixelRatio,
+      width: window.innerWidth / window.devicePixelRatio,
+      resolution: window.devicePixelRatio,
       antialias: true,
     });
+    this.mainStage = newContainer();
+    this.app.stage.addChild(this.mainStage);
     this.ctx = {
       gd,
       size,
-      parent: this.app.stage,
+      parent: this.mainStage,
     };
   }
+
   start() {
     document.body.appendChild(this.app.view);
+    this.refreshScale();
+    window.addEventListener('resize', debounce(this.refreshScale, 50));
+
     this.app.ticker.add(delta => {
       Tween.update();
     });
     this.app.start();
   }
+
   enterLoading() {
     this.setScreen(LoadingScreen(this.ctx));
   }
@@ -86,6 +99,14 @@ export class MainUI {
     }
     this.currentScreen = screen;
   }
+
+  private refreshScale = () => {
+    const deviceWidth = window.innerWidth / window.devicePixelRatio;
+    const deviceHeight = window.innerHeight / window.devicePixelRatio;
+    this.app.renderer.resize(deviceWidth, deviceHeight);
+    const scale = Math.min(deviceWidth / Layout.screen.width, deviceHeight / Layout.screen.height);
+    this.mainStage.scale.set(scale, scale);
+  };
 }
 export interface ScreenContext {
   gd: GlobalDispatcher;
