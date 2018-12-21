@@ -15,28 +15,51 @@ export function getTexture(name: string): Texture {
   return utils.TextureCache[name];
 }
 
-export function newSprite(
-  texture: string | Texture,
-  opts: { position?: Position | Point; size?: Dimension; anchor?: Point } = {}
-): Sprite {
-  const s = new Sprite(typeof texture === 'string' ? getTexture(texture) : texture);
+export interface LayoutOptions {
+  position?: Position | Point;
+  size?: Dimension;
+  anchor?: Point;
+  scale?: Point;
+}
+
+function applyLayoutOptions(
+  obj: Text | Sprite,
+  opts: { position?: Position | Point; size?: Dimension; anchor?: Point; scale?: Point } = {}
+) {
   if (opts.position) {
-    s.position.set(opts.position.x, opts.position.y);
+    obj.position.set(opts.position.x, opts.position.y);
   }
   if (opts.size) {
-    s.width = opts.size.width;
-    s.height = opts.size.height;
+    obj.width = opts.size.width;
+    obj.height = opts.size.height;
   }
   if (opts.anchor) {
-    s.anchor.set(opts.anchor.x, opts.anchor.y);
+    obj.anchor.set(opts.anchor.x, opts.anchor.y);
   }
+  if (opts.scale) {
+    obj.scale.set(opts.scale.x, opts.scale.y);
+  }
+}
+
+export function newSprite(
+  texture: string | Texture,
+  opts: { position?: Position | Point; size?: Dimension; anchor?: Point; scale?: Point } = {}
+): Sprite {
+  const s = new Sprite(typeof texture === 'string' ? getTexture(texture) : texture);
+  applyLayoutOptions(s, opts);
   return s;
 }
 
-export function newText(txt: string, style: keyof typeof TextStyles) {
+export function newText(
+  txt: string,
+  style: keyof typeof TextStyles,
+  opts: { position?: Position | Point; anchor?: Point } = {}
+) {
   const text = new Text(txt, TextStyles[style]);
+  applyLayoutOptions(text, opts);
   if (window.devicePixelRatio === 2) {
     text.scale.set(0.5, 0.5);
   }
+
   return text;
 }

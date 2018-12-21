@@ -1,17 +1,17 @@
-import { Container } from 'pixi.js';
+import { Container, Point } from 'pixi.js';
 import { Battle, Player } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
 import { Bar } from './battle/Bars';
 import { BoostSelector, LinesSelector } from './battle/ChoiceSelector';
 import { ReelsUI } from './battle/Reels';
 import { ScoreBox } from './battle/ScoreBox';
-import { SpinBtn } from './battle/SpinBtn';
 import { Dimension, Position } from './commons';
 import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { newContainer, newSprite, newText } from './utils';
 import { Button } from './utils/Button';
+import { smallIcon, primaryBtn } from './basic';
 
 export interface UIState {
   boostIdx: number;
@@ -90,10 +90,7 @@ function createUI(opts: BattleScreenProps) {
     },
   });
 
-  const spinBtn = SpinBtn({
-    parent: stage,
-    onClick: opts.gd.requestSpin.bind(opts.gd),
-  });
+  const spinBtn = primaryBtn('fight', opts.gd.requestSpin.bind(opts.gd), stage);
 
   const lowBalanceText = newText('Need more tronium', 'Body2');
   stage.addChild(lowBalanceText);
@@ -208,19 +205,7 @@ function Villain(opts: Position & Dimension) {
 
 function GlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
   const container = newContainer(opts.x, opts.y);
-
-  new Button({
-    x: 0,
-    y: 0,
-    texture: 'icoHelp',
-    onClick: opts.onHelp,
-  }).addTo(container);
-  new Button({
-    x: 49,
-    y: 0,
-    texture: 'icoClose',
-    onClick: opts.onClose,
-  }).addTo(container);
-
+  Button.from(smallIcon('icoHelp'), opts.onHelp).addTo(container);
+  Button.from(smallIcon('icoClose', { position: new Point(49, 0) }), opts.onClose).addTo(container);
   return container;
 }

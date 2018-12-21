@@ -62,6 +62,7 @@ export interface FightStats {
   famePoints: number;
   troniums: number;
   seconds: number;
+  playerName: string;
 }
 
 export interface PlayerStats {
@@ -226,7 +227,47 @@ export class FakeApi implements API {
   }
 
   async getGlobalStats(): Promise<GlobalStats> {
-    return null as any;
+    return {
+      allTime: [
+        {
+          playerName: 'Rob',
+          famePoints: 100,
+          troniums: 1000000000000000000000,
+          seconds: 90000,
+        },
+        {
+          playerName: 'Cono',
+          famePoints: 100,
+          troniums: 100000,
+          seconds: 90000,
+        },
+        {
+          playerName: 'Danny',
+          famePoints: 100,
+          troniums: 100000,
+          seconds: 90000,
+        },
+        {
+          playerName: 'Really Long Name is HEREeeeeeeeeeeeeeeeeeeee',
+          famePoints: 100,
+          troniums: 100000,
+          seconds: 90000,
+        },
+        {
+          playerName: 'Big',
+          famePoints: 100,
+          troniums: 100000,
+          seconds: 90000,
+        },
+      ],
+      villainsDefeated: 3588,
+      bestFightWeek: {
+        seconds: 55,
+        famePoints: 100,
+        troniums: 500,
+        playerName: 'Cono',
+      },
+    };
   }
 
   async getPlayerStats(): Promise<PlayerStats> {

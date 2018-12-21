@@ -1,11 +1,11 @@
-import { Container, Graphics, Point, Rectangle } from 'pixi.js';
-import { iter } from '../utils';
+import { Container, Graphics, Point } from 'pixi.js';
+import { FightStats } from '../model/api';
+import { primaryBtn } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox } from './StatBox';
-import { newContainer, newSprite, newText } from './utils';
-import { Button } from './utils/Button';
+import { newContainer, newText } from './utils';
 
 interface TitleScreenProps {
   size: Dimension;
@@ -17,51 +17,42 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
   const stage = newContainer();
   parent.addChild(stage);
 
-  const btn = ConnectBtn({
-    position: new Point(size.width / 2, 538),
-    anchor: new Point(0.5, 0),
-    onClick: gd.requestConnect.bind(gd),
+  primaryBtn('connect', gd.requestConnect.bind(gd), stage);
+
+  const ranksBox = GeneralRanks({ position: new Point(100, 150) });
+  stage.addChild(ranksBox.stage);
+
+  const defeatedInvadersBox = MainStatBox({
+    position: new Point(100, 550),
+    header: 'CALL TO ARMS',
+    value: '--',
+    footer: 'INVADERS DEFEATED',
   });
-  stage.addChild(btn.stage);
+  stage.addChild(defeatedInvadersBox.stage);
 
-  stage.addChild(GeneralRanks({ position: new Point(100, 150) }));
-  stage.addChild(
-    MainStatBox({
-      position: new Point(100, 550),
-      header: 'CALL TO ARMS',
-      value: '3.588',
-      footer: 'INVADERS DEFEATED',
-    })
-  );
+  const weekHighestBox = MainStatBox({
+    position: new Point(315, 550),
+    header: 'HIGHEST THIS WEEK',
+    value: '-- TRONIUM',
+    footer: 'IN 55 SECS',
+  });
+  stage.addChild(weekHighestBox.stage);
 
-  stage.addChild(
-    MainStatBox({
-      position: new Point(315, 550),
-      header: 'HIGHEST THIS WEEK',
-      value: '0.15 TRX',
-      footer: 'IN 55 SECS',
-    })
-  );
+  const unregister = gd.registerForTitleScreen({
+    setGlobalStats: stats => {
+      weekHighestBox.setValue(`${stats.bestFightWeek.troniums} TRONIUM`);
+      defeatedInvadersBox.setValue(stats.villainsDefeated.toString());
+      ranksBox.updateRanks(stats.allTime);
+    },
+  });
 
   return {
     dispose: () => {
       parent.removeChild(stage);
       stage.destroy({ children: true });
+      unregister();
     },
   };
-}
-
-function ConnectBtn(opts: { position: Point; anchor: Point; onClick: () => void }) {
-  const btnSprite = newSprite('btnConnect');
-  btnSprite.anchor.set(opts.anchor.x, opts.anchor.y);
-  const btn = new Button({
-    ...opts.position,
-    hitArea: new Rectangle(-125, 0, 250, 106),
-    sprite: btnSprite,
-    onClick: opts.onClick,
-  });
-
-  return btn;
 }
 
 function GeneralRanks(opts: { position: Point }) {
@@ -76,13 +67,22 @@ function GeneralRanks(opts: { position: Point }) {
   title.anchor.x = 0.5;
   stage.addChild(title);
 
-  iter(5, i => {
-    const entry = RankEntry({ idx: i, epicness: 3581, playerName: 'User Lorem Ipsum' });
-    entry.y = FirstEntryTopMargin + i * EntryHeight;
-    stage.addChild(entry);
-  });
+  const ranksStage = newContainer(0, FirstEntryTopMargin);
+  stage.addChild(ranksStage);
 
-  return stage;
+  const updateRanks = (fights: FightStats[]) => {
+    ranksStage.removeChildren();
+    fights.forEach((fight, i) => {
+      const entry = RankEntry({ idx: i, epicness: fight.troniums, playerName: fight.playerName });
+      entry.y = i * EntryHeight;
+      ranksStage.addChild(entry);
+    });
+  };
+
+  return {
+    stage,
+    updateRanks,
+  };
 }
 
 function RankEntry(opts: { idx: number; epicness: number; playerName: string }) {
@@ -95,7 +95,7 @@ function RankEntry(opts: { idx: number; epicness: number; playerName: string }) 
   stage.addChild(g);
 
   const idxText = newText(`${opts.idx + 1}`, 'Body1');
-  const epicnessText = newText(`${opts.epicness} EPICNESS`, 'Body1');
+  const epicnessText = newText(`${opts.epicness.toFixed(0)} EPICNESS`, 'Body1');
   const playerText = newText(opts.playerName, 'Body2');
 
   idxText.y = epicnessText.y = 10;

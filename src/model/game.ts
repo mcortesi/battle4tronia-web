@@ -1,5 +1,6 @@
 import { API, Battle, Bet, GameStatus, Player, SpinResult } from './api';
 import { BetResult, Move, toBetResult } from './reel';
+import { wait } from '../utils';
 export interface ClientSpinResult {
   player: Player;
   bet: Bet;
@@ -81,7 +82,19 @@ export class GameClient {
     return this._battle;
   }
 
+  async getGlobalStats() {
+    await wait(2000);
+    return this.api.getGlobalStats();
+  }
+
+  async getPlayerStats() {
+    await wait(2000);
+    return this.api.getPlayerStats();
+  }
+
   async spin(bet: Bet): Promise<ClientSpinResult> {
+    // FIXME
+    await wait(2000);
     const res: SpinResult = await this.api.spin(bet);
     this._player = res.player;
     this._battle = res.currentBattle;

@@ -1,5 +1,6 @@
 import { BoostChoice, LineChoice } from '../model/base';
 import { ClientSpinResult } from '../model/game';
+import { GlobalStats, PlayerStats } from '../model/api';
 
 export interface HowToPlayActions {
   showHowToPlay(): void;
@@ -9,11 +10,11 @@ export interface HowToPlayActions {
 }
 
 export interface TitleScreenActions {
-  setGeneralStats(): void;
+  setGlobalStats(stats: GlobalStats): void;
 }
 
 export interface HomeScreenActions {
-  setPlayerStats(): void;
+  setPlayerStats(stats: PlayerStats): void;
 }
 
 export interface BattleScreenActions {
@@ -30,7 +31,7 @@ export interface BattleModelActions {
 export interface ModelActions {
   requestConnect(): void;
   requestBattle(): void;
-  requestGeneralStats(): void;
+  requestGlobalStats(): void;
   requestPlayerStats(): void;
   requestSpin(): void;
   exitBattle(): void;
@@ -151,8 +152,8 @@ export class GlobalDispatcher
   requestBattle(): void {
     this.fireEvent(this.modelListeners, 'requestBattle');
   }
-  requestGeneralStats(): void {
-    this.fireEvent(this.modelListeners, 'requestGeneralStats');
+  requestGlobalStats(): void {
+    this.fireEvent(this.modelListeners, 'requestGlobalStats');
   }
   requestPlayerStats(): void {
     this.fireEvent(this.modelListeners, 'requestPlayerStats');
@@ -165,12 +166,12 @@ export class GlobalDispatcher
     this.fireEvent(this.modelListeners, 'exitBattle');
   }
 
-  setPlayerStats(): void {
-    this.fireEvent(this.homeScreenListeners, 'setPlayerStats');
+  setPlayerStats(stats: PlayerStats): void {
+    this.fireEvent(this.homeScreenListeners, 'setPlayerStats', stats);
   }
 
-  setGeneralStats(): void {
-    this.fireEvent(this.titleScreenListeners, 'setGeneralStats');
+  setGlobalStats(stats: GlobalStats): void {
+    this.fireEvent(this.titleScreenListeners, 'setGlobalStats', stats);
   }
 
   setLoadPercentage(x: number): void {

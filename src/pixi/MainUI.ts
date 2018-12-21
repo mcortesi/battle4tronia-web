@@ -52,10 +52,12 @@ export class MainUI {
   enterLoading() {
     this.setScreen(LoadingScreen(this.ctx));
   }
+
   enterTitle() {
     this.ensureMainBackground();
     this.setScreen(TitleScreen(this.ctx));
   }
+
   enterHome(player: Player) {
     this.ensureMainBackground();
     this.setScreen(

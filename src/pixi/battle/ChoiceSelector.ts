@@ -1,4 +1,4 @@
-import { Container, loader, Sprite, Text, Texture } from 'pixi.js';
+import { Container, loader, Sprite, Text, Texture, Point } from 'pixi.js';
 import { BoostChoice, LineChoice } from '../../model/base';
 import { Position } from '../commons';
 import SoundManager from '../SoundManager';
@@ -101,25 +101,21 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.idx = opts.initValue;
     this.choices = opts.choices;
 
-    const leftArrowSprite = newSprite(this.getTexture());
-    leftArrowSprite.scale.x = -1;
-
-    this.prevBtn = new Button({
-      x: leftArrowSprite.width,
-      y: 20,
-      sprite: leftArrowSprite,
-      onClick: this.prev,
+    const leftArrowSprite = newSprite(this.getTexture(), {
+      position: new Point(0, 20),
+      scale: new Point(-1, 1),
     });
-    this.prevBtn.addTo(this.view);
+    (leftArrowSprite.x = leftArrowSprite.width), (leftArrowSprite.scale.x = -1);
 
-    this.nextBtn = new Button({
-      x: this.prevBtn.stage.width + opts.textSpace,
-      y: 20,
-      texture: this.getTexture(),
-      onClick: this.next,
-    });
+    this.prevBtn = Button.from(leftArrowSprite, this.prev).addTo(this.view);
 
-    this.nextBtn.addTo(this.view);
+    this.nextBtn = Button.from(
+      newSprite(this.getTexture(), {
+        position: new Point(this.prevBtn.stage.width + opts.textSpace, 20),
+        scale: new Point(-1, 1),
+      }),
+      this.next
+    ).addTo(this.view);
 
     this.renderer = this.createRenderer(this.view);
 

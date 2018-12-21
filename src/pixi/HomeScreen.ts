@@ -1,11 +1,11 @@
-import { Point, Rectangle, Container } from 'pixi.js';
-import { Position, Dimension } from './commons';
-import { Button } from './utils/Button';
-import { newContainer, newSprite } from './utils';
-import { Disposable } from './MainUI';
-import { GlobalDispatcher } from './GlobalDispatcher';
+import { Container, Point } from 'pixi.js';
 import { Player } from '../model/api';
-import { MainStatBox } from './StatBox';
+import { primaryBtn } from './basic';
+import { Dimension } from './commons';
+import { GlobalDispatcher } from './GlobalDispatcher';
+import { Disposable } from './MainUI';
+import { MainStatBox, SecondaryStatBox } from './StatBox';
+import { newContainer, newSprite, newText } from './utils';
 
 export interface HomeScreenProps {
   size: Dimension;
@@ -14,60 +14,118 @@ export interface HomeScreenProps {
   player: Player;
 }
 
-export function HomeScreen(opts: HomeScreenProps): Disposable {
+export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Disposable {
   const stage = newContainer();
-  opts.parent.addChild(stage);
-  const btn = ToBattleBtn({
-    position: {
-      x: opts.size.width / 2,
-      y: 538,
-    },
-    anchor: new Point(0.5, 0),
-    onClick: () => opts.gd.requestBattle(),
-  });
-  stage.addChild(btn.stage);
+  parent.addChild(stage);
 
-  const leftBox = MainStatBox({
-    position: new Point(0, 230),
+  primaryBtn('toBattle', () => gd.requestBattle(), stage);
+  // const btn = ToBattleBtn({
+  //   position: {
+  //     x: size.width / 2,
+  //     y: 538,
+  //   },
+  // });
+  // stage.addChild(btn.stage);
+
+  stage.addChild(
+    newText(player.name, 'H1', {
+      position: new Point(size.width / 2, 200),
+      anchor: new Point(0.5, 0),
+    })
+  );
+
+  stage.addChild(
+    newSprite('icoFame', {
+      position: new Point(size.width / 2 - 24 - 38, 250 + 6),
+      size: { width: 24, height: 24 },
+    })
+  );
+
+  stage.addChild(
+    newText(player.fame.toString(), 'H2', {
+      position: new Point(size.width / 2 - 30, 250),
+    })
+  );
+
+  const ColWidth = size.width / 5;
+  const TableLayout = {
+    x: [ColWidth * 1, ColWidth * 2, ColWidth * 3],
+    y: [310, 420],
+  };
+
+  // stage.addChild(
+  //   new Graphics()
+  //     .lineStyle(1, 0xffff00)
+  //     .drawRect(TableLayout.x[0], TableLayout.y[0], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  //     .drawRect(TableLayout.x[1], TableLayout.y[0], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  //     .drawRect(TableLayout.x[2], TableLayout.y[0], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  //     .drawRect(TableLayout.x[0], TableLayout.y[1], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  //     .drawRect(TableLayout.x[1], TableLayout.y[1], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  //     .drawRect(TableLayout.x[2], TableLayout.y[1], ColWidth, TableLayout.y[1] - TableLayout.y[0])
+  // );
+
+  const playerBestFightBox = MainStatBox({
+    position: new Point(TableLayout.x[0], TableLayout.y[0]),
+    width: ColWidth,
     header: 'YOUR BEST FIGHT',
     value: '3.588',
     footer: 'EPICNESS',
   });
-  leftBox.x = opts.size.width / 2 - 250 - leftBox.width / 2;
 
-  const centerBox = MainStatBox({
-    position: new Point(0, 230),
+  const bestFightBox = SecondaryStatBox({
+    position: new Point(TableLayout.x[0], TableLayout.y[1]),
+    width: ColWidth,
+    header: 'BEST IN TRONIA',
+    value: '55555',
+  });
+
+  const playerBestMatchBox = MainStatBox({
+    position: new Point(TableLayout.x[1], TableLayout.y[0]),
+    width: ColWidth,
     header: 'HIGHEST EARNINGS',
     value: '0.15 TRX',
     footer: 'IN ONE MATCH',
   });
-  centerBox.x = (opts.size.width - centerBox.width) / 2;
 
-  const rightBox = MainStatBox({
-    position: new Point(0, 230),
+  const bestMatchBox = SecondaryStatBox({
+    position: new Point(TableLayout.x[1], TableLayout.y[1]),
+    width: ColWidth,
+    header: 'BEST IN TRONIA',
+    value: '0.15 TRX',
+  });
+
+  const playerKillsBox = MainStatBox({
+    position: new Point(TableLayout.x[2], TableLayout.y[0]),
+    width: ColWidth,
     header: 'CALL TO ARMS',
     value: '35',
     footer: 'INVADERS DEFEATED',
   });
-  rightBox.x = opts.size.width / 2 + 250 - rightBox.width / 2;
 
-  stage.addChild(leftBox, centerBox, rightBox);
+  const totalKillsBox = SecondaryStatBox({
+    position: new Point(TableLayout.x[2], TableLayout.y[1]),
+    width: ColWidth,
+    header: 'EVERYWHERE',
+    value: '1000',
+  });
+
+  stage.addChild(
+    playerBestFightBox.stage,
+    playerBestMatchBox.stage,
+    playerKillsBox.stage,
+    bestFightBox.stage,
+    bestMatchBox.stage,
+    totalKillsBox.stage
+  );
+
+  // const unregister = gd.registerForHomeScreen({
+  //   setPlayerStats: (playerStats: PlayerStats) => {},
+  // });
 
   return {
     dispose: () => {
-      opts.parent.removeChild(stage);
+      parent.removeChild(stage);
       stage.destroy({ children: true });
     },
   };
-}
-function ToBattleBtn(opts: { position: Position; anchor: Point; onClick: () => void }) {
-  const btnSprite = newSprite('btnToBattle');
-  btnSprite.anchor.set(opts.anchor.x, opts.anchor.y);
-  const btn = new Button({
-    ...opts.position,
-    hitArea: new Rectangle(-125, 0, 250, 106),
-    sprite: btnSprite,
-    onClick: opts.onClick,
-  });
-  return btn;
 }

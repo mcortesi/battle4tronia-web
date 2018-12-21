@@ -43,15 +43,24 @@ export class Orchestrator implements ModelActions {
     await this.loader.loadAll();
     await this.game.init();
     if (this.game.connected) {
-      this.ui.enterHome(this.game.player);
+      await this.goHome();
     } else {
-      this.ui.enterTitle();
+      await this.goTitle();
     }
+  }
+
+  async goHome() {
+    this.ui.enterHome(this.game.player);
+    await this.requestGlobalStats();
+  }
+  async goTitle() {
+    this.ui.enterTitle();
+    await this.requestGlobalStats();
   }
 
   requestConnect = async () => {
     await this.game.connect();
-    this.ui.enterHome(this.game.player);
+    await this.goHome();
   };
 
   requestBattle = async () => {
@@ -64,12 +73,14 @@ export class Orchestrator implements ModelActions {
     });
   };
 
-  requestGeneralStats = () => {
-    this.gd.setGeneralStats();
+  requestGlobalStats = async () => {
+    const stats = await this.game.getGlobalStats();
+    this.gd.setGlobalStats(stats);
   };
 
-  requestPlayerStats = () => {
-    this.gd.setPlayerStats();
+  requestPlayerStats = async () => {
+    const stats = await this.game.getPlayerStats();
+    this.gd.setPlayerStats(stats);
   };
 
   requestSpin = async () => {
@@ -89,5 +100,5 @@ export class Orchestrator implements ModelActions {
     this.gd.canBetWithCurrentBalance(bet <= this.game.player.tronium);
   }
 
-  exitBattle = () => this.ui.enterHome(this.game.player);
+  exitBattle = () => this.goHome();
 }
