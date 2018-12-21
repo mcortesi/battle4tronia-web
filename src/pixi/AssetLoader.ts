@@ -3,29 +3,35 @@ import WebFont from 'webfontloader';
 import { GlobalDispatcher } from './GlobalDispatcher';
 
 const ResouceMap = {
-  battleground: '/assets/bgBattle.jpg',
-  hero: '/assets/hero_1.png',
-  villain: '/assets/villain.png',
-  energyArrow: '/assets/energy-arrow.png',
-  linesArrow: '/assets/lines-arrow.png',
+  // backgrounds
+  bgBattle: '/assets/bgBattle.jpg',
   bgCoatofarms: '/assets/bg-coatofarms.png',
-  icoTronium: '/assets/ico-tronium.png',
+  // icons
+  icoArrow: '/assets/icoArrow.png',
+  icoTronium: '/assets/icoTronium.png',
+  icoFame: '/assets/icoFame.png',
+  icoClose: '/assets/icoClose.png',
+  icoHelp: '/assets/icoHelp.png',
+  // buttons
   btnSpin: '/assets/btnSpin.png',
   btnConnect: '/assets/btnConnect.png',
   btnHowToPlay: '/assets/btnHowToPlay.png',
   btnToBattle: '/assets/btnToBattle.png',
-  icoFame: '/assets/ico-fame.png',
-  icoClose: '/assets/ico-close.png',
-  icoHelp: '/assets/ico-help.png',
-  'symbol-attack1': '/assets/symbol-attack1.png',
-  'symbol-attack2': '/assets/symbol-attack2.png',
-  'symbol-attack3': '/assets/symbol-attack3.png',
-  'symbol-attack4': '/assets/symbol-attack4.png',
-  'symbol-trash1': '/assets/symbol-trash1.png',
-  'symbol-trash2': '/assets/symbol-trash2.png',
-  'symbol-trash3': '/assets/symbol-trash3.png',
-  'symbol-trash4': '/assets/symbol-trash4.png',
-  'symbol-trash5': '/assets/symbol-trash5.png',
+  // characters
+  hero: '/assets/hero_1.png',
+  villain: '/assets/villain.png',
+  // cards
+  cardAttack1: '/assets/symbol-attack1.png',
+  cardAttack2: '/assets/symbol-attack2.png',
+  cardAttack3: '/assets/symbol-attack3.png',
+  cardAttack4: '/assets/symbol-attack4.png',
+  cardTrash1: '/assets/symbol-trash1.png',
+  cardTrash2: '/assets/symbol-trash2.png',
+  cardTrash3: '/assets/symbol-trash3.png',
+  cardTrash4: '/assets/symbol-trash4.png',
+  cardTrash5: '/assets/symbol-trash5.png',
+  cardNegScatter: '/assets/symbol-negScatter.png',
+  cardScatter: '/assets/symbol-scatter.png',
 };
 
 export class AssetLoader {
@@ -62,7 +68,7 @@ export class AssetLoader {
   private loadLoadingStageResources() {
     return new Promise((resolve, reject) => {
       loader.add('bgHome', '/assets/bgHome.jpg');
-      loader.add('imgTitle', '/assets/imgTitle.png');
+      loader.add('bgTitleText', '/assets/bgTitleText.png');
       loader.load(() => {
         this.progressDelta(5);
         this.gd.bgLoaded();

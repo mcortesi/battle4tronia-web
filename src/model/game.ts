@@ -94,7 +94,7 @@ export class GameClient {
 
   async spin(bet: Bet): Promise<ClientSpinResult> {
     // FIXME
-    await wait(2000);
+    await wait(1000);
     const res: SpinResult = await this.api.spin(bet);
     this._player = res.player;
     this._battle = res.currentBattle;

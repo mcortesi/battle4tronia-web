@@ -12,6 +12,7 @@ import { Disposable } from './MainUI';
 import { newContainer, newSprite, newText } from './utils';
 import { Button } from './utils/Button';
 import { smallIcon, primaryBtn } from './basic';
+import { BattleBackground } from './backgrounds';
 
 export interface UIState {
   boostIdx: number;
@@ -48,8 +49,8 @@ function createUI(opts: BattleScreenProps) {
 
   const energyBarUI = new Bar({
     ...Layout.energyBar,
-    maxValue: 1000,
-    initValue: Math.min(1000, opts.player.tronium),
+    maxValue: 100,
+    initValue: Math.min(100, opts.player.tronium),
     leftToRight: true,
   }).addTo(stage);
 
@@ -121,7 +122,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
 
   const updateTronium = (tronium: number) => {
     ui.scoresUI.setTronium(tronium);
-    ui.energyBarUI.updateValue(Math.min(1000, tronium));
+    ui.energyBarUI.updateValue(Math.min(100, tronium));
   };
 
   const handleSpinButton = () => {
@@ -177,14 +178,6 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
     },
   };
   // stage.addChild(drawRules([643, 643 + 95], [305, 400]));
-}
-
-function BattleBackground(size: Dimension) {
-  const bg = newSprite('battleground');
-  bg.width = size.width;
-  bg.height = size.height;
-  bg.tint = 0x999999;
-  return bg;
 }
 
 function Hero(opts: Position & Dimension) {

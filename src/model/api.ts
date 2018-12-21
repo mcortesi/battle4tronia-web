@@ -7,6 +7,8 @@ export interface Collectable {
   id: Address;
 }
 
+export type Line = 1 | 2 | 3;
+
 export interface Player {
   name: string;
   tronium: number;
@@ -21,7 +23,7 @@ export interface Player {
 export interface Bet {
   tronium: number;
   damageMultiplier: number;
-  lines: number;
+  lines: Line;
 }
 
 export interface Villain {
@@ -132,8 +134,8 @@ export class FakeApi implements API {
     this.status = GameStatus.NO_CHANNEL_OPENED;
     this.player = {
       name: 'Papu',
-      tronium: 1000,
-      fame: 2000,
+      tronium: 15 * 50,
+      fame: 0,
       collectables: [],
       item1: null,
       item2: null,
@@ -185,8 +187,8 @@ export class FakeApi implements API {
       this.battle = {
         status: BattleStatus.READY,
         villain: {
-          hp: 300,
-          maxHp: 300,
+          hp: 100,
+          maxHp: 100,
         },
         epicness: 0,
         tronium: 0,

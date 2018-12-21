@@ -1,3 +1,5 @@
+import { Line } from './api';
+
 export class BoostChoice {
   static ALL: BoostChoice[] = [
     new BoostChoice('Normal', 10, 1),
@@ -32,5 +34,5 @@ export class LineChoice {
   static indexOf = (c: LineChoice) => LineChoice.ALL.indexOf(c);
   static fromIdx = (i: number) => LineChoice.ALL[i];
 
-  private constructor(public readonly label: string, public readonly value: number) {}
+  private constructor(public readonly label: string, public readonly value: Line) {}
 }

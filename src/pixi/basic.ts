@@ -4,7 +4,7 @@ import SoundManager from './SoundManager';
 import { Button } from './utils/Button';
 import { Layout } from './constants';
 
-export type IconName = 'icoTronium' | 'icoFame' | 'icoClose' | 'icoHelp';
+export type IconName = 'icoTronium' | 'icoFame' | 'icoClose' | 'icoHelp' | 'icoArrow';
 
 const PrimeryButtons = {
   fight: {

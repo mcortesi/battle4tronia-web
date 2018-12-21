@@ -17,8 +17,8 @@ export interface ReelsOptions extends Position {
   colSeparation: number;
   cellWidth: number;
   cellHeight: number;
-  symbolWidth: number;
-  symbolHeight: number;
+  cardWidth: number;
+  cardHeight: number;
 }
 
 interface Reel {
@@ -111,8 +111,8 @@ export class ReelsUI extends UIComponent {
           o.y += delta;
           if (o.y >= MAX) {
             o.gotoAndStop(Card.rnd().idx);
-            o.width = this.opts.symbolWidth;
-            o.height = this.opts.symbolHeight;
+            o.width = this.opts.cardWidth;
+            o.height = this.opts.cardHeight;
             o.y = o.y % MAX;
           }
         }
@@ -123,6 +123,12 @@ export class ReelsUI extends UIComponent {
 
   public async stopAnimation(result: BetResult) {
     const lastColSymbols = result.reels;
+
+    // console.log(
+    //   transpose(lastColSymbols)
+    //     .map(cs => cs.map(c => c.id.replace('card', '')).join(' '))
+    //     .join('\n')
+    // );
 
     const positionsToMove = 5;
     const baseTime = 800;
@@ -182,14 +188,14 @@ export class ReelsUI extends UIComponent {
     //   const initialPositions = sprites.map(s => s.y);
     // }
 
-    const topMargin = (this.opts.cellHeight - this.opts.symbolHeight) / 2;
+    // space between the start of a cell and the start of a symbol
+    const topMargin = (this.opts.cellHeight - this.opts.cardHeight) / 2;
     const sprites = reel.sprites;
     // the position within a "cell" the sprites are. If it's different than topMargin, it means we are in the 'middle' of a move.
     const currentDisplacement = sprites[0].y % this.opts.cellHeight;
-    const ytoMove =
-      currentDisplacement < topMargin
-        ? topMargin - currentDisplacement + (positionsToMove - 1) * this.opts.cellHeight
-        : topMargin - currentDisplacement + positionsToMove * this.opts.cellHeight;
+    const delta = topMargin - currentDisplacement;
+    // console.log(delta < 0 ? 'ANTES' : 'DESPUES', delta);
+    const ytoMove = delta + this.opts.cellHeight * positionsToMove;
 
     const symbolQueue = [Card.rnd()].concat(
       endPositions,
@@ -199,30 +205,35 @@ export class ReelsUI extends UIComponent {
     const initialPositions = sprites.map(s => s.y);
 
     let prev = 0;
-    return new Tween.Tween({ pos: 0 })
-      .to({ pos: ytoMove }, time)
-      .onUpdate(({ pos }: { pos: number }) => {
-        reel.blur.blur = (pos - prev) / 2;
-        prev = pos;
-        for (let i = 0; i < 4; i++) {
-          const prevY = sprites[i].y;
-          const newY = (initialPositions[i] + pos) % MAX;
-          if (prevY > newY) {
-            sprites[i].gotoAndStop(symbolQueue.pop()!.idx);
-            sprites[i].width = this.opts.symbolWidth;
-            sprites[i].height = this.opts.symbolHeight;
+    return (
+      new Tween.Tween({ pos: 0 })
+        .to({ pos: ytoMove }, time)
+        .onUpdate(({ pos }: { pos: number }) => {
+          reel.blur.blur = (pos - prev) / 2;
+          prev = pos;
+          for (let i = 0; i < 4; i++) {
+            const prevY = sprites[i].y;
+            const newY = (initialPositions[i] + pos) % MAX;
+            if (prevY > newY) {
+              sprites[i].gotoAndStop(symbolQueue.pop()!.idx);
+              sprites[i].width = this.opts.cardWidth;
+              sprites[i].height = this.opts.cardHeight;
+            }
+            sprites[i].y = newY;
           }
-          sprites[i].y = newY;
-        }
-      })
-      .easing(Tween.Easing.Cubic.Out);
+        })
+        // .onComplete(() => {
+        //   console.log(symbolQueue);
+        // })
+        .easing(Tween.Easing.Cubic.Out)
+    );
   }
 
   private drawSymbols() {
     const { rows, columns, cellHeight, cellWidth, colSeparation } = this.opts;
 
-    const leftMargin = (cellWidth - this.opts.symbolWidth) / 2;
-    const topMargin = (cellHeight - this.opts.symbolHeight) / 2;
+    const leftMargin = (cellWidth - this.opts.cardWidth) / 2;
+    const topMargin = (cellHeight - this.opts.cardHeight) / 2;
 
     this.reels = [];
 
@@ -233,7 +244,7 @@ export class ReelsUI extends UIComponent {
       // and the mask is from 0 to visibleHeight
       const visibleHeight = rows * cellHeight;
       const stage = newContainer(leftMargin + col * (cellWidth + colSeparation), -cellHeight);
-      const mask = new Graphics().drawRect(0, cellHeight, this.opts.symbolWidth, visibleHeight);
+      const mask = new Graphics().drawRect(0, cellHeight, this.opts.cardWidth, visibleHeight);
       stage.mask = mask;
       stage.addChild(mask);
 
@@ -248,8 +259,8 @@ export class ReelsUI extends UIComponent {
 
         s.gotoAndStop(Card.rnd().idx);
         // const s = new Sprite(nextSymbol());
-        s.width = this.opts.symbolWidth;
-        s.height = this.opts.symbolHeight;
+        s.width = this.opts.cardWidth;
+        s.height = this.opts.cardHeight;
         s.position.y = topMargin + row * cellHeight;
         return s;
       });

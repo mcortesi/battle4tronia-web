@@ -18,19 +18,19 @@ export class Card {
   static ALL: Card[] = [];
   static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
 
-  static HeroA = new Card('symbol-attack1', CardKind.Attack);
-  static HeroB = new Card('symbol-attack2', CardKind.Attack);
-  static HeroC = new Card('symbol-attack3', CardKind.Attack);
-  static HeroD = new Card('symbol-attack4', CardKind.Attack);
+  static HeroA = new Card('cardAttack1', CardKind.Attack);
+  static HeroB = new Card('cardAttack2', CardKind.Attack);
+  static HeroC = new Card('cardAttack3', CardKind.Attack);
+  static HeroD = new Card('cardAttack4', CardKind.Attack);
 
-  static TrashA = new Card('symbol-trash1', CardKind.Trash);
-  static TrashB = new Card('symbol-trash2', CardKind.Trash);
-  static TrashC = new Card('symbol-trash3', CardKind.Trash);
-  static TrashD = new Card('symbol-trash4', CardKind.Trash);
-  static TrashE = new Card('symbol-trash5', CardKind.Trash);
+  static TrashA = new Card('cardTrash1', CardKind.Trash);
+  static TrashB = new Card('cardTrash2', CardKind.Trash);
+  static TrashC = new Card('cardTrash3', CardKind.Trash);
+  static TrashD = new Card('cardTrash4', CardKind.Trash);
+  static TrashE = new Card('cardTrash5', CardKind.Trash);
 
-  static NegScatter = new Card('symbol-negScatter', CardKind.NegativeScatter);
-  static Scatter = new Card('symbol-scatter', CardKind.NegativeScatter);
+  static NegScatter = new Card('cardNegScatter', CardKind.NegativeScatter);
+  static Scatter = new Card('cardScatter', CardKind.Scatter);
 
   static rnd(): Card {
     return rndElem(Card.ALL);
@@ -204,9 +204,12 @@ export class Move {
       Move.add(move);
     }
 
-    if (Move.ALL[Move.ALL.length - 1].max !== 1) {
-      throw new Error('Bad RowCombination probabilities. Sum not 1');
+    const max = Move.ALL[Move.ALL.length - 1].max;
+    const epsilon = 0.0001;
+    if (max > 1 + epsilon || max < 1 - epsilon) {
+      throw new Error(`Bad RowCombination probabilities. Sum not 1. They sum: ${max}`);
     }
+    Move.ALL[Move.ALL.length - 1].max = 1;
   }
   private static add(s: Move) {
     if (Move.ALL.length === 0) {
@@ -224,9 +227,7 @@ export class Move {
     readonly damage: number,
     readonly epicness: number,
     private builder: () => Card[]
-  ) {
-    Move.add(this);
-  }
+  ) {}
 
   isWin() {
     return this.damage + this.payout > 0;
@@ -286,6 +287,7 @@ export function winningsFor(bet: Bet, combinations: Move[]) {
 export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
   const winnings = winningsFor(bet, combinations);
 
+  // console.log('WIN_COMB', combinations.map(c => c.id));
   switch (bet.lines) {
     case 1:
       return {
@@ -345,7 +347,7 @@ const MovesTable: Array<[string, number, number, number, number, () => Card[]]> 
   ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0      , b1ABCD4T                        ],
   ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD1NP2T                     ],
   ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD2NP1T                     ],
-  ['5T'	        , 0.2117 , 0	  , 0	   , 0      , b5T                             ],
+  ['5T'	        , 0.2116 , 0	  , 0	   , 0      , b5T                             ],
 ];
 
 Move.createAll(MovesTable);

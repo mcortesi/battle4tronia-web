@@ -34,7 +34,7 @@ export function LoadingScreen({ size, parent, gd }: LoadingScreenProps): Disposa
     bgLoaded: () => {
       bgSprite.texture = getTexture('bgHome');
       stage.addChild(
-        newSprite('imgTitle', {
+        newSprite('bgTitleText', {
           position: new Point(size.width / 2, 50),
           anchor: new Point(0.5, 0),
         })

@@ -1,5 +1,6 @@
-import { Container, loader, Sprite, Text, Texture, Point } from 'pixi.js';
+import { Container, loader, Point, Sprite, Text } from 'pixi.js';
 import { BoostChoice, LineChoice } from '../../model/base';
+import { bigIcon } from '../basic';
 import { Position } from '../commons';
 import SoundManager from '../SoundManager';
 import { newContainer, newSprite, newText } from '../utils';
@@ -50,7 +51,7 @@ class BoostChoiceRenderer implements Renderer<BoostChoice> {
   }
 }
 
-class LineChoiceRenderer implements Renderer<BoostChoice> {
+class LineChoiceRenderer implements Renderer<LineChoice> {
   label: Text;
   desc: Text;
 
@@ -72,9 +73,9 @@ class LineChoiceRenderer implements Renderer<BoostChoice> {
     parent.addChild(this.desc);
   }
 
-  update(choice: BoostChoice) {
+  update(choice: LineChoice) {
     this.label.text = choice.label;
-    this.desc.text = 'x ' + choice.bet.toString();
+    this.desc.text = 'x ' + choice.value.toString();
   }
 }
 
@@ -101,7 +102,7 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.idx = opts.initValue;
     this.choices = opts.choices;
 
-    const leftArrowSprite = newSprite(this.getTexture(), {
+    const leftArrowSprite = newSprite('icoArrow', {
       position: new Point(0, 20),
       scale: new Point(-1, 1),
     });
@@ -110,9 +111,8 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.prevBtn = Button.from(leftArrowSprite, this.prev).addTo(this.view);
 
     this.nextBtn = Button.from(
-      newSprite(this.getTexture(), {
+      bigIcon('icoArrow', {
         position: new Point(this.prevBtn.stage.width + opts.textSpace, 20),
-        scale: new Point(-1, 1),
       }),
       this.next
     ).addTo(this.view);
@@ -123,7 +123,6 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
   }
 
   abstract createRenderer(parent: Container): Renderer<T>;
-  abstract getTexture(): Texture;
 
   get currentValue() {
     return this.choices[this.idx];
@@ -159,9 +158,6 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
 }
 
 export class BoostSelector extends ArrowSelector<BoostChoice> {
-  getTexture() {
-    return loader.resources.energyArrow.texture;
-  }
   createRenderer(view: Container) {
     return new BoostChoiceRenderer(this.view);
   }
@@ -170,8 +166,5 @@ export class BoostSelector extends ArrowSelector<BoostChoice> {
 export class LinesSelector extends ArrowSelector<LineChoice> {
   createRenderer(view: Container) {
     return new LineChoiceRenderer(this.view);
-  }
-  getTexture() {
-    return loader.resources.linesArrow.texture;
   }
 }
