@@ -26,6 +26,14 @@ export function rndElem<A>(elements: A[]): A {
   return elements[rndInt(0, elements.length)];
 }
 
+export function newArray<A>(n: number, f: A): A[] {
+  const res: A[] = [];
+  for (let i = 0; i < n; i++) {
+    res.push(f);
+  }
+  return res;
+}
+
 export function genArray<A>(n: number, f: (i: number) => A): A[] {
   const res: A[] = [];
   for (let i = 0; i < n; i++) {

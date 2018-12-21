@@ -85,10 +85,11 @@ export class Orchestrator implements ModelActions {
 
   requestSpin = async () => {
     this.gd.startSpinning(
-      this.game.player.tronium - this.currentBoost.value * this.currentAttack.value
+      this.game.player.tronium - this.currentBoost.bet * this.currentAttack.value
     );
     const res = await this.game.spin({
-      tronium: this.currentBoost.value,
+      tronium: this.currentBoost.bet,
+      damageMultiplier: this.currentBoost.damageMultiplier,
       lines: this.currentAttack.value,
     });
     this.gd.endSpinning(res);
@@ -96,7 +97,7 @@ export class Orchestrator implements ModelActions {
   };
 
   updateBetBalanceCheck() {
-    const bet = this.currentBoost.value * this.currentAttack.value;
+    const bet = this.currentBoost.bet * this.currentAttack.value;
     this.gd.canBetWithCurrentBalance(bet <= this.game.player.tronium);
   }
 

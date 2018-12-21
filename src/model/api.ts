@@ -20,6 +20,7 @@ export interface Player {
 
 export interface Bet {
   tronium: number;
+  damageMultiplier: number;
   lines: number;
 }
 
@@ -36,10 +37,9 @@ export const enum BattleStatus {
 
 export interface Battle {
   status: BattleStatus;
-  villain: Villain;
-  famePoints: number;
+  epicness: number;
   tronium: number;
-  score: number;
+  villain: Villain;
 }
 
 export interface SpinResult {
@@ -59,10 +59,10 @@ export const enum GameStatus {
 }
 
 export interface FightStats {
-  famePoints: number;
+  playerName: string;
+  epicness: number;
   troniums: number;
   seconds: number;
-  playerName: string;
 }
 
 export interface PlayerStats {
@@ -188,9 +188,8 @@ export class FakeApi implements API {
           hp: 300,
           maxHp: 300,
         },
-        famePoints: 0,
+        epicness: 0,
         tronium: 0,
-        score: 0,
       };
     }
     return cloneBattle(this.battle);
@@ -207,13 +206,15 @@ export class FakeApi implements API {
     }
 
     const lineResults = genArray(bet.lines, () => Math.random());
-    const winnings = winningsFor(bet.tronium, lineResults.map(x => Move.fromDice(x)));
+    const winnings = winningsFor(bet, lineResults.map(x => Move.fromDice(x)));
 
-    this.player.tronium += winnings.troniumPayout - bet.lines * bet.tronium;
-    this.player.fame += winnings.damage;
+    const betCost = bet.lines * bet.tronium;
 
-    this.battle.tronium += winnings.troniumPayout - bet.lines * bet.tronium;
-    this.battle.score += winnings.damage;
+    this.player.tronium += winnings.payout - betCost;
+    this.battle.tronium += winnings.payout - betCost;
+
+    this.player.fame += winnings.epicness;
+    this.battle.epicness += winnings.epicness;
 
     this.battle.villain.hp = Math.max(this.battle.villain.hp - winnings.damage, 0);
     this.battle.status = this.battle.villain.hp <= 0 ? BattleStatus.FINISHED : BattleStatus.ONGOING;
@@ -231,31 +232,31 @@ export class FakeApi implements API {
       allTime: [
         {
           playerName: 'Rob',
-          famePoints: 100,
+          epicness: 100,
           troniums: 1000000000000000000000,
           seconds: 90000,
         },
         {
           playerName: 'Cono',
-          famePoints: 100,
+          epicness: 100,
           troniums: 100000,
           seconds: 90000,
         },
         {
           playerName: 'Danny',
-          famePoints: 100,
+          epicness: 100,
           troniums: 100000,
           seconds: 90000,
         },
         {
           playerName: 'Really Long Name is HEREeeeeeeeeeeeeeeeeeeee',
-          famePoints: 100,
+          epicness: 100,
           troniums: 100000,
           seconds: 90000,
         },
         {
           playerName: 'Big',
-          famePoints: 100,
+          epicness: 100,
           troniums: 100000,
           seconds: 90000,
         },
@@ -263,7 +264,7 @@ export class FakeApi implements API {
       villainsDefeated: 3588,
       bestFightWeek: {
         seconds: 55,
-        famePoints: 100,
+        epicness: 100,
         troniums: 500,
         playerName: 'Cono',
       },

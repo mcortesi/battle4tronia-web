@@ -1,15 +1,24 @@
 export class BoostChoice {
   static ALL: BoostChoice[] = [
-    new BoostChoice('Normal', 10),
-    new BoostChoice('Strong', 50),
-    new BoostChoice('Max', 100),
+    new BoostChoice('Normal', 10, 1),
+    new BoostChoice('Strong', 50, 1.15),
+    new BoostChoice('Max', 50, 1.3),
+    new BoostChoice('Epic', 100, 1.5),
   ];
 
   static DEFAULT = BoostChoice.ALL[0];
   static indexOf = (c: BoostChoice) => BoostChoice.ALL.indexOf(c);
   static fromIdx = (i: number) => BoostChoice.ALL[i];
 
-  private constructor(public readonly label: string, public readonly value: number) {}
+  private constructor(
+    public readonly label: string,
+    public readonly bet: number,
+    public readonly damageMultiplier: number
+  ) {}
+
+  get value() {
+    return this.bet;
+  }
 }
 
 export class LineChoice {

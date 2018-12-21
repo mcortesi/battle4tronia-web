@@ -1,4 +1,4 @@
-import { genArray, rndElem, transpose, shuffle } from '../utils';
+import { rndElem, shuffle, transpose } from '../utils';
 import { Bet } from './api';
 
 export const ReelSize = {
@@ -6,7 +6,7 @@ export const ReelSize = {
   columns: 5,
 };
 
-export const enum SymbolKind {
+export const enum CardKind {
   Attack,
   Scatter,
   Trash,
@@ -16,28 +16,33 @@ export const enum SymbolKind {
 
 export class Card {
   static ALL: Card[] = [];
-  static ALL_BYKIND: Map<SymbolKind, Card[]> = new Map();
-  static HeroA = new Card('symbol-attack1', SymbolKind.Attack);
-  static HeroB = new Card('symbol-attack2', SymbolKind.Attack);
-  static HeroC = new Card('symbol-attack3', SymbolKind.Attack);
-  static HeroD = new Card('symbol-attack4', SymbolKind.Attack);
-  static TrashA = new Card('symbol-trash1', SymbolKind.Trash);
-  static TrashB = new Card('symbol-trash2', SymbolKind.Trash);
-  static TrashC = new Card('symbol-trash3', SymbolKind.Trash);
-  static TrashD = new Card('symbol-trash4', SymbolKind.Trash);
-  static TrashE = new Card('symbol-trash5', SymbolKind.Trash);
+  static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
+
+  static HeroA = new Card('symbol-attack1', CardKind.Attack);
+  static HeroB = new Card('symbol-attack2', CardKind.Attack);
+  static HeroC = new Card('symbol-attack3', CardKind.Attack);
+  static HeroD = new Card('symbol-attack4', CardKind.Attack);
+
+  static TrashA = new Card('symbol-trash1', CardKind.Trash);
+  static TrashB = new Card('symbol-trash2', CardKind.Trash);
+  static TrashC = new Card('symbol-trash3', CardKind.Trash);
+  static TrashD = new Card('symbol-trash4', CardKind.Trash);
+  static TrashE = new Card('symbol-trash5', CardKind.Trash);
+
+  static NegScatter = new Card('symbol-negScatter', CardKind.NegativeScatter);
+  static Scatter = new Card('symbol-scatter', CardKind.NegativeScatter);
 
   static rnd(): Card {
     return rndElem(Card.ALL);
   }
 
-  static rndOfKind(kind: SymbolKind) {
+  static rndOfKind(kind: CardKind) {
     return rndElem(this.ALL_BYKIND.get(kind)!);
   }
 
   readonly idx: number;
 
-  private constructor(readonly id: string, readonly kind: SymbolKind) {
+  private constructor(readonly id: string, readonly kind: CardKind) {
     this.idx = Card.ALL.length;
 
     Card.ALL.push(this);
@@ -52,24 +57,121 @@ export class Card {
   }
 }
 
+function scatter(): Card[] {
+  return shuffle([
+    Card.Scatter,
+    Card.rndOfKind(CardKind.Attack),
+    Card.rndOfKind(CardKind.Attack),
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ]);
+}
+
 function b5of(symbol: Card): () => Card[] {
-  return () => genArray(5, () => symbol);
+  return () => [symbol, symbol, symbol, symbol, symbol];
 }
 function b4of(symbol: Card): () => Card[] {
-  return () => shuffle(genArray(4, () => symbol).concat([Card.rndOfKind(SymbolKind.Trash)]));
+  return () => shuffle([symbol, symbol, symbol, symbol, Card.rndOfKind(CardKind.Trash)]);
 }
 
 function b3of(symbol: Card): () => Card[] {
   return () =>
-    shuffle(genArray(4, () => symbol).concat(genArray(2, () => Card.rndOfKind(SymbolKind.Trash))));
+    shuffle([
+      symbol,
+      symbol,
+      symbol,
+      Card.rndOfKind(CardKind.Trash),
+      Card.rndOfKind(CardKind.Trash),
+    ]);
 }
 
 function b3and2(symbol3: Card, symbol2: Card): () => Card[] {
-  return () => shuffle(genArray(3, () => symbol3).concat(genArray(2, () => symbol2)));
+  return () => shuffle([symbol3, symbol3, symbol3, symbol2, symbol2]);
 }
 
-function missBuilder(): Card[] {
-  return genArray(5, () => Card.rndOfKind(SymbolKind.Trash));
+function b3ABCD1SN1T(): Card[] {
+  const attackCard = Card.rndOfKind(CardKind.Attack);
+  return shuffle([attackCard, attackCard, attackCard, Card.rndOfKind(CardKind.Trash)]).concat(
+    Card.NegScatter
+  );
+}
+
+function b4ABCD1SN(): Card[] {
+  const attackCard = Card.rndOfKind(CardKind.Attack);
+  return [attackCard, attackCard, attackCard, attackCard, Card.NegScatter];
+}
+
+function b2ABCD3T(): Card[] {
+  const attackCard = Card.rndOfKind(CardKind.Attack);
+  return shuffle([
+    attackCard,
+    attackCard,
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ]);
+}
+
+function b1ABCD4T(): Card[] {
+  const attackCard = Card.rndOfKind(CardKind.Attack);
+  return shuffle([
+    attackCard,
+    attackCard,
+    attackCard,
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ]);
+}
+function b2ABCD1NP2T(): Card[] {
+  const [attackCard, diffAttackCard] = shuffle(
+    rndElem([
+      [Card.HeroA, Card.HeroB],
+      [Card.HeroA, Card.HeroC],
+      [Card.HeroA, Card.HeroD],
+      [Card.HeroB, Card.HeroC],
+      [Card.HeroB, Card.HeroD],
+      [Card.HeroC, Card.HeroD],
+    ])
+  );
+
+  return shuffle([
+    attackCard,
+    attackCard,
+    diffAttackCard,
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ]);
+}
+
+function b2ABCD2NP1T(): Card[] {
+  const [attackCard, diffAttackCard] = shuffle(
+    rndElem([
+      [Card.HeroA, Card.HeroB],
+      [Card.HeroA, Card.HeroC],
+      [Card.HeroA, Card.HeroD],
+      [Card.HeroB, Card.HeroC],
+      [Card.HeroB, Card.HeroD],
+      [Card.HeroC, Card.HeroD],
+    ])
+  );
+
+  return shuffle([
+    attackCard,
+    attackCard,
+    diffAttackCard,
+    diffAttackCard,
+    Card.rndOfKind(CardKind.Trash),
+  ]);
+}
+
+function b5T(): Card[] {
+  return [
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ];
 }
 
 // function nearMissBuilder(): SlotSymbol[] {
@@ -80,37 +182,6 @@ function missBuilder(): Card[] {
 
 export class Move {
   static ALL: Array<{ max: number; result: Move }> = [];
-
-  static A3 = new Move('3A2T', 0.0715, 0.5, 1, b3of(Card.HeroA));
-  static B3 = new Move('3B2T', 0.0358, 1, 2, b3of(Card.HeroB));
-  static C3 = new Move('3C2T', 0.0072, 5, 3, b3of(Card.HeroC));
-  static D3 = new Move('3D2T', 0.0036, 10, 4, b3of(Card.HeroD));
-
-  static A4 = new Move('4A1T', 0.0358, 1, 4, b4of(Card.HeroA));
-  static B4 = new Move('4B1T', 0.0179, 2, 5, b4of(Card.HeroB));
-  static C4 = new Move('4C1T', 0.0036, 10, 6, b4of(Card.HeroC));
-  static D4 = new Move('4D1T', 0.0018, 20, 7, b4of(Card.HeroD));
-
-  static A5 = new Move('5A', 0.0143, 2.5, 7, b5of(Card.HeroA));
-  static B5 = new Move('5B', 0.0072, 5, 8, b5of(Card.HeroB));
-  static C5 = new Move('5C', 0.0015, 25, 9, b5of(Card.HeroC));
-  static D5 = new Move('5D', 0.0008, 50, 10, b5of(Card.HeroD));
-
-  static A3B2 = new Move('3A2B', 0.0358, 1, 2, b3and2(Card.HeroA, Card.HeroB));
-  static A3C2 = new Move('3A2C', 0.012, 3, 3, b3and2(Card.HeroA, Card.HeroC));
-  static A3D2 = new Move('3A2D', 0.0065, 5.5, 4, b3and2(Card.HeroA, Card.HeroD));
-  static B3A2 = new Move('3B2A', 0.0275, 1.3, 2, b3and2(Card.HeroB, Card.HeroA));
-  static B3C2 = new Move('3B2C', 0.006, 6, 4, b3and2(Card.HeroB, Card.HeroC));
-  static B3D2 = new Move('3B2D', 0.006, 6, 5, b3and2(Card.HeroB, Card.HeroD));
-  static C3A2 = new Move('3C2A', 0.0068, 5.3, 4, b3and2(Card.HeroC, Card.HeroA));
-  static C3B2 = new Move('3C2B', 0.0065, 5.5, 5, b3and2(Card.HeroC, Card.HeroB));
-  static C3D2 = new Move('3C2D', 0.0036, 10, 6, b3and2(Card.HeroC, Card.HeroD));
-  static D3A2 = new Move('3D2A', 0.0035, 10.3, 5, b3and2(Card.HeroD, Card.HeroA));
-  static D3B2 = new Move('3D2B', 0.0035, 10.5, 6, b3and2(Card.HeroD, Card.HeroB));
-  static D3C2 = new Move('3D2C', 0.0029, 12.5, 7, b3and2(Card.HeroD, Card.HeroC));
-
-  static Miss = new Move('Miss', 1 - 0.3216, 0, 0, missBuilder);
-  // static NearMiss = new RowCombination('NearMiss', 0.3, 0, 0, nearMissBuilder);
 
   static rnd() {
     return Move.fromDice(Math.random());
@@ -123,6 +194,20 @@ export class Move {
     return result.result;
   }
 
+  static createAll(table: Array<[string, number, number, number, number, () => Card[]]>) {
+    if (Move.ALL.length > 0) {
+      throw new Error('Moves Already created!');
+    }
+
+    for (const moveArgs of table) {
+      const move = new Move(...moveArgs);
+      Move.add(move);
+    }
+
+    if (Move.ALL[Move.ALL.length - 1].max !== 1) {
+      throw new Error('Bad RowCombination probabilities. Sum not 1');
+    }
+  }
   private static add(s: Move) {
     if (Move.ALL.length === 0) {
       Move.ALL.push({ max: s.probability, result: s });
@@ -130,23 +215,21 @@ export class Move {
       const prevMax = Move.ALL[Move.ALL.length - 1].max;
       Move.ALL.push({ max: s.probability + prevMax, result: s });
     }
-    if (Move.ALL[Move.ALL.length - 1].max > 1) {
-      throw new Error('Bad RowCombination probabilities. Bigger than 1');
-    }
   }
 
   private constructor(
     readonly id: string,
     readonly probability: number,
-    readonly troniumPayout: number,
+    readonly payout: number,
     readonly damage: number,
+    readonly epicness: number,
     private builder: () => Card[]
   ) {
     Move.add(this);
   }
 
   isWin() {
-    return this.damage + this.troniumPayout > 0;
+    return this.damage + this.payout > 0;
   }
 
   build(): Card[] {
@@ -155,18 +238,21 @@ export class Move {
 
   winnings(): Winnings {
     return {
-      troniumPayout: this.troniumPayout,
+      payout: this.payout,
       damage: this.damage,
+      epicness: this.epicness,
     };
   }
+
   toString() {
     return this.id;
   }
 }
 
 export interface Winnings {
-  troniumPayout: number;
+  payout: number;
   damage: number;
+  epicness: number;
 }
 
 export interface BetResult {
@@ -175,27 +261,30 @@ export interface BetResult {
   rowWinStatus: boolean[];
 }
 
-export function winningsFor(bet: number, combinations: Move[]) {
-  const baseWinnings = combinations.filter(c => c.isWin()).reduce(
+export function winningsFor(bet: Bet, combinations: Move[]) {
+  const baseWinnings = combinations.reduce(
     (acc, c) => {
-      acc.troniumPayout = c.troniumPayout;
+      acc.payout = c.payout;
       acc.damage = c.damage;
+      acc.epicness = c.epicness;
       return acc;
     },
     {
-      troniumPayout: 0,
+      payout: 0,
       damage: 0,
+      epicness: 0,
     }
   );
 
   return {
-    troniumPayout: baseWinnings.troniumPayout * bet,
-    damage: baseWinnings.damage * bet,
+    payout: baseWinnings.payout * bet.tronium,
+    damage: baseWinnings.damage * bet.damageMultiplier,
+    epicness: baseWinnings.epicness * bet.damageMultiplier,
   };
 }
 
 export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
-  const winnings = winningsFor(bet.tronium, combinations);
+  const winnings = winningsFor(bet, combinations);
 
   switch (bet.lines) {
     case 1:
@@ -221,3 +310,42 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
       throw new Error('Illegal bet lines ' + bet.lines);
   }
 }
+
+// prettier-ignore
+const MovesTable: Array<[string, number, number, number, number, () => Card[]]> = [
+  // ID          PROB    PAYOUT DAMAGE EPICNESS   MOVE GENERATOR
+  ['1S4*'	      , 0.0015 , 30	  , 45   , 3333   , scatter                         ],
+  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 83     , b3of(Card.HeroA)                ],
+  ['3B2T'	      , 0.0500 , 0.7  , 7    , 100    , b3of(Card.HeroB)                ],
+  ['3C2T'	      , 0.0400 , 1.2  , 14   , 125    , b3of(Card.HeroC)                ],
+  ['3D2T'	      , 0.0080 , 7.7  , 29   , 625    , b3of(Card.HeroD)                ],
+  ['4A1T'	      , 0.0312 , 1	  , 5    , 160    , b4of(Card.HeroA)                ],
+  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 192    , b4of(Card.HeroB)                ],
+  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 240    , b4of(Card.HeroC)                ],
+  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 1202   , b4of(Card.HeroD)                ],
+  ['5A'	        , 0.0150 , 2.5	, 6	   , 333    , b5of(Card.HeroA)                ],
+  ['5B'	        , 0.0125 , 3.5	, 12.5 , 400    , b5of(Card.HeroB)                ],
+  ['5C'	        , 0.0100 , 18	  , 25	 , 500    , b5of(Card.HeroC)                ],
+  ['5D'	        , 0.0020 , 50	  , 50	 , 2500   , b5of(Card.HeroD)                ],
+  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 625    , b3and2(Card.HeroA, Card.HeroB)  ],
+  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 694    , b3and2(Card.HeroA, Card.HeroC)  ],
+  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 772    , b3and2(Card.HeroA, Card.HeroD)  ],
+  ['3B2A'	      , 0.0067 , 1	  , 10	 , 750    , b3and2(Card.HeroB, Card.HeroA)  ],
+  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 833    , b3and2(Card.HeroB, Card.HeroC)  ],
+  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 926    , b3and2(Card.HeroB, Card.HeroD)  ],
+  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 938    , b3and2(Card.HeroC, Card.HeroA)  ],
+  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 1042   , b3and2(Card.HeroC, Card.HeroB)  ],
+  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 1157   , b3and2(Card.HeroC, Card.HeroD)  ],
+  ['3D2A'	      , 0.0011 , 8	  , 32	 , 4688   , b3and2(Card.HeroD, Card.HeroA)  ],
+  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 5208   , b3and2(Card.HeroD, Card.HeroB)  ],
+  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 5787   , b3and2(Card.HeroD, Card.HeroC)  ],
+  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 1000   , b3ABCD1SN1T                     ],
+  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 1500   , b4ABCD1SN                       ],
+  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0      , b2ABCD3T                        ],
+  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0      , b1ABCD4T                        ],
+  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD1NP2T                     ],
+  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD2NP1T                     ],
+  ['5T'	        , 0.2117 , 0	  , 0	   , 0      , b5T                             ],
+];
+
+Move.createAll(MovesTable);

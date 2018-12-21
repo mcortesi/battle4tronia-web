@@ -46,7 +46,7 @@ class BoostChoiceRenderer implements Renderer<BoostChoice> {
 
   update(choice: BoostChoice) {
     this.label.text = choice.label;
-    this.desc.text = choice.value.toString();
+    this.desc.text = choice.bet.toString();
   }
 }
 
@@ -74,7 +74,7 @@ class LineChoiceRenderer implements Renderer<BoostChoice> {
 
   update(choice: BoostChoice) {
     this.label.text = choice.label;
-    this.desc.text = 'x ' + choice.value.toString();
+    this.desc.text = 'x ' + choice.bet.toString();
   }
 }
 
