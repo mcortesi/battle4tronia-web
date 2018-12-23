@@ -3,7 +3,7 @@ import { newContainer, newText } from './utils';
 
 export function MainStatBox(opts: {
   position: Point;
-  width?: number;
+  width: number;
   header: string;
   value: string;
   footer: string;
@@ -18,17 +18,10 @@ export function MainStatBox(opts: {
   valueText.y = headerText.height + 3;
   footerText.y = valueText.y + valueText.height + 3;
   headerText.anchor.x = footerText.anchor.x = valueText.anchor.x = 0.5;
-
-  const centerX = () => {
-    const maxWidth = Math.max(headerText.width, valueText.width, footerText.width);
-    headerText.position.x = footerText.position.x = valueText.position.x =
-      (opts.width || maxWidth) / 2;
-  };
-  centerX();
+  headerText.position.x = footerText.position.x = valueText.position.x = opts.width / 2;
 
   const setValue = (txt: string) => {
     valueText.text = txt;
-    centerX();
   };
 
   return {
@@ -39,7 +32,7 @@ export function MainStatBox(opts: {
 
 export function SecondaryStatBox(opts: {
   position: Point;
-  width?: number;
+  width: number;
   header: string;
   value: string;
 }) {
@@ -52,16 +45,10 @@ export function SecondaryStatBox(opts: {
   stage.addChild(headerText, valueText);
   valueText.y = headerText.height + 3;
   headerText.anchor.x = valueText.anchor.x = 0.5;
-
-  const centerX = () => {
-    const maxWidth = Math.max(headerText.width, valueText.width);
-    headerText.position.x = valueText.position.x = (opts.width || maxWidth) / 2;
-  };
-  centerX();
+  headerText.position.x = valueText.position.x = opts.width / 2;
 
   const setValue = (txt: string) => {
     valueText.text = txt;
-    centerX();
   };
 
   return {
