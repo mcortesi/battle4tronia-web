@@ -1,13 +1,12 @@
 import * as Tween from '@tweenjs/tween.js';
-import { Container, extras, filters, Graphics } from 'pixi.js';
+import { Container, extras, filters, Graphics, loader } from 'pixi.js';
 import { LineChoice } from '../../model/base';
 import { BetResult, Card } from '../../model/reel';
-import { genArray } from '../../utils';
+import { genArray, transpose } from '../../utils';
 import { Position, UIComponent } from '../commons';
-import { getTexture, newContainer } from '../utils';
+import { newContainer } from '../utils';
 
 const BG_SELECTED_COLOR = 0xd8d8d8;
-const BG_COLOR = 0x979797;
 
 const AnimatedSprite = extras.AnimatedSprite;
 
@@ -23,8 +22,8 @@ export interface ReelsOptions extends Position {
 
 interface Reel {
   stage: Container;
-  sprites: extras.AnimatedSprite[];
   blur: filters.BlurYFilter;
+  sprites: extras.AnimatedSprite[];
 }
 
 export class ReelsUI extends UIComponent {
@@ -43,19 +42,19 @@ export class ReelsUI extends UIComponent {
   public selectLines(lineChoice: LineChoice) {
     switch (lineChoice.value) {
       case 1:
-        this.rowGraphics[0].tint = BG_COLOR;
-        this.rowGraphics[1].tint = BG_SELECTED_COLOR;
-        this.rowGraphics[2].tint = BG_COLOR;
+        this.rowGraphics[0].visible = false;
+        this.rowGraphics[1].visible = true;
+        this.rowGraphics[2].visible = false;
         break;
       case 2:
-        this.rowGraphics[0].tint = BG_SELECTED_COLOR;
-        this.rowGraphics[1].tint = BG_COLOR;
-        this.rowGraphics[2].tint = BG_SELECTED_COLOR;
+        this.rowGraphics[0].visible = true;
+        this.rowGraphics[1].visible = false;
+        this.rowGraphics[2].visible = true;
         break;
       case 3:
-        this.rowGraphics[0].tint = BG_SELECTED_COLOR;
-        this.rowGraphics[1].tint = BG_SELECTED_COLOR;
-        this.rowGraphics[2].tint = BG_SELECTED_COLOR;
+        this.rowGraphics[0].visible = true;
+        this.rowGraphics[1].visible = true;
+        this.rowGraphics[2].visible = true;
         break;
     }
   }
@@ -85,9 +84,27 @@ export class ReelsUI extends UIComponent {
       .repeat(3)
       .onStart(() => {
         this.stage.addChild(g);
+
+        for (let r = 0; r < betResult.reels.length; r++) {
+          for (let c = 0; c < betResult.reels[r].length; c++) {
+            const res = betResult.reels[r][c];
+            const sp = this.reels[r].sprites[c + 1];
+            if (res.active && sp.totalFrames > 1) {
+              sp.play();
+            }
+          }
+        }
       })
       .onComplete(() => {
         this.stage.removeChild(g);
+        for (let r = 0; r < betResult.reels.length; r++) {
+          for (let c = 0; c < betResult.reels[r].length; c++) {
+            const sp = this.reels[r].sprites[c + 1];
+            if (sp.totalFrames > 1) {
+              sp.gotoAndStop(0);
+            }
+          }
+        }
       });
   }
 
@@ -98,22 +115,21 @@ export class ReelsUI extends UIComponent {
       y: 0,
       prev: 0,
       blurs: this.reels.map(r => r.blur),
-      sprites: this.reels.map(r => r.sprites).reduce((acc, ss) => acc.concat(ss), []),
     };
     this.currAnimation = new Tween.Tween(animData)
       .to({ y: this.opts.cellHeight * 60 }, 5000)
       .onUpdate((curr: typeof animData) => {
         const delta = curr.y - curr.prev;
-        for (const blur of curr.blurs) {
-          blur.blur = delta / 2;
-        }
-        for (const o of curr.sprites) {
-          o.y += delta;
-          if (o.y >= MAX) {
-            o.gotoAndStop(Card.rnd().idx);
-            o.width = this.opts.cardWidth;
-            o.height = this.opts.cardHeight;
-            o.y = o.y % MAX;
+
+        for (const reel of this.reels) {
+          reel.blur.blur = delta / 2;
+          for (let i = 0; i < reel.sprites.length; i++) {
+            const o = reel.sprites[i];
+            o.y += delta;
+            if (o.y >= MAX) {
+              this.replaceSprite(reel, i, Card.rnd());
+              reel.sprites[i].y = reel.sprites[i].y % MAX;
+            }
           }
         }
         curr.prev = curr.y;
@@ -122,13 +138,14 @@ export class ReelsUI extends UIComponent {
   }
 
   public async stopAnimation(result: BetResult) {
-    const lastColSymbols = result.reels;
+    const lastColSymbols = result.reels.map(cps => cps.map(cp => cp.card));
 
-    // console.log(
-    //   transpose(lastColSymbols)
-    //     .map(cs => cs.map(c => c.id.replace('card', '')).join(' '))
-    //     .join('\n')
-    // );
+    console.log(result.winnings);
+    console.log(
+      transpose(lastColSymbols)
+        .map(cs => cs.map(c => c.id.replace('card', '')).join(' '))
+        .join('\n')
+    );
 
     const positionsToMove = 5;
     const baseTime = 800;
@@ -159,8 +176,6 @@ export class ReelsUI extends UIComponent {
         baseTime + 700
       ),
     ];
-    // const g = new Tween.Group();
-    // tweens.forEach( t=> g.add(t));
 
     if (result.rowWinStatus.some(x => x)) {
       tweens[tweens.length - 1].chain(this.animeWin(result));
@@ -168,6 +183,9 @@ export class ReelsUI extends UIComponent {
 
     return new Promise(resolve => {
       tweens[tweens.length - 1].onComplete(() => {
+        this.reels.forEach(r => {
+          r.sprites.sort((a, b) => a.y - b.y);
+        });
         resolve();
       });
       this.currAnimation!.stop();
@@ -215,9 +233,7 @@ export class ReelsUI extends UIComponent {
             const prevY = sprites[i].y;
             const newY = (initialPositions[i] + pos) % MAX;
             if (prevY > newY) {
-              sprites[i].gotoAndStop(symbolQueue.pop()!.idx);
-              sprites[i].width = this.opts.cardWidth;
-              sprites[i].height = this.opts.cardHeight;
+              this.replaceSprite(reel, i, symbolQueue.pop()!);
             }
             sprites[i].y = newY;
           }
@@ -243,37 +259,44 @@ export class ReelsUI extends UIComponent {
       // that's why we have `-cellHeight` as position.y
       // and the mask is from 0 to visibleHeight
       const visibleHeight = rows * cellHeight;
-      const stage = newContainer(leftMargin + col * (cellWidth + colSeparation), -cellHeight);
+      const reelStage = newContainer(leftMargin + col * (cellWidth + colSeparation), -cellHeight);
       const mask = new Graphics().drawRect(0, cellHeight, this.opts.cardWidth, visibleHeight);
-      stage.mask = mask;
-      stage.addChild(mask);
+      reelStage.mask = mask;
+      reelStage.addChild(mask);
 
       const blur = new filters.BlurYFilter();
       blur.blur = 0;
 
       const sprites = genArray(rows + 1, row => {
         // we use a sprite with all potential texture and then just change the frame to show with `gotoAndStop()`
-        const s = new AnimatedSprite(Card.ALL.map(ss => getTexture(ss.id)));
-
-        s.filters = [blur];
-
-        s.gotoAndStop(Card.rnd().idx);
-        // const s = new Sprite(nextSymbol());
+        const s = getSpriteFor(Card.rnd());
         s.width = this.opts.cardWidth;
         s.height = this.opts.cardHeight;
         s.position.y = topMargin + row * cellHeight;
+        s.filters = [blur];
         return s;
       });
 
-      this.stage.addChild(stage);
-      stage.addChild(...sprites);
+      this.stage.addChild(reelStage);
+      reelStage.addChild(...sprites);
 
       this.reels.push({
-        stage,
+        stage: reelStage,
         sprites,
         blur,
       });
     }
+  }
+
+  private replaceSprite(reel: Reel, idx: number, card: Card) {
+    const s = getSpriteFor(card);
+    s.width = this.opts.cardWidth;
+    s.height = this.opts.cardHeight;
+    s.position.y = reel.sprites[idx].y;
+    s.filters = [reel.blur];
+    reel.stage.removeChild(reel.sprites[idx]);
+    reel.sprites[idx] = s;
+    reel.stage.addChild(reel.sprites[idx]);
   }
 
   private drawBackground() {
@@ -282,10 +305,17 @@ export class ReelsUI extends UIComponent {
     this.rowGraphics = [];
     for (let row = 0; row < rows; row++) {
       const rowG = new Graphics();
-      rowG.beginFill(0xffffff).lineStyle(1, 0x979797);
+      rowG.alpha = 0.1;
+      rowG.beginFill(BG_SELECTED_COLOR);
+      // rowG.beginFill(0xffffff).lineStyle(1, 0x979797);
       this.rowGraphics.push(rowG);
       for (let col = 0; col < columns; col++) {
-        rowG.drawRect(col * (cellWidth + colSeparation), row * cellHeight, cellWidth, cellHeight);
+        rowG.drawRect(
+          col * (cellWidth + colSeparation),
+          row * cellHeight,
+          cellWidth + colSeparation,
+          cellHeight
+        );
         // const color = (col + rows * row) % 2 === 0 ? 0xc7c7c7 : 0xd8d8d8;
         // const s = createSlotCell(cellWidth, cellHeight, color);
         // s.position.set(col * (cellWidth + rowSeparation), row * cellHeight);
@@ -294,5 +324,24 @@ export class ReelsUI extends UIComponent {
     }
 
     this.stage.addChild(...this.rowGraphics);
+  }
+}
+
+function getSpriteFor(card: Card) {
+  const spritesheet = loader.resources.cards.spritesheet!;
+  if (card.canAnimate) {
+    const textures = spritesheet.animations[`ico${card.id}`];
+    if (textures == null || textures.length === 0) {
+      throw new Error(`missing textures for ${card.idx}`);
+    }
+    const s = new AnimatedSprite(textures);
+    s.animationSpeed = 0.5;
+    return s;
+  } else {
+    const texture = spritesheet.textures[`ico${card.id}.png`];
+    if (texture == null) {
+      throw new Error(`missing textures for ${card.idx}`);
+    }
+    return new AnimatedSprite([texture]);
   }
 }

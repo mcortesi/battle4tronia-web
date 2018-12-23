@@ -1,5 +1,6 @@
 import { rndElem, shuffle, transpose } from '../utils';
 import { Bet } from './api';
+import { BoostChoice } from './base';
 
 export const ReelSize = {
   rows: 3,
@@ -14,23 +15,28 @@ export const enum CardKind {
   Joker,
 }
 
+export interface CardPosition {
+  card: Card;
+  active: boolean;
+}
+
 export class Card {
   static ALL: Card[] = [];
   static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
 
-  static HeroA = new Card('cardAttack1', CardKind.Attack);
-  static HeroB = new Card('cardAttack2', CardKind.Attack);
-  static HeroC = new Card('cardAttack3', CardKind.Attack);
-  static HeroD = new Card('cardAttack4', CardKind.Attack);
+  static HeroA = new Card('Punch', CardKind.Attack, true);
+  static HeroB = new Card('Boomerang', CardKind.Attack, true);
+  static HeroC = new Card('Sword', CardKind.Attack, true);
+  static HeroD = new Card('Tronium', CardKind.Attack, true);
 
-  static TrashA = new Card('cardTrash1', CardKind.Trash);
-  static TrashB = new Card('cardTrash2', CardKind.Trash);
-  static TrashC = new Card('cardTrash3', CardKind.Trash);
-  static TrashD = new Card('cardTrash4', CardKind.Trash);
-  static TrashE = new Card('cardTrash5', CardKind.Trash);
+  // static TrashA = new Card('cardTrash1', CardKind.Trash);
+  static TrashB = new Card('T2', CardKind.Trash, false);
+  static TrashC = new Card('T3', CardKind.Trash, false);
+  static TrashD = new Card('T4', CardKind.Trash, false);
+  static TrashE = new Card('T5', CardKind.Trash, false);
 
-  static NegScatter = new Card('cardNegScatter', CardKind.NegativeScatter);
-  static Scatter = new Card('cardScatter', CardKind.Scatter);
+  static NegScatter = new Card('NegScatter', CardKind.NegativeScatter, false);
+  static Scatter = new Card('Scatter', CardKind.Scatter, true);
 
   static rnd(): Card {
     return rndElem(Card.ALL);
@@ -42,7 +48,7 @@ export class Card {
 
   readonly idx: number;
 
-  private constructor(readonly id: string, readonly kind: CardKind) {
+  private constructor(readonly id: string, readonly kind: CardKind, readonly canAnimate: boolean) {
     this.idx = Card.ALL.length;
 
     Card.ALL.push(this);
@@ -55,53 +61,88 @@ export class Card {
   toString() {
     return this.id;
   }
+
+  active(): CardPosition {
+    return {
+      card: this,
+      active: true,
+    };
+  }
+
+  still(): CardPosition {
+    return {
+      card: this,
+      active: false,
+    };
+  }
 }
 
-function scatter(): Card[] {
+function scatter(): CardPosition[] {
   return shuffle([
-    Card.Scatter,
-    Card.rndOfKind(CardKind.Attack),
-    Card.rndOfKind(CardKind.Attack),
-    Card.rndOfKind(CardKind.Trash),
-    Card.rndOfKind(CardKind.Trash),
+    Card.Scatter.active(),
+    Card.rndOfKind(CardKind.Attack).still(),
+    Card.rndOfKind(CardKind.Attack).still(),
+    Card.rndOfKind(CardKind.Trash).still(),
+    Card.rndOfKind(CardKind.Trash).still(),
   ]);
 }
 
-function b5of(symbol: Card): () => Card[] {
-  return () => [symbol, symbol, symbol, symbol, symbol];
+function b5of(symbol: Card): () => CardPosition[] {
+  const activeCard = symbol.active();
+  return () => [activeCard, activeCard, activeCard, activeCard, activeCard];
 }
-function b4of(symbol: Card): () => Card[] {
-  return () => shuffle([symbol, symbol, symbol, symbol, Card.rndOfKind(CardKind.Trash)]);
-}
-
-function b3of(symbol: Card): () => Card[] {
+function b4of(symbol: Card): () => CardPosition[] {
   return () =>
     shuffle([
-      symbol,
-      symbol,
-      symbol,
-      Card.rndOfKind(CardKind.Trash),
-      Card.rndOfKind(CardKind.Trash),
+      symbol.active(),
+      symbol.active(),
+      symbol.active(),
+      symbol.active(),
+      Card.rndOfKind(CardKind.Trash).still(),
     ]);
 }
 
-function b3and2(symbol3: Card, symbol2: Card): () => Card[] {
-  return () => shuffle([symbol3, symbol3, symbol3, symbol2, symbol2]);
+function b3of(symbol: Card): () => CardPosition[] {
+  return () =>
+    shuffle([
+      symbol.active(),
+      symbol.active(),
+      symbol.active(),
+      Card.rndOfKind(CardKind.Trash).still(),
+      Card.rndOfKind(CardKind.Trash).still(),
+    ]);
 }
 
-function b3ABCD1SN1T(): Card[] {
+function b3and2(symbol3: Card, symbol2: Card): () => CardPosition[] {
+  return () =>
+    shuffle([
+      symbol3.active(),
+      symbol3.active(),
+      symbol3.active(),
+      symbol2.active(),
+      symbol2.active(),
+    ]);
+}
+
+function b3ABCD1SN1T(): CardPosition[] {
   const attackCard = Card.rndOfKind(CardKind.Attack);
-  return shuffle([attackCard, attackCard, attackCard, Card.rndOfKind(CardKind.Trash)]).concat(
-    Card.NegScatter
-  );
+  return shuffle([attackCard, attackCard, attackCard, Card.rndOfKind(CardKind.Trash)])
+    .map(c => c.still())
+    .concat(Card.NegScatter.active());
 }
 
-function b4ABCD1SN(): Card[] {
+function b4ABCD1SN(): CardPosition[] {
   const attackCard = Card.rndOfKind(CardKind.Attack);
-  return [attackCard, attackCard, attackCard, attackCard, Card.NegScatter];
+  return [
+    attackCard.still(),
+    attackCard.still(),
+    attackCard.still(),
+    attackCard.still(),
+    Card.NegScatter.active(),
+  ];
 }
 
-function b2ABCD3T(): Card[] {
+function b2ABCD3T(): CardPosition[] {
   const attackCard = Card.rndOfKind(CardKind.Attack);
   return shuffle([
     attackCard,
@@ -109,20 +150,20 @@ function b2ABCD3T(): Card[] {
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
-  ]);
+  ]).map(c => c.still());
 }
 
-function b1ABCD4T(): Card[] {
+function b1ABCD4T(): CardPosition[] {
   const attackCard = Card.rndOfKind(CardKind.Attack);
   return shuffle([
     attackCard,
-    attackCard,
-    attackCard,
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
-  ]);
+    Card.rndOfKind(CardKind.Trash),
+    Card.rndOfKind(CardKind.Trash),
+  ]).map(c => c.still());
 }
-function b2ABCD1NP2T(): Card[] {
+function b2ABCD1NP2T(): CardPosition[] {
   const [attackCard, diffAttackCard] = shuffle(
     rndElem([
       [Card.HeroA, Card.HeroB],
@@ -140,10 +181,10 @@ function b2ABCD1NP2T(): Card[] {
     diffAttackCard,
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
-  ]);
+  ]).map(c => c.still());
 }
 
-function b2ABCD2NP1T(): Card[] {
+function b2ABCD2NP1T(): CardPosition[] {
   const [attackCard, diffAttackCard] = shuffle(
     rndElem([
       [Card.HeroA, Card.HeroB],
@@ -161,17 +202,17 @@ function b2ABCD2NP1T(): Card[] {
     diffAttackCard,
     diffAttackCard,
     Card.rndOfKind(CardKind.Trash),
-  ]);
+  ]).map(c => c.still());
 }
 
-function b5T(): Card[] {
+function b5T(): CardPosition[] {
   return [
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
     Card.rndOfKind(CardKind.Trash),
-  ];
+  ].map(c => c.still());
 }
 
 // function nearMissBuilder(): SlotSymbol[] {
@@ -194,7 +235,7 @@ export class Move {
     return result.result;
   }
 
-  static createAll(table: Array<[string, number, number, number, number, () => Card[]]>) {
+  static createAll(table: Array<[string, number, number, number, number, () => CardPosition[]]>) {
     if (Move.ALL.length > 0) {
       throw new Error('Moves Already created!');
     }
@@ -226,15 +267,19 @@ export class Move {
     readonly payout: number,
     readonly damage: number,
     readonly epicness: number,
-    private builder: () => Card[]
+    private builder: () => CardPosition[]
   ) {}
 
   isWin() {
     return this.damage + this.payout > 0;
   }
 
-  build(): Card[] {
+  build(): CardPosition[] {
     return this.builder();
+  }
+
+  buildStill(): CardPosition[] {
+    return this.builder().map(cp => ({ card: cp.card, active: false }));
   }
 
   winnings(): Winnings {
@@ -258,11 +303,12 @@ export interface Winnings {
 
 export interface BetResult {
   winnings: Winnings;
-  reels: Card[][];
+  reels: CardPosition[][];
   rowWinStatus: boolean[];
 }
 
 export function winningsFor(bet: Bet, combinations: Move[]) {
+  const damageMultiplier = BoostChoice.fromBet(bet.tronium).damageMultiplier;
   const baseWinnings = combinations.reduce(
     (acc, c) => {
       acc.payout = c.payout;
@@ -278,33 +324,35 @@ export function winningsFor(bet: Bet, combinations: Move[]) {
   );
 
   return {
-    payout: baseWinnings.payout * bet.tronium,
-    damage: baseWinnings.damage * bet.damageMultiplier,
-    epicness: baseWinnings.epicness * bet.damageMultiplier,
+    payout: baseWinnings.payout * bet.tronium * bet.lines,
+    damage: baseWinnings.damage * damageMultiplier,
+    epicness: baseWinnings.epicness * damageMultiplier,
   };
 }
 
 export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
   const winnings = winningsFor(bet, combinations);
+  const stillMove = () => Move.rnd().buildStill();
+  const pos = combinations.map(c => c.build());
 
-  // console.log('WIN_COMB', combinations.map(c => c.id));
+  console.log('WIN_COMB', combinations.map(c => c.id));
   switch (bet.lines) {
     case 1:
       return {
         winnings,
-        reels: transpose([Move.rnd(), combinations[0], Move.rnd()].map(c => c.build())),
+        reels: transpose([stillMove(), pos[0], stillMove()]),
         rowWinStatus: [false, combinations[0].isWin(), false],
       };
     case 2:
       return {
         winnings,
-        reels: transpose([combinations[0], Move.rnd(), combinations[1]].map(c => c.build())),
+        reels: transpose([pos[0], stillMove(), pos[1]]),
         rowWinStatus: [combinations[0].isWin(), false, combinations[1].isWin()],
       };
     case 3:
       return {
         winnings,
-        reels: transpose(combinations.map(c => c.build())),
+        reels: transpose(pos),
         rowWinStatus: combinations.map(c => c.isWin()),
       };
 
@@ -314,7 +362,7 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
 }
 
 // prettier-ignore
-const MovesTable: Array<[string, number, number, number, number, () => Card[]]> = [
+const MovesTable: Array<[string, number, number, number, number, () => CardPosition[]]> = [
   // ID          PROB    PAYOUT DAMAGE EPICNESS   MOVE GENERATOR
   ['1S4*'	      , 0.0015 , 30	  , 45   , 3333   , scatter                         ],
   ['3A2T'	      , 0.0600 , 0.5  , 4	   , 83     , b3of(Card.HeroA)                ],

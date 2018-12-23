@@ -1,6 +1,6 @@
-import { Container, loader, Point, Sprite, Text } from 'pixi.js';
+import { Container, Point, Text } from 'pixi.js';
 import { BoostChoice, LineChoice } from '../../model/base';
-import { bigIcon } from '../basic';
+import { bigIcon, smallIcon } from '../basic';
 import { Position } from '../commons';
 import SoundManager from '../SoundManager';
 import { newContainer, newSprite, newText } from '../utils';
@@ -22,22 +22,24 @@ class BoostChoiceRenderer implements Renderer<BoostChoice> {
   desc: Text;
 
   constructor(readonly parent: Container) {
-    const title = newText('Boost', 'Body1');
-    this.label = newText('XXX', 'H2');
-    this.desc = newText('XXX', 'H3');
-    const troniumIcon = new Sprite(loader.resources.icoTronium.texture);
-    troniumIcon.width = 24;
-    troniumIcon.height = 24;
+    const anchor = new Point(0.5, 0);
 
-    title.anchor.set(0.5, 0);
-    this.label.anchor.set(0.5, 0);
-    this.desc.anchor.set(0.5, 0);
-    troniumIcon.anchor.set(0.5, 0);
-    title.x = this.label.x = parent.width / 2;
-    this.label.y = 30;
-
-    troniumIcon.position.set(-15 + parent.width / 2, 70);
-    this.desc.position.set(12 + parent.width / 2, 73);
+    const title = newText('Boost', 'Body1', {
+      anchor,
+      position: new Point(parent.width / 2, 0),
+    });
+    this.label = newText('XXX', 'H2', {
+      anchor,
+      position: new Point(parent.width / 2, 30),
+    });
+    this.desc = newText('XXX', 'H3', {
+      anchor,
+      position: new Point(12 + parent.width / 2, 73),
+    });
+    const troniumIcon = smallIcon('IcoTronium', {
+      anchor,
+      position: new Point(-15 + parent.width / 2, 70),
+    });
 
     parent.addChild(title);
     parent.addChild(this.label);
@@ -102,7 +104,7 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.idx = opts.initValue;
     this.choices = opts.choices;
 
-    const leftArrowSprite = newSprite('icoArrow', {
+    const leftArrowSprite = newSprite('IcoArrow.png', {
       position: new Point(0, 20),
       scale: new Point(-1, 1),
     });
@@ -111,7 +113,7 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     this.prevBtn = Button.from(leftArrowSprite, this.prev).addTo(this.view);
 
     this.nextBtn = Button.from(
-      bigIcon('icoArrow', {
+      bigIcon('IcoArrow', {
         position: new Point(this.prevBtn.stage.width + opts.textSpace, 20),
       }),
       this.next

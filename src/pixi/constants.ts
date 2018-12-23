@@ -63,8 +63,8 @@ export const Layout = {
     colSeparation: 13,
     cellWidth: 140,
     cellHeight: 125,
-    cardWidth: 109,
-    cardHeight: 109,
+    cardWidth: 140,
+    cardHeight: 125,
   },
   hero: {
     width: 300,

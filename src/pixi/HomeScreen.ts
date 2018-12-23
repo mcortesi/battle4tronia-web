@@ -1,11 +1,11 @@
 import { Container, Point } from 'pixi.js';
 import { Player } from '../model/api';
-import { primaryBtn } from './basic';
+import { primaryBtn, smallIcon } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox, SecondaryStatBox } from './StatBox';
-import { newContainer, newSprite, newText } from './utils';
+import { newContainer, newText } from './utils';
 
 export interface HomeScreenProps {
   size: Dimension;
@@ -35,9 +35,8 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   );
 
   stage.addChild(
-    newSprite('icoFame', {
+    smallIcon('IcoFame', {
       position: new Point(size.width / 2 - 24 - 38, 250 + 6),
-      size: { width: 24, height: 24 },
     })
   );
 

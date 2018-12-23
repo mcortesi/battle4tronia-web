@@ -1,0 +1,93 @@
+{
+  "frames": {
+    "BtnConnect.png": {
+      "frame": { "x": 413, "y": 0, "w": 250, "h": 100 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
+      "sourceSize": { "w": 250, "h": 100 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "BtnFight.png": {
+      "frame": { "x": 213, "y": 0, "w": 200, "h": 100 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 100 },
+      "sourceSize": { "w": 200, "h": 100 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "BtnToBattle.png": {
+      "frame": { "x": 0, "y": 100, "w": 250, "h": 100 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
+      "sourceSize": { "w": 250, "h": 100 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "IcoArrow.png": {
+      "frame": { "x": 103, "y": 0, "w": 55, "h": 55 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 55 },
+      "sourceSize": { "w": 55, "h": 55 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "IcoClose.png": {
+      "frame": { "x": 24, "y": 0, "w": 24, "h": 24 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
+      "sourceSize": { "w": 24, "h": 24 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "IcoFame.png": {
+      "frame": { "x": 48, "y": 0, "w": 55, "h": 56 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 56 },
+      "sourceSize": { "w": 55, "h": 56 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "IcoHowtoPlay.png": {
+      "frame": { "x": 0, "y": 0, "w": 24, "h": 24 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
+      "sourceSize": { "w": 24, "h": 24 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "IcoTronium.png": {
+      "frame": { "x": 158, "y": 0, "w": 55, "h": 55 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 55 },
+      "sourceSize": { "w": 55, "h": 55 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "UIBoard.png": {
+      "frame": { "x": 0, "y": 451, "w": 879, "h": 550 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
+      "sourceSize": { "w": 879, "h": 550 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "UIShield.png": {
+      "frame": { "x": 250, "y": 100, "w": 349, "h": 351 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 349, "h": 351 },
+      "sourceSize": { "w": 349, "h": 351 },
+      "anchor": { "x": 0, "y": 0 }
+    }
+  },
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "spriteUI.png",
+    "format": "RGBA8888",
+    "size": { "w": 879, "h": 1001 },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:d4287d2402f284f352d2a8c2fd4d7c1e:be0049c5929c8aedece6997207723919:de961cef2580a30f653f22442131ceb0$"
+  }
+}

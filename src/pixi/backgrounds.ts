@@ -27,8 +27,16 @@ export function MainBackground(size: Dimension) {
 }
 
 export function BattleBackground(size: Dimension) {
+  const container = newContainer();
+
   const bg = newSprite('bgBattle', { size });
   bg.name = 'background';
   bg.tint = 0x999999;
-  return bg;
+
+  const board = newSprite('UIBoard.png', {
+    position: new Point(243, 11),
+  });
+
+  container.addChild(bg, board);
+  return container;
 }

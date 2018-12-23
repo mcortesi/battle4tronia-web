@@ -11,6 +11,13 @@ export class BoostChoice {
   static DEFAULT = BoostChoice.ALL[0];
   static indexOf = (c: BoostChoice) => BoostChoice.ALL.indexOf(c);
   static fromIdx = (i: number) => BoostChoice.ALL[i];
+  static fromBet = (bet: number) => {
+    const found = BoostChoice.ALL.find(bc => bc.bet === bet);
+    if (!found) {
+      throw new Error('wrong bet');
+    }
+    return found;
+  };
 
   private constructor(
     public readonly label: string,

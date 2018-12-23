@@ -1,7 +1,8 @@
 import { Easing, Tween } from '@tweenjs/tween.js';
 import { Container, Text } from 'pixi.js';
+import { bigIcon, IconName } from '../basic';
 import { Position, UIComponent } from '../commons';
-import { newContainer, newSprite, newText } from '../utils';
+import { newContainer, newText } from '../utils';
 
 export interface ScoresUI {
   view: Container;
@@ -30,12 +31,14 @@ export class ScoreBox extends UIComponent {
 
     this.currentFame = opts.initFame;
     this.currentTronium = opts.initTronium;
-    this.troniumText = this.createScoreRender('Tronium', opts.initTronium, 'icoTronium', 0);
-    this.fameText = this.createScoreRender('Fame', opts.initFame, 'icoFame', this.opts.fameY);
+    this.troniumText = this.createScoreRender('Tronium', opts.initTronium, 'IcoTronium', 0);
+    this.fameText = this.createScoreRender('Fame', opts.initFame, 'IcoFame', this.opts.fameY);
 
     this.troniumIncrease = newText('', 'H2');
+    this.troniumIncrease.style.dropShadow = true;
+
     this.troniumIncrease.x = this.troniumText.x + this.troniumText.width + 30;
-    this.troniumIncrease.tint = 0x00c03b;
+    this.troniumIncrease.tint = 0x2fe43f;
     this.troniumIncrease.visible = false;
     this.stage.addChild(this.troniumIncrease);
   }
@@ -57,11 +60,11 @@ export class ScoreBox extends UIComponent {
     this.currentTronium = newTronium;
   }
 
-  private createScoreRender(labelText: string, value: number, texture: string, yPos: number) {
+  private createScoreRender(labelText: string, value: number, iconName: IconName, yPos: number) {
     const container = newContainer(0, yPos);
     const score = newText(value.toString(), 'H2');
     const label = newText(labelText, 'Body2');
-    const icon = newSprite(texture);
+    const icon = bigIcon(iconName);
     container.addChild(icon, score, label);
 
     score.position.set(this.opts.textX, 0);

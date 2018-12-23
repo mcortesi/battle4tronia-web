@@ -1,40 +1,39 @@
-import { newSprite, LayoutOptions } from './utils';
-import { Container, Point, Rectangle } from 'pixi.js';
-import SoundManager from './SoundManager';
-import { Button } from './utils/Button';
+import { Container, Point } from 'pixi.js';
 import { Layout } from './constants';
+import SoundManager from './SoundManager';
+import { LayoutOptions, newSprite } from './utils';
+import { Button } from './utils/Button';
 
-export type IconName = 'icoTronium' | 'icoFame' | 'icoClose' | 'icoHelp' | 'icoArrow';
+export type IconName = 'IcoTronium' | 'IcoFame' | 'IcoClose' | 'IcoHowtoPlay' | 'IcoArrow';
 
 const PrimeryButtons = {
   fight: {
-    image: 'btnSpin',
-    shadowLength: 20,
+    image: 'BtnFight.png',
     size: {
-      width: 240,
-      height: 140,
+      width: 200,
+      height: 100,
     },
     // width & height - shadow * 2.
     // x starts in -100 since anchor is 0.5
-    hitArea: new Rectangle(-100, 20, 200, 100),
+    // hitArea: new Rectangle(-100, 20, 200, 100),
   },
   toBattle: {
-    image: 'btnToBattle',
+    image: 'BtnToBattle.png',
     shadowLength: 0,
     size: {
       width: 250,
       height: 100,
     },
-    hitArea: new Rectangle(-125, 0, 250, 100),
+    // hitArea: new Rectangle(-125, 0, 250, 100),
   },
   connect: {
-    image: 'btnConnect',
+    image: 'BtnConnect.png',
     shadowLength: 0,
     size: {
-      width: 240,
+      width: 250,
       height: 100,
     },
-    hitArea: new Rectangle(-125, 0, 250, 100),
+    // hitArea: new Rectangle(-125, 0, 250, 100),
   },
 };
 
@@ -48,7 +47,7 @@ function icon(
   type: keyof typeof IconType,
   opts: Pick<LayoutOptions, 'anchor' | 'position'> = {}
 ) {
-  return newSprite(name, {
+  return newSprite(name + '.png', {
     ...opts,
     size: IconType[type],
   });
@@ -73,7 +72,7 @@ export function primaryBtn(
     anchor: new Point(0.5, 0),
     position: new Point(
       Layout.screen.width / 2,
-      Layout.screen.height - BottomMargin - spec.size.height + spec.shadowLength
+      Layout.screen.height - BottomMargin - spec.size.height
     ),
   });
 
@@ -82,7 +81,7 @@ export function primaryBtn(
     action();
   };
 
-  const btn = Button.from(btnSprite, onClick, { hitArea: spec.hitArea });
+  const btn = Button.from(btnSprite, onClick);
   parent.addChild(btn.stage);
   return btn;
 }

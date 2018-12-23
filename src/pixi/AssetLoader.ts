@@ -6,32 +6,14 @@ const ResouceMap = {
   // backgrounds
   bgBattle: '/assets/bgBattle.jpg',
   bgCoatofarms: '/assets/bg-coatofarms.png',
-  // icons
-  icoArrow: '/assets/icoArrow.png',
-  icoTronium: '/assets/icoTronium.png',
-  icoFame: '/assets/icoFame.png',
-  icoClose: '/assets/icoClose.png',
-  icoHelp: '/assets/icoHelp.png',
-  // buttons
-  btnSpin: '/assets/btnSpin.png',
-  btnConnect: '/assets/btnConnect.png',
-  btnHowToPlay: '/assets/btnHowToPlay.png',
-  btnToBattle: '/assets/btnToBattle.png',
+
+  // sprites
+  ui: '/assets/spriteUI.json',
+  cards: '/assets/spriteCards.json',
+
   // characters
   hero: '/assets/hero_1.png',
   villain: '/assets/villain.png',
-  // cards
-  cardAttack1: '/assets/symbol-attack1.png',
-  cardAttack2: '/assets/symbol-attack2.png',
-  cardAttack3: '/assets/symbol-attack3.png',
-  cardAttack4: '/assets/symbol-attack4.png',
-  cardTrash1: '/assets/symbol-trash1.png',
-  cardTrash2: '/assets/symbol-trash2.png',
-  cardTrash3: '/assets/symbol-trash3.png',
-  cardTrash4: '/assets/symbol-trash4.png',
-  cardTrash5: '/assets/symbol-trash5.png',
-  cardNegScatter: '/assets/symbol-negScatter.png',
-  cardScatter: '/assets/symbol-scatter.png',
 };
 
 export class AssetLoader {

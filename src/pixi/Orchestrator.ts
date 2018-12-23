@@ -88,8 +88,8 @@ export class Orchestrator implements ModelActions {
       this.game.player.tronium - this.currentBoost.bet * this.currentAttack.value
     );
     const res = await this.game.spin({
+      level: 1,
       tronium: this.currentBoost.bet,
-      damageMultiplier: this.currentBoost.damageMultiplier,
       lines: this.currentAttack.value,
     });
     this.gd.endSpinning(res);

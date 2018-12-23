@@ -21,8 +21,8 @@ export interface Player {
 }
 
 export interface Bet {
+  level: number;
   tronium: number;
-  damageMultiplier: number;
   lines: Line;
 }
 
@@ -210,7 +210,7 @@ export class FakeApi implements API {
     const lineResults = genArray(bet.lines, () => Math.random());
     const winnings = winningsFor(bet, lineResults.map(x => Move.fromDice(x)));
 
-    const betCost = bet.lines * bet.tronium;
+    const betCost = bet.lines * bet.tronium * bet.level;
 
     this.player.tronium += winnings.payout - betCost;
     this.battle.tronium += winnings.payout - betCost;

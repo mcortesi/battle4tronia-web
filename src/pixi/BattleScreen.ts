@@ -91,6 +91,14 @@ function createUI(opts: BattleScreenProps) {
     },
   });
 
+  stage.addChild(
+    newSprite('UIShield.png', {
+      anchor: new Point(0.5, 0),
+      position: new Point(opts.size.width / 2, 418),
+      scale: new Point(0.6, 0.6),
+    })
+  );
+
   const spinBtn = primaryBtn('fight', opts.gd.requestSpin.bind(opts.gd), stage);
 
   const lowBalanceText = newText('Need more tronium', 'Body2');
@@ -198,7 +206,7 @@ function Villain(opts: Position & Dimension) {
 
 function GlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
   const container = newContainer(opts.x, opts.y);
-  Button.from(smallIcon('icoHelp'), opts.onHelp).addTo(container);
-  Button.from(smallIcon('icoClose', { position: new Point(49, 0) }), opts.onClose).addTo(container);
+  Button.from(smallIcon('IcoHowtoPlay'), opts.onHelp).addTo(container);
+  Button.from(smallIcon('IcoClose', { position: new Point(49, 0) }), opts.onClose).addTo(container);
   return container;
 }
