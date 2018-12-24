@@ -35,6 +35,8 @@ export interface ModelActions {
   requestPlayerStats(): void;
   requestSpin(): void;
   exitBattle(): void;
+  openAddMoreModal(): void;
+  openCashOutModal(): void;
 }
 
 export interface LoadScreenActions {
@@ -164,6 +166,13 @@ export class GlobalDispatcher
 
   exitBattle(): void {
     this.fireEvent(this.modelListeners, 'exitBattle');
+  }
+  openAddMoreModal(): void {
+    this.fireEvent(this.modelListeners, 'openAddMoreModal');
+  }
+
+  openCashOutModal(): void {
+    this.fireEvent(this.modelListeners, 'openCashOutModal');
   }
 
   setPlayerStats(stats: PlayerStats): void {

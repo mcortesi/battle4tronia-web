@@ -101,5 +101,13 @@ export class Orchestrator implements ModelActions {
     this.gd.canBetWithCurrentBalance(bet <= this.game.player.tronium);
   }
 
+  openAddMoreModal = () => {
+    this.ui.openAddMoreModal();
+  };
+
+  openCashOutModal = () => {
+    this.ui.openCashOutModal();
+  };
+
   exitBattle = () => this.goHome();
 }

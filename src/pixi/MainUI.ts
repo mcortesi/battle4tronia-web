@@ -12,6 +12,8 @@ import * as Tween from '@tweenjs/tween.js';
 import { MainBackground } from './backgrounds';
 import { newContainer } from './utils';
 import debounce from 'lodash.debounce';
+import { AddMoreModal } from './AddMoreModal';
+import { CashOutModal } from './CashOutModal';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
@@ -20,6 +22,8 @@ export class MainUI {
   private app: Application;
   private mainStage: Container;
   private resolution = 1;
+
+  private currentModal: Disposable | null = null;
   // private resolution = window.devicePixelRatio;
 
   constructor(gd: GlobalDispatcher, size: Dimension) {
@@ -84,6 +88,15 @@ export class MainUI {
       })
     );
   }
+
+  openAddMoreModal() {
+    this.setModal(AddMoreModal(this.ctx));
+  }
+
+  openCashOutModal() {
+    this.setModal(CashOutModal(this.ctx));
+  }
+
   private ensureMainBackground() {
     if (!this.mainBg) {
       this.mainBg = MainBackground(this.ctx.size);
@@ -96,6 +109,14 @@ export class MainUI {
       this.mainBg = null;
     }
   }
+  private setModal(modal: Disposable) {
+    if (this.currentModal) {
+      this.currentModal.dispose();
+      this.currentModal = null;
+    }
+    this.currentModal = modal;
+  }
+
   private setScreen(screen: Disposable) {
     if (this.currentScreen) {
       this.currentScreen.dispose();

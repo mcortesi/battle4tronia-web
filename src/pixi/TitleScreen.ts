@@ -1,11 +1,12 @@
 import { Container, Graphics, Point } from 'pixi.js';
 import { FightStats } from '../model/api';
-import { primaryBtn } from './basic';
+import { HowtoPlayBtn, primaryBtn } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox } from './StatBox';
 import { newContainer, newText } from './utils';
+import { Modal } from './Modal';
 
 interface TitleScreenProps {
   size: Dimension;
@@ -21,6 +22,19 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
   parent.addChild(stage);
 
   primaryBtn('connect', gd.requestConnect.bind(gd), stage);
+
+  parent.addChild(
+    HowtoPlayBtn(() => {
+      Modal({
+        screenStage: parent,
+        screenSize: size,
+        size: { width: (size.width * 2) / 3, height: (size.height * 2) / 3 },
+        onClose: () => {
+          console.log('se cerro!');
+        },
+      });
+    }).stage
+  );
 
   const ranksBox = GeneralRanks({ position: new Point(100, 150), width: RanksWidth });
   stage.addChild(ranksBox.stage);

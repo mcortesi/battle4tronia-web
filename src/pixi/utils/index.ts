@@ -1,4 +1,4 @@
-import { Container, Point, Sprite, Text, Texture, utils } from 'pixi.js';
+import { Container, Point, Sprite, Text, Texture, utils, TextStyle } from 'pixi.js';
 import { Dimension, Position } from '../commons';
 import { TextStyles } from '../constants';
 
@@ -52,10 +52,11 @@ export function newSprite(
 
 export function newText(
   txt: string,
-  style: keyof typeof TextStyles,
+  style: keyof typeof TextStyles | TextStyle,
   opts: { position?: Position | Point; anchor?: Point } = {}
 ) {
-  const text = new Text(txt, TextStyles[style]);
+  const realStyle = typeof style === 'string' ? TextStyles[style] : style;
+  const text = new Text(txt, realStyle);
   applyLayoutOptions(text, opts);
   if (window.devicePixelRatio === 2) {
     text.scale.set(0.5, 0.5);

@@ -3,6 +3,7 @@ import { Container, Text } from 'pixi.js';
 import { bigIcon, IconName } from '../basic';
 import { Position, UIComponent } from '../commons';
 import { newContainer, newText } from '../utils';
+import { TextStyles } from '../constants';
 
 export interface ScoresUI {
   view: Container;
@@ -34,8 +35,9 @@ export class ScoreBox extends UIComponent {
     this.troniumText = this.createScoreRender('Tronium', opts.initTronium, 'IcoTronium', 0);
     this.fameText = this.createScoreRender('Fame', opts.initFame, 'IcoFame', this.opts.fameY);
 
-    this.troniumIncrease = newText('', 'H2');
-    this.troniumIncrease.style.dropShadow = true;
+    const st = TextStyles.H2.clone();
+    st.dropShadow = true;
+    this.troniumIncrease = newText('', st);
 
     this.troniumIncrease.x = this.troniumText.x + this.troniumText.width + 30;
     this.troniumIncrease.tint = 0x2fe43f;

@@ -85,3 +85,8 @@ export function primaryBtn(
   parent.addChild(btn.stage);
   return btn;
 }
+
+export function HowtoPlayBtn(onClick: () => void) {
+  const btn = newSprite('btnHowToPlay', { position: new Point(1065, 346) });
+  return Button.from(btn, onClick);
+}

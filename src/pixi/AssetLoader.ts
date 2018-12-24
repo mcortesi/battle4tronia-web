@@ -14,6 +14,9 @@ const ResouceMap = {
   // characters
   hero: '/assets/hero_1.png',
   villain: '/assets/villain.png',
+
+  btnHowToPlay: '/assets/btnHowToPlay.png',
+  btnBuy: '/assets/btnBuy.png',
 };
 
 export class AssetLoader {
