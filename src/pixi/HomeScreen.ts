@@ -134,8 +134,15 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   //   setPlayerStats: (playerStats: PlayerStats) => {},
   // });
 
+  const unregister = gd.registerForUIEvents({
+    playerUpdated: (p: Player) => {
+      balanceBox.setBalance(p.tronium);
+    },
+  });
+
   return {
     dispose: () => {
+      unregister();
       parent.removeChild(stage);
       stage.destroy({ children: true });
     },
@@ -177,7 +184,7 @@ function BalanceBox(opts: {
 
   return {
     stage: container,
-    setScore: (newVal: number) => {
+    setBalance: (newVal: number) => {
       score.text = newVal.toString();
       btnAddMore.x = score.x + score.width + 10;
       btnCashOut.x = btnAddMore.x + btnAddMore.width + 10;

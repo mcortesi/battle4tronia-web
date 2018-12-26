@@ -1,12 +1,18 @@
 import { BoostChoice, LineChoice } from '../model/base';
 import { ClientSpinResult } from '../model/game';
-import { GlobalStats, PlayerStats } from '../model/api';
+import { GlobalStats, PlayerStats, Player } from '../model/api';
 
 export interface HowToPlayActions {
   showHowToPlay(): void;
   hideHowToPlay(): void;
   nextHowToPlaySlide(): void;
   prevHowToPlaySlide(): void;
+}
+
+export interface UIEvents {
+  playerUpdated(player: Player): void;
+  closeAddMoreModal(): void;
+  closeCashOutModal(): void;
 }
 
 export interface TitleScreenActions {
@@ -34,6 +40,8 @@ export interface ModelActions {
   requestGlobalStats(): void;
   requestPlayerStats(): void;
   requestSpin(): void;
+  requestBuyTronium(amount: number): void;
+  requestSellTronium(amount: number): void;
   exitBattle(): void;
   openAddMoreModal(): void;
   openCashOutModal(): void;
@@ -54,7 +62,8 @@ type AllActions =
   | BattleScreenActions
   | BattleModelActions
   | LoadScreenActions
-  | ModelActions;
+  | ModelActions
+  | UIEvents;
 
 export class GlobalDispatcher
   implements
@@ -64,6 +73,7 @@ export class GlobalDispatcher
     BattleModelActions,
     BattleScreenActions,
     LoadScreenActions,
+    UIEvents,
     ModelActions {
   private howToPlayListeners: HowToPlayActions[] = [];
   private titleScreenListeners: TitleScreenActions[] = [];
@@ -72,6 +82,14 @@ export class GlobalDispatcher
   private battleScreenListeners: BattleScreenActions[] = [];
   private battleModelListeners: BattleModelActions[] = [];
   private modelListeners: ModelActions[] = [];
+  private uiEventsListeners: Array<Partial<UIEvents>> = [];
+
+  registerForUIEvents(listener: Partial<UIEvents>): () => void {
+    this.uiEventsListeners.push(listener);
+    return () => {
+      this.uiEventsListeners = this.uiEventsListeners.filter(x => x !== listener);
+    };
+  }
 
   registerForHowToPlay(listener: HowToPlayActions): () => void {
     this.howToPlayListeners.push(listener);
@@ -115,6 +133,18 @@ export class GlobalDispatcher
     return () => {
       this.modelListeners = this.modelListeners.filter(x => x !== listener);
     };
+  }
+
+  playerUpdated(player: Player): void {
+    this.fireEvent(this.uiEventsListeners, 'playerUpdated', player);
+  }
+
+  closeAddMoreModal(): void {
+    this.fireEvent(this.uiEventsListeners, 'closeAddMoreModal');
+  }
+
+  closeCashOutModal(): void {
+    this.fireEvent(this.uiEventsListeners, 'closeCashOutModal');
   }
 
   showHowToPlay(): void {
@@ -163,6 +193,12 @@ export class GlobalDispatcher
   requestSpin(): void {
     this.fireEvent(this.modelListeners, 'requestSpin');
   }
+  requestBuyTronium(amount: number): void {
+    this.fireEvent(this.modelListeners, 'requestBuyTronium', amount);
+  }
+  requestSellTronium(amount: number): void {
+    this.fireEvent(this.modelListeners, 'requestSellTronium', amount);
+  }
 
   exitBattle(): void {
     this.fireEvent(this.modelListeners, 'exitBattle');
@@ -194,12 +230,14 @@ export class GlobalDispatcher
   }
 
   private fireEvent<A extends AllActions, K extends keyof A>(
-    listeners: A[],
+    listeners: Array<Partial<A>>,
     name: K,
     ...args: ArgumentsType<A[K]>
   ) {
     listeners.forEach(x => {
-      (x[name] as any).apply(x, args);
+      if (name in x) {
+        (x[name] as any).apply(x, args);
+      }
     });
   }
 }

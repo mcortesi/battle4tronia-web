@@ -134,7 +134,7 @@ export class FakeApi implements API {
     this.status = GameStatus.NO_CHANNEL_OPENED;
     this.player = {
       name: 'Papu',
-      tronium: 15 * 50,
+      tronium: 0,
       fame: 0,
       collectables: [],
       item1: null,
@@ -153,10 +153,12 @@ export class FakeApi implements API {
 
   async openChannel(tronium: number): Promise<boolean> {
     this.status = GameStatus.READY;
+    this.player.tronium += tronium;
     return true;
   }
 
   async addTronium(tronium: number): Promise<boolean> {
+    this.player.tronium += tronium;
     return true;
   }
 
@@ -199,6 +201,7 @@ export class FakeApi implements API {
 
   async closeChannel(): Promise<boolean> {
     this.status = GameStatus.NO_CHANNEL_OPENED;
+    this.player.tronium = 0; // CASH OUT
     return true;
   }
 

@@ -68,7 +68,7 @@ export class GameClient {
 
   async connect() {
     if (!this.connected) {
-      await this.api.openChannel(1000);
+      await this.api.openChannel(10);
       await this.refreshStatus();
       if (this.connected) {
         await this.refreshPlayer();
@@ -102,5 +102,33 @@ export class GameClient {
       ...res,
       result: toBetResult(bet, res.result.map(Move.fromDice)),
     };
+  }
+
+  async buyTronium(amount: number): Promise<Player> {
+    await this.refreshStatus();
+    if (this.status === GameStatus.NO_CHANNEL_OPENED) {
+      await this.api.openChannel(amount);
+      await this.refreshStatus();
+      await this.refreshPlayer();
+    } else if (this.status === GameStatus.READY || this.status === GameStatus.NOT_ENOUGH_BALANCE) {
+      await this.api.addTronium(amount);
+      await this.refreshStatus();
+      await this.refreshPlayer();
+    } else {
+      throw new Error(`Invalid Game Status: ${this.status}`);
+    }
+    return this.player;
+  }
+
+  async sellTronium(amount: number): Promise<Player> {
+    await this.refreshStatus();
+    if (this.status === GameStatus.READY || GameStatus.NOT_ENOUGH_BALANCE) {
+      await this.api.closeChannel();
+      await this.refreshStatus();
+      await this.refreshPlayer();
+    } else {
+      throw new Error(`Invalid Game Status: ${this.status}`);
+    }
+    return this.player;
   }
 }

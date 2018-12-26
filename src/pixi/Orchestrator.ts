@@ -83,6 +83,18 @@ export class Orchestrator implements ModelActions {
     this.gd.setPlayerStats(stats);
   };
 
+  requestBuyTronium = async (amount: number) => {
+    await this.game.buyTronium(amount);
+    this.gd.playerUpdated(this.game.player);
+    this.gd.closeAddMoreModal();
+  };
+
+  requestSellTronium = async (amount: number) => {
+    await this.game.sellTronium(amount);
+    this.gd.playerUpdated(this.game.player);
+    this.gd.closeCashOutModal();
+  };
+
   requestSpin = async () => {
     this.gd.startSpinning(
       this.game.player.tronium - this.currentBoost.bet * this.currentAttack.value
