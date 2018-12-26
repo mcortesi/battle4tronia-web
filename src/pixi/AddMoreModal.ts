@@ -21,9 +21,7 @@ export function AddMoreModal(opts: ScreenContext): Disposable {
   const modal = Modal({
     screenSize: opts.size,
     screenStage: opts.parent,
-    onClose: () => {
-      console.log('nothing');
-    },
+    onClose: () => dispose(),
     size: {
       width: Width,
       height: Height,

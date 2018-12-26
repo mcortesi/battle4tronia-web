@@ -93,8 +93,13 @@ export class MainUI {
     this.setModal(AddMoreModal(this.ctx));
   }
 
-  openCashOutModal() {
-    this.setModal(CashOutModal(this.ctx));
+  openCashOutModal(player: Player) {
+    this.setModal(
+      CashOutModal({
+        ...this.ctx,
+        player,
+      })
+    );
   }
 
   private ensureMainBackground() {
