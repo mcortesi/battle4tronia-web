@@ -1,31 +1,10 @@
 import { Disposable, ScreenContext } from './MainUI';
 import { Modal } from './Modal';
-import { newText, newSprite } from './utils';
+import { newText, newSprite, centerX, centerGroupX, postionAfterY } from './utils';
 import { TextStyles } from './constants';
 import { Button } from './utils/Button';
 import { Player } from '../model/api';
-import { Sprite } from 'pixi.js';
 import { smallIcon } from './basic';
-
-function centerX(parentWidth: number, sprite: Sprite) {
-  sprite.x = (parentWidth - sprite.width) / 2;
-}
-function centerGroupX(parentWidth: number, separation: number, ...sprite: Sprite[]) {
-  let groupWidth = -separation;
-  for (const s of sprite) {
-    groupWidth += separation + s.width;
-  }
-
-  sprite[0].x = (parentWidth - groupWidth) / 2;
-
-  for (let i = 1; i < sprite.length; i++) {
-    sprite[i].x = sprite[i - 1].x + sprite[i - 1].width + separation;
-  }
-}
-
-function postionAfterY(before: Sprite, elem: Sprite, separtion: number = 0) {
-  elem.y = before.y + before.height + separtion;
-}
 
 export function CashOutModal(opts: ScreenContext & { player: Player }): Disposable {
   const Width = 530;

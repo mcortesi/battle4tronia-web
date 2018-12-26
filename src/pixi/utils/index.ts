@@ -64,3 +64,23 @@ export function newText(
 
   return text;
 }
+
+export function centerX(parentWidth: number, sprite: Sprite) {
+  sprite.x = (parentWidth - sprite.width) / 2;
+}
+export function centerGroupX(parentWidth: number, separation: number, ...sprite: Sprite[]) {
+  let groupWidth = -separation;
+  for (const s of sprite) {
+    groupWidth += separation + s.width;
+  }
+
+  sprite[0].x = (parentWidth - groupWidth) / 2;
+
+  for (let i = 1; i < sprite.length; i++) {
+    sprite[i].x = sprite[i - 1].x + sprite[i - 1].width + separation;
+  }
+}
+
+export function postionAfterY(before: Sprite, elem: Sprite, separtion: number = 0) {
+  elem.y = before.y + before.height + separtion;
+}
