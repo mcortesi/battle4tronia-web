@@ -9,10 +9,8 @@ const ResouceMap = {
   // sprites
   ui: '/assets/spriteUI.json',
   cards: '/assets/spriteCards.json',
-
-  // characters
-  hero: '/assets/hero_1.png',
-  villain: '/assets/villain.png',
+  characters1: '/assets/characters1.json',
+  characters2: '/assets/characters2.json',
 
   btnBuy: '/assets/btnBuy.png',
 };

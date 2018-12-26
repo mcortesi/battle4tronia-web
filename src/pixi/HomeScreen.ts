@@ -1,7 +1,7 @@
 import { Container, Graphics, Point } from 'pixi.js';
 import { Player } from '../model/api';
 import { bigIcon, HowtoPlayBtn, primaryBtn, smallIcon } from './basic';
-import { Dimension, Position } from './commons';
+import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox, SecondaryStatBox } from './StatBox';
@@ -18,15 +18,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   const stage = newContainer();
   parent.addChild(stage);
 
-  stage.addChild(
-    Hero({
-      size: {
-        width: 300,
-        height: 525,
-      },
-      position: new Point(0, 688 - 525),
-    })
-  );
+  stage.addChild(Hero(size));
 
   primaryBtn('toBattle', () => gd.requestBattle(), stage);
 
@@ -227,10 +219,9 @@ function GraphicBtn(opts: {
   return g;
 }
 
-function Hero(opts: { position: Position; size: Dimension }) {
-  const hero = newSprite('hero');
-  hero.position.set(opts.position.x, opts.position.y);
-  hero.width = opts.size.width;
-  hero.height = opts.size.height;
+function Hero(parentSize: Dimension) {
+  const hero = newSprite('Hero.png');
+  hero.x = 0;
+  hero.y = parentSize.height - hero.height;
   return hero;
 }

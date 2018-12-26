@@ -13,6 +13,7 @@ import { newContainer, newSprite, newText } from './utils';
 import { Button } from './utils/Button';
 import { smallIcon, primaryBtn } from './basic';
 import { BattleBackground } from './backgrounds';
+import { rndInt } from '../utils';
 
 export interface UIState {
   boostIdx: number;
@@ -44,8 +45,8 @@ function createUI(opts: BattleScreenProps) {
   const reelsUI = new ReelsUI(Layout.reels).addTo(stage);
   reelsUI.selectLines(opts.attack);
 
-  stage.addChild(Hero(Layout.hero));
-  stage.addChild(Villain(Layout.villain));
+  stage.addChild(Hero(opts.size));
+  stage.addChild(Villain(opts.size));
 
   const energyBarUI = new Bar({
     ...Layout.energyBar,
@@ -187,19 +188,25 @@ export function BattleScreen(opts: BattleScreenProps): Disposable {
   // stage.addChild(drawRules([643, 643 + 95], [305, 400]));
 }
 
-function Hero(opts: Position & Dimension) {
-  const hero = newSprite('hero');
-  hero.position.set(opts.x, opts.y);
-  hero.width = opts.width;
-  hero.height = opts.height;
+function Hero(parentSize: Dimension) {
+  const hero = newSprite('Hero.png');
+  hero.x = 0;
+  hero.y = parentSize.height - hero.height;
   return hero;
 }
 
-function Villain(opts: Position & Dimension) {
-  const villain = newSprite('villain');
-  villain.position.set(opts.x, opts.y);
-  villain.width = opts.width;
-  villain.height = opts.height;
+function Villain(parentSize: Dimension) {
+  const baseLayer = newSprite('z04.png');
+  const layer3 = newSprite(`z030${rndInt(1, 6)}.png`);
+  const layer2 = newSprite(`z020${rndInt(1, 8)}.png`);
+  const layer1 = newSprite(`z010${rndInt(1, 8)}.png`);
+
+  const villain = newContainer(
+    parentSize.width - baseLayer.width,
+    parentSize.height - baseLayer.height
+  );
+
+  villain.addChild(baseLayer, layer3, layer2, layer1);
   return villain;
 }
 

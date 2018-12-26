@@ -66,18 +66,6 @@ export const Layout = {
     cardWidth: 140,
     cardHeight: 125,
   },
-  hero: {
-    width: 300,
-    height: 525,
-    x: 0,
-    y: 688 - 525,
-  },
-  villain: {
-    width: 300,
-    height: 525,
-    x: 1366 - 300,
-    y: 688 - 525,
-  },
 };
 
 export const TextStyles = {
