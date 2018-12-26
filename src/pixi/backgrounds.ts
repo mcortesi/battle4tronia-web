@@ -14,7 +14,7 @@ export function MainBackground(size: Dimension) {
   bg.tint = 0xcccccc;
   container.addChild(bg);
 
-  const titleLabel = newSprite('bgTitleText', {
+  const titleLabel = newSprite('UILogo.png', {
     position: {
       x: size.width / 2,
       y: 50,

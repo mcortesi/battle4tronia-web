@@ -87,6 +87,6 @@ export function primaryBtn(
 }
 
 export function HowtoPlayBtn(onClick: () => void) {
-  const btn = newSprite('btnHowToPlay', { position: new Point(1065, 346) });
+  const btn = newSprite('BtnHowtoPlay.png', { position: new Point(1065, 346) });
   return Button.from(btn, onClick);
 }

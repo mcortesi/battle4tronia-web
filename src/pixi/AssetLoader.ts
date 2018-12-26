@@ -5,7 +5,6 @@ import { GlobalDispatcher } from './GlobalDispatcher';
 const ResouceMap = {
   // backgrounds
   bgBattle: '/assets/bgBattle.jpg',
-  bgCoatofarms: '/assets/bg-coatofarms.png',
 
   // sprites
   ui: '/assets/spriteUI.json',
@@ -15,7 +14,6 @@ const ResouceMap = {
   hero: '/assets/hero_1.png',
   villain: '/assets/villain.png',
 
-  btnHowToPlay: '/assets/btnHowToPlay.png',
   btnBuy: '/assets/btnBuy.png',
 };
 
@@ -53,7 +51,6 @@ export class AssetLoader {
   private loadLoadingStageResources() {
     return new Promise((resolve, reject) => {
       loader.add('bgHome', '/assets/bgHome.jpg');
-      loader.add('bgTitleText', '/assets/bgTitleText.png');
       loader.load(() => {
         this.progressDelta(5);
         this.gd.bgLoaded();

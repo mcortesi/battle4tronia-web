@@ -1,4 +1,4 @@
-import { Container, Point, Texture } from 'pixi.js';
+import { Container, Texture } from 'pixi.js';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
@@ -33,12 +33,12 @@ export function LoadingScreen({ size, parent, gd }: LoadingScreenProps): Disposa
 
     bgLoaded: () => {
       bgSprite.texture = getTexture('bgHome');
-      stage.addChild(
-        newSprite('bgTitleText', {
-          position: new Point(size.width / 2, 50),
-          anchor: new Point(0.5, 0),
-        })
-      );
+      // stage.addChild(
+      //   newSprite('bgTitleText', {
+      //     position: new Point(size.width / 2, 50),
+      //     anchor: new Point(0.5, 0),
+      //   })
+      // );
     },
   });
 

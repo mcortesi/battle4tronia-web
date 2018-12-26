@@ -1,7 +1,7 @@
 {
   "frames": {
     "BtnConnect.png": {
-      "frame": { "x": 413, "y": 0, "w": 250, "h": 100 },
+      "frame": { "x": 213, "y": 0, "w": 250, "h": 100 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
@@ -9,7 +9,7 @@
       "anchor": { "x": 0, "y": 0 }
     },
     "BtnFight.png": {
-      "frame": { "x": 213, "y": 0, "w": 200, "h": 100 },
+      "frame": { "x": 463, "y": 0, "w": 200, "h": 100 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 100 },
@@ -17,15 +17,23 @@
       "anchor": { "x": 0, "y": 0 }
     },
     "BtnToBattle.png": {
-      "frame": { "x": 0, "y": 100, "w": 250, "h": 100 },
+      "frame": { "x": 663, "y": 0, "w": 250, "h": 100 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
       "sourceSize": { "w": 250, "h": 100 },
       "anchor": { "x": 0, "y": 0 }
     },
+    "BtnHowtoPlay.png": {
+      "frame": { "x": 597, "y": 100, "w": 263, "h": 281 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 263, "h": 281 },
+      "sourceSize": { "w": 263, "h": 281 },
+      "anchor": { "x": 0, "y": 0 }
+    },
     "IcoArrow.png": {
-      "frame": { "x": 103, "y": 0, "w": 55, "h": 55 },
+      "frame": { "x": 48, "y": 0, "w": 55, "h": 55 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 55 },
@@ -41,7 +49,7 @@
       "anchor": { "x": 0, "y": 0 }
     },
     "IcoFame.png": {
-      "frame": { "x": 48, "y": 0, "w": 55, "h": 56 },
+      "frame": { "x": 158, "y": 0, "w": 55, "h": 56 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 56 },
@@ -57,7 +65,7 @@
       "anchor": { "x": 0, "y": 0 }
     },
     "IcoTronium.png": {
-      "frame": { "x": 158, "y": 0, "w": 55, "h": 55 },
+      "frame": { "x": 103, "y": 0, "w": 55, "h": 55 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 55 },
@@ -65,19 +73,27 @@
       "anchor": { "x": 0, "y": 0 }
     },
     "UIBoard.png": {
-      "frame": { "x": 0, "y": 451, "w": 879, "h": 550 },
+      "frame": { "x": 0, "y": 381, "w": 879, "h": 550 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
       "sourceSize": { "w": 879, "h": 550 },
       "anchor": { "x": 0, "y": 0 }
     },
-    "UIShield.png": {
-      "frame": { "x": 250, "y": 100, "w": 349, "h": 351 },
+    "UILogo.png": {
+      "frame": { "x": 198, "y": 100, "w": 399, "h": 104 },
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 349, "h": 351 },
-      "sourceSize": { "w": 349, "h": 351 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 399, "h": 104 },
+      "sourceSize": { "w": 399, "h": 104 },
+      "anchor": { "x": 0, "y": 0 }
+    },
+    "UIShield.png": {
+      "frame": { "x": 0, "y": 100, "w": 198, "h": 102 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 198, "h": 102 },
+      "sourceSize": { "w": 198, "h": 102 },
       "anchor": { "x": 0, "y": 0 }
     }
   },
@@ -86,8 +102,8 @@
     "version": "1.0",
     "image": "spriteUI.png",
     "format": "RGBA8888",
-    "size": { "w": 879, "h": 1001 },
+    "size": { "w": 913, "h": 931 },
     "scale": "1",
-    "smartupdate": "$TexturePacker:SmartUpdate:d4287d2402f284f352d2a8c2fd4d7c1e:be0049c5929c8aedece6997207723919:de961cef2580a30f653f22442131ceb0$"
+    "smartupdate": "$TexturePacker:SmartUpdate:2ce2d98faea7c65dca69fdc0e53c353d:aa9da4c0194331ca82a9b7a09fadd1da:de961cef2580a30f653f22442131ceb0$"
   }
 }

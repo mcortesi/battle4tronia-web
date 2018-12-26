@@ -26,15 +26,15 @@ export const Layout = {
   energyBar: {
     color: 0x05bcec,
     x: 305,
-    y: 486,
-    width: 285,
+    y: 490,
+    width: 322,
     height: 20,
   },
   hpBar: {
     color: 0xff3300,
-    x: 1057 - 285,
-    y: 486,
-    width: 285,
+    x: 1057 - 322,
+    y: 490,
+    width: 322,
     height: 20,
   },
 

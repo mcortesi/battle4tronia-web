@@ -94,8 +94,7 @@ function createUI(opts: BattleScreenProps) {
   stage.addChild(
     newSprite('UIShield.png', {
       anchor: new Point(0.5, 0),
-      position: new Point(opts.size.width / 2, 418),
-      scale: new Point(0.6, 0.6),
+      position: new Point(opts.size.width / 2, 436),
     })
   );
 
