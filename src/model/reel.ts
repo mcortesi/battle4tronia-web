@@ -24,19 +24,20 @@ export class Card {
   static ALL: Card[] = [];
   static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
 
-  static HeroA = new Card('Punch', CardKind.Attack, true);
-  static HeroB = new Card('Boomerang', CardKind.Attack, true);
-  static HeroC = new Card('Sword', CardKind.Attack, true);
-  static HeroD = new Card('Tronium', CardKind.Attack, true);
+  static HeroA = new Card('punch', CardKind.Attack, true);
+  static HeroB = new Card('boomerang', CardKind.Attack, true);
+  static HeroC = new Card('sword', CardKind.Attack, true);
+  static HeroD = new Card('tronium', CardKind.Attack, true);
 
-  // static TrashA = new Card('cardTrash1', CardKind.Trash);
-  static TrashB = new Card('T2', CardKind.Trash, false);
-  static TrashC = new Card('T3', CardKind.Trash, false);
-  static TrashD = new Card('T4', CardKind.Trash, false);
-  static TrashE = new Card('T5', CardKind.Trash, false);
+  static TrashA = new Card('tA', CardKind.Trash, false);
+  static TrashB = new Card('tB', CardKind.Trash, false);
+  static TrashC = new Card('tC', CardKind.Trash, false);
+  static TrashD = new Card('tD', CardKind.Trash, false);
+  static TrashE = new Card('tE', CardKind.Trash, false);
 
-  static NegScatter = new Card('NegScatter', CardKind.NegativeScatter, false);
-  static Scatter = new Card('Scatter', CardKind.Scatter, true);
+  static NegScatter = new Card('scatterneg', CardKind.NegativeScatter, true);
+  static Scatter = new Card('scatter', CardKind.Scatter, true);
+  static Joker = new Card('joker', CardKind.Joker, true);
 
   static rnd(): Card {
     return rndElem(Card.ALL);
@@ -311,9 +312,9 @@ export function winningsFor(bet: Bet, combinations: Move[]) {
   const damageMultiplier = BoostChoice.fromBet(bet.tronium).damageMultiplier;
   const baseWinnings = combinations.reduce(
     (acc, c) => {
-      acc.payout = c.payout;
-      acc.damage = c.damage;
-      acc.epicness = c.epicness;
+      acc.payout += c.payout;
+      acc.damage += c.damage;
+      acc.epicness += c.epicness;
       return acc;
     },
     {

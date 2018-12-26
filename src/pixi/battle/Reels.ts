@@ -335,7 +335,7 @@ function getSpriteFor(card: Card) {
       throw new Error(`missing textures for ${card.idx}`);
     }
     const s = new AnimatedSprite(textures);
-    s.animationSpeed = 0.5;
+    s.animationSpeed = 1 / 6;
     return s;
   } else {
     const texture = spritesheet.textures[`ico${card.id}.png`];
