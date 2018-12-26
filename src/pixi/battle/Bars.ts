@@ -26,7 +26,7 @@ export class Bar extends UIComponent {
     }
 
     const bgBar = new Graphics();
-    bgBar.lineStyle(1, 0xffffff);
+    bgBar.lineStyle(1, 0xffffff, 0.6);
     bgBar.drawRect(0, 0, opts.width, opts.height);
 
     this.outerBar = new Graphics();

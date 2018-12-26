@@ -1,9 +1,9 @@
-import { Container, Point, Text } from 'pixi.js';
+import { Container, Point, Text, Sprite } from 'pixi.js';
 import { BoostChoice, LineChoice } from '../../model/base';
 import { bigIcon, smallIcon } from '../basic';
 import { Position } from '../commons';
 import SoundManager from '../SoundManager';
-import { newContainer, newSprite, newText } from '../utils';
+import { newContainer, newSprite, newText, centerX, centerGroupX } from '../utils';
 import { Button } from '../utils/Button';
 
 export interface SelectorUI<T> {
@@ -20,36 +20,30 @@ interface Renderer<T> {
 class BoostChoiceRenderer implements Renderer<BoostChoice> {
   label: Text;
   desc: Text;
+  troniumIcon: Sprite;
 
-  constructor(readonly parent: Container) {
-    const anchor = new Point(0.5, 0);
+  constructor(readonly parent: Container, readonly width: number) {
+    const title = newText('Boost', 'Body1');
+    this.label = newText('XXX', 'H2');
+    this.desc = newText('XXX', 'H3');
+    this.troniumIcon = smallIcon('IcoTronium');
 
-    const title = newText('Boost', 'Body1', {
-      anchor,
-      position: new Point(parent.width / 2, 0),
-    });
-    this.label = newText('XXX', 'H2', {
-      anchor,
-      position: new Point(parent.width / 2, 30),
-    });
-    this.desc = newText('XXX', 'H3', {
-      anchor,
-      position: new Point(12 + parent.width / 2, 73),
-    });
-    const troniumIcon = smallIcon('IcoTronium', {
-      anchor,
-      position: new Point(-15 + parent.width / 2, 70),
-    });
+    centerX(width, title);
+    centerX(width, this.label);
+    centerGroupX(width, 5, this.troniumIcon, this.desc);
 
-    parent.addChild(title);
-    parent.addChild(this.label);
-    parent.addChild(this.desc);
-    parent.addChild(troniumIcon);
+    this.label.y = 30;
+    this.desc.y = 70;
+    this.troniumIcon.y = this.desc.y + (this.desc.height - this.troniumIcon.height) / 2;
+
+    parent.addChild(title, this.label, this.desc, this.troniumIcon);
   }
 
   update(choice: BoostChoice) {
     this.label.text = choice.label;
     this.desc.text = choice.bet.toString();
+    centerX(this.width, this.label);
+    centerGroupX(this.width, 5, this.troniumIcon, this.desc);
   }
 }
 
@@ -57,7 +51,7 @@ class LineChoiceRenderer implements Renderer<LineChoice> {
   label: Text;
   desc: Text;
 
-  constructor(readonly parent: Container) {
+  constructor(readonly parent: Container, width: number) {
     const title = newText('Attack', 'Body1');
     this.label = newText('XXX', 'H2');
     this.desc = newText('XXX', 'H3');
@@ -65,7 +59,7 @@ class LineChoiceRenderer implements Renderer<LineChoice> {
     title.anchor.set(0.5, 0);
     this.label.anchor.set(0.5, 0);
     this.desc.anchor.set(0.5, 0);
-    title.x = this.label.x = this.desc.x = parent.width / 2;
+    title.x = this.label.x = this.desc.x = width / 2;
 
     this.label.y = 30;
     this.desc.position.y = 70;
@@ -108,23 +102,27 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
       position: new Point(0, 20),
       scale: new Point(-1, 1),
     });
-    (leftArrowSprite.x = leftArrowSprite.width), (leftArrowSprite.scale.x = -1);
+    leftArrowSprite.x = leftArrowSprite.width;
+    leftArrowSprite.scale.x = -1;
 
-    this.prevBtn = Button.from(leftArrowSprite, this.prev).addTo(this.view);
+    this.prevBtn = Button.from(leftArrowSprite, this.prev);
 
     this.nextBtn = Button.from(
       bigIcon('IcoArrow', {
         position: new Point(this.prevBtn.stage.width + opts.textSpace, 20),
       }),
       this.next
-    ).addTo(this.view);
+    );
 
-    this.renderer = this.createRenderer(this.view);
+    const textContainer = newContainer(leftArrowSprite.x, 0);
+    this.view.addChild(leftArrowSprite, textContainer, this.nextBtn.stage);
+
+    this.renderer = this.createRenderer(textContainer, opts.textSpace);
 
     this.update(this.idx);
   }
 
-  abstract createRenderer(parent: Container): Renderer<T>;
+  abstract createRenderer(parent: Container, width: number): Renderer<T>;
 
   get currentValue() {
     return this.choices[this.idx];
@@ -160,13 +158,13 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
 }
 
 export class BoostSelector extends ArrowSelector<BoostChoice> {
-  createRenderer(view: Container) {
-    return new BoostChoiceRenderer(this.view);
+  createRenderer(view: Container, width: number) {
+    return new BoostChoiceRenderer(view, width);
   }
 }
 
 export class LinesSelector extends ArrowSelector<LineChoice> {
-  createRenderer(view: Container) {
-    return new LineChoiceRenderer(this.view);
+  createRenderer(view: Container, width: number) {
+    return new LineChoiceRenderer(view, width);
   }
 }

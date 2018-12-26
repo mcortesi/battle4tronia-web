@@ -3,7 +3,7 @@ import { Line } from './api';
 export class BoostChoice {
   static ALL: BoostChoice[] = [
     new BoostChoice('Normal', 10, 1),
-    new BoostChoice('Strong', 50, 1.15),
+    new BoostChoice('Strong', 30, 1.15),
     new BoostChoice('Max', 50, 1.3),
     new BoostChoice('Epic', 100, 1.5),
   ];
