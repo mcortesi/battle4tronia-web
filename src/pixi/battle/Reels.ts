@@ -177,7 +177,7 @@ export class ReelsUI extends UIComponent {
       ),
     ];
 
-    if (result.rowWinStatus.some(x => x)) {
+    if (result.reels.some(cps => cps.find(cp => cp.active) != null)) {
       tweens[tweens.length - 1].chain(this.animeWin(result));
     }
 
