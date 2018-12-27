@@ -23,7 +23,7 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
 
   primaryBtn('connect', gd.requestConnect.bind(gd), stage);
 
-  parent.addChild(
+  stage.addChild(
     HowtoPlayBtn(() => {
       Modal({
         screenStage: parent,

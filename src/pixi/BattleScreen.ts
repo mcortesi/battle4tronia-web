@@ -47,10 +47,6 @@ function createUI(opts: BattleScreenProps) {
   const reelsUI = new ReelsUI(Layout.reels).addTo(stage);
   reelsUI.selectLines(opts.attack);
 
-  stage.addChild(Hero(opts.size));
-  const villain = Villain(opts.size);
-  stage.addChild(villain.stage);
-
   const energyBarUI = new Bar({
     ...Layout.energyBar,
     maxValue: 100,
@@ -63,6 +59,10 @@ function createUI(opts: BattleScreenProps) {
     maxValue: opts.battle.villain.maxHp,
     initValue: opts.battle.villain.hp,
   }).addTo(stage);
+
+  stage.addChild(Hero(opts.size));
+  const villain = Villain(opts.size);
+  stage.addChild(villain.stage);
 
   stage.addChild(
     GlobalButtons({

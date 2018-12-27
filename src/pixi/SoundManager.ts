@@ -1,5 +1,5 @@
 import { Howl } from 'howler';
-import { rndElem, wait } from '../utils';
+import { rndElem } from '../utils';
 
 const Spec = {
   src: ['/assets/sounds.ogg', '/assets/sounds.m4a', '/assets/sounds.mp3', '/assets/sounds.ac3'],
