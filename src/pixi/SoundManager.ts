@@ -145,8 +145,9 @@ export class SoundManager {
     return this.playAndWait(rndElem(winSounds));
   }
 
-  playTaunt() {
-    return this.playAndWait(rndElem(Taunts));
+  async playVillainEntry() {
+    await this.playAndWait('villainEntry');
+    await this.playAndWait(rndElem(Taunts));
   }
 
   play(id: SoundId) {

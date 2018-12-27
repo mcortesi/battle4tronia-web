@@ -193,7 +193,7 @@ export class ReelsUI extends UIComponent {
         this.reels.forEach(r => {
           r.sprites.sort((a, b) => a.y - b.y);
         });
-        SoundManager.play(result.sound);
+        SoundManager.play(result.featuredMove.soundId);
         resolve();
       });
       this.currAnimation!.stop();

@@ -14,7 +14,7 @@ import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import SoundManager from './SoundManager';
-import { newContainer, newSprite, newText } from './utils';
+import { newContainer, newSprite, newText, centerX } from './utils';
 import { Button } from './utils/Button';
 
 export interface UIState {
@@ -95,21 +95,23 @@ function createUI(opts: BattleScreenProps) {
     },
   });
 
-  stage.addChild(
-    newSprite('UIShield.png', {
-      anchor: new Point(0.5, 0),
-      position: new Point(opts.size.width / 2, 436),
-    })
-  );
-
   const spinBtn = primaryBtn('fight', opts.gd.requestSpin.bind(opts.gd), stage);
-
+  const uiShield = newSprite('UIShield.png');
   const lowBalanceText = newText('Need more tronium', 'Body2');
-  stage.addChild(lowBalanceText);
-  lowBalanceText.anchor.x = 0.5;
-  lowBalanceText.x = opts.size.width / 2;
+  const winText = newText('', 'H3');
+
+  centerX(opts.size.width, uiShield);
+  centerX(opts.size.width, lowBalanceText);
+  centerX(opts.size.width, winText);
+
+  uiShield.y = 436;
   lowBalanceText.y = 645;
+  winText.y = 35;
+
+  stage.addChild(uiShield, lowBalanceText, winText);
+
   lowBalanceText.visible = false;
+  winText.visible = false;
 
   return {
     dispose: () => {
@@ -118,6 +120,14 @@ function createUI(opts: BattleScreenProps) {
     },
     villain,
     spinBtn,
+    showWinText: (txt: string, duration: number) => {
+      winText.visible = true;
+      winText.text = txt;
+      centerX(opts.size.width, winText);
+      setTimeout(() => {
+        winText.visible = false;
+      }, duration);
+    },
     linesSelectorUI,
     betSelectorUI,
     hpBarUI,
@@ -165,6 +175,10 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
       try {
         await ui.reelsUI.stopAnimation(result.result);
 
+        if (result.result.featuredMove.winMsg) {
+          ui.showWinText(result.result.featuredMove.winMsg, 3000);
+        }
+
         ui.scoresUI.setFame(result.player.fame);
         updateTronium(result.player.tronium);
         ui.hpBarUI.updateValue(result.currentBattle.villain.hp);
@@ -182,8 +196,12 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
     resetBattle: async battle => {
       await spinLock.acquire();
       try {
+        isSpinning = true;
+        handleSpinButton();
         await ui.villain.createNew();
         ui.hpBarUI.reset(battle.villain.maxHp);
+        isSpinning = false;
+        handleSpinButton();
       } finally {
         spinLock.release();
       }
@@ -265,7 +283,7 @@ function Villain(parentSize: Dimension) {
 
       const t = new Tween(villain).to({ x: 0 }, 1500).start();
       await Promise.all([
-        SoundManager.playTaunt(),
+        SoundManager.playVillainEntry(),
         new Promise(resolve => {
           t.onComplete(resolve);
         }),
