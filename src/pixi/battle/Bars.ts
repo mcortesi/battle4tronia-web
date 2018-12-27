@@ -13,7 +13,7 @@ export interface BarOpts extends Position, Dimension {
 export class Bar extends UIComponent {
   readonly stage: Container;
   outerBar: Graphics;
-  readonly maxValue: number;
+  maxValue: number;
 
   constructor(private readonly opts: BarOpts) {
     super();
@@ -41,5 +41,10 @@ export class Bar extends UIComponent {
   updateValue(newValue: number) {
     const newWidth = (this.opts.width * newValue) / this.maxValue;
     new Tween(this.outerBar).to({ width: newWidth }, 300).start();
+  }
+
+  reset(max: number) {
+    this.maxValue = max;
+    this.outerBar.width = this.opts.width;
   }
 }

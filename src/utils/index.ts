@@ -66,3 +66,33 @@ export function transpose<A>(matrix: A[][]): A[][] {
   }
   return newMatrix;
 }
+
+type AcquireFn = () => void;
+
+export class Lock {
+  private _isAcquired = false;
+  private acquireQueue: AcquireFn[] = [];
+
+  release() {
+    this._isAcquired = false;
+    if (this.acquireQueue.length > 0) {
+      const first = this.acquireQueue.shift()!;
+      first();
+    }
+  }
+
+  get acquired() {
+    return this._isAcquired;
+  }
+
+  acquire(): Promise<void> {
+    if (this.acquired) {
+      return new Promise(resolve => {
+        this.acquireQueue.push(resolve);
+      });
+    } else {
+      this._isAcquired = true;
+      return Promise.resolve();
+    }
+  }
+}

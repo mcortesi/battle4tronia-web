@@ -1,6 +1,6 @@
 import { BoostChoice, LineChoice } from '../model/base';
 import { ClientSpinResult } from '../model/game';
-import { GlobalStats, PlayerStats, Player } from '../model/api';
+import { GlobalStats, PlayerStats, Player, Battle } from '../model/api';
 
 export interface HowToPlayActions {
   showHowToPlay(): void;
@@ -26,6 +26,7 @@ export interface HomeScreenActions {
 export interface BattleScreenActions {
   startSpinning(tronium: number): void;
   endSpinning(result: ClientSpinResult): void;
+  resetBattle(battle: Battle): void;
   canBetWithCurrentBalance(isEnough: boolean): void;
 }
 
@@ -165,6 +166,9 @@ export class GlobalDispatcher
   }
   endSpinning(result: ClientSpinResult): void {
     this.fireEvent(this.battleScreenListeners, 'endSpinning', result);
+  }
+  resetBattle(battle: Battle): void {
+    this.fireEvent(this.battleScreenListeners, 'resetBattle', battle);
   }
   canBetWithCurrentBalance(isEnough: boolean): void {
     this.fireEvent(this.battleScreenListeners, 'canBetWithCurrentBalance', isEnough);

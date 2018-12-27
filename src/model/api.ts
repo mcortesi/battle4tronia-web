@@ -185,7 +185,7 @@ export class FakeApi implements API {
   }
 
   async getCurrentBattle(): Promise<Battle> {
-    if (this.battle == null) {
+    if (this.battle == null || this.battle.status === BattleStatus.FINISHED) {
       this.battle = {
         status: BattleStatus.READY,
         villain: {

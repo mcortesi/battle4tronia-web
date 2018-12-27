@@ -1,4 +1,5 @@
 import { Howl } from 'howler';
+import { rndElem, wait } from '../utils';
 
 const Spec = {
   src: ['/assets/sounds.ogg', '/assets/sounds.m4a', '/assets/sounds.mp3', '/assets/sounds.ac3'],
@@ -48,12 +49,35 @@ const Spec = {
 
 export type SoundId = keyof typeof Spec['sprite'];
 
+const Taunts: SoundId[] = [
+  'taunt1',
+  'taunt10',
+  'taunt11',
+  'taunt12',
+  'taunt13',
+  'taunt14',
+  'taunt15',
+  'taunt16',
+  'taunt17',
+  'taunt18',
+  'taunt19',
+  'taunt2',
+  'taunt3',
+  'taunt4',
+  'taunt5',
+  'taunt6',
+  'taunt7',
+  'taunt8',
+  'taunt9',
+];
+
 export class SoundManager {
   private howl: Howl;
   private currentSpin: null | number = null;
   private homeSound: null | number = null;
   private battleSounds: null | number[] = null;
   private toStopOnFade: Set<number> = new Set();
+  private endListeners: Map<number, () => void> = new Map();
 
   constructor() {
     this.howl = new Howl(Spec as any);
@@ -61,6 +85,13 @@ export class SoundManager {
       if (this.toStopOnFade.has(id)) {
         this.howl.stop(id);
         this.toStopOnFade.delete(id);
+      }
+    });
+
+    this.howl.on('end', id => {
+      if (this.endListeners.has(id)) {
+        this.endListeners.get(id)!();
+        this.endListeners.delete(id);
       }
     });
   }
@@ -109,8 +140,24 @@ export class SoundManager {
   //   this.play('spin');
   // }
 
+  playWin() {
+    const winSounds: SoundId[] = ['battleEndA', 'battleEndB', 'battleEndC'];
+    return this.playAndWait(rndElem(winSounds));
+  }
+
+  playTaunt() {
+    return this.playAndWait(rndElem(Taunts));
+  }
+
   play(id: SoundId) {
     return this.howl.play(id);
+  }
+
+  async playAndWait(id: SoundId) {
+    const num = this.play(id);
+    return new Promise(resolve => {
+      this.endListeners.set(num, resolve);
+    });
   }
 
   fadeAndStop(id: number, duration: number) {

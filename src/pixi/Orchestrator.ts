@@ -4,6 +4,7 @@ import { AssetLoader } from './AssetLoader';
 import { Layout } from './constants';
 import { GlobalDispatcher, ModelActions } from './GlobalDispatcher';
 import { MainUI } from './MainUI';
+import { BattleStatus } from '../model/api';
 
 export class Orchestrator implements ModelActions {
   private game: GameClient;
@@ -106,6 +107,10 @@ export class Orchestrator implements ModelActions {
     });
     this.gd.endSpinning(res);
     this.updateBetBalanceCheck();
+    if (res.currentBattle.status === BattleStatus.FINISHED) {
+      const battle = await this.game.getCurrentBattle();
+      this.gd.resetBattle(battle);
+    }
   };
 
   updateBetBalanceCheck() {

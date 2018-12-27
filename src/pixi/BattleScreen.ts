@@ -1,6 +1,10 @@
-import { Container, Point } from 'pixi.js';
-import { Battle, Player } from '../model/api';
+import { Tween } from '@tweenjs/tween.js';
+import { Container, extras, loader, Point } from 'pixi.js';
+import { Battle, BattleStatus, Player } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
+import { Lock, rndInt } from '../utils';
+import { BattleBackground } from './backgrounds';
+import { primaryBtn, smallIcon } from './basic';
 import { Bar } from './battle/Bars';
 import { BoostSelector, LinesSelector } from './battle/ChoiceSelector';
 import { ReelsUI } from './battle/Reels';
@@ -9,11 +13,9 @@ import { Dimension, Position } from './commons';
 import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
+import SoundManager from './SoundManager';
 import { newContainer, newSprite, newText } from './utils';
 import { Button } from './utils/Button';
-import { smallIcon, primaryBtn } from './basic';
-import { BattleBackground } from './backgrounds';
-import { rndInt } from '../utils';
 
 export interface UIState {
   boostIdx: number;
@@ -46,7 +48,8 @@ function createUI(opts: BattleScreenProps) {
   reelsUI.selectLines(opts.attack);
 
   stage.addChild(Hero(opts.size));
-  stage.addChild(Villain(opts.size));
+  const villain = Villain(opts.size);
+  stage.addChild(villain.stage);
 
   const energyBarUI = new Bar({
     ...Layout.energyBar,
@@ -113,6 +116,7 @@ function createUI(opts: BattleScreenProps) {
       opts.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
+    villain,
     spinBtn,
     linesSelectorUI,
     betSelectorUI,
@@ -148,21 +152,41 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
     },
   });
 
+  const spinLock = new Lock();
   const unregister2 = gd.registerForBattleScreen({
-    startSpinning: (tronium: number) => {
+    startSpinning: async (tronium: number) => {
       isSpinning = true;
       handleSpinButton();
       updateTronium(tronium);
       ui.reelsUI.startAnimation();
     },
     endSpinning: async result => {
-      await ui.reelsUI.stopAnimation(result.result);
+      await spinLock.acquire();
+      try {
+        await ui.reelsUI.stopAnimation(result.result);
 
-      ui.scoresUI.setFame(result.player.fame);
-      updateTronium(result.player.tronium);
-      ui.hpBarUI.updateValue(result.currentBattle.villain.hp);
-      isSpinning = false;
-      handleSpinButton();
+        ui.scoresUI.setFame(result.player.fame);
+        updateTronium(result.player.tronium);
+        ui.hpBarUI.updateValue(result.currentBattle.villain.hp);
+
+        if (result.currentBattle.status === BattleStatus.FINISHED) {
+          await ui.villain.animateKill();
+        }
+
+        isSpinning = false;
+        handleSpinButton();
+      } finally {
+        spinLock.release();
+      }
+    },
+    resetBattle: async battle => {
+      await spinLock.acquire();
+      try {
+        await ui.villain.createNew();
+        ui.hpBarUI.reset(battle.villain.maxHp);
+      } finally {
+        spinLock.release();
+      }
     },
     canBetWithCurrentBalance: isEnough => {
       lowBalance = !isEnough;
@@ -195,19 +219,59 @@ function Hero(parentSize: Dimension) {
   return hero;
 }
 
-function Villain(parentSize: Dimension) {
-  const baseLayer = newSprite('z04.png');
+function createVillainLayers() {
   const layer3 = newSprite(`z030${rndInt(1, 6)}.png`);
   const layer2 = newSprite(`z020${rndInt(1, 8)}.png`);
   const layer1 = newSprite(`z010${rndInt(1, 8)}.png`);
+  return [layer3, layer2, layer1];
+}
+function Villain(parentSize: Dimension) {
+  const baseLayer = newSprite('z04.png');
 
-  const villain = newContainer(
+  const puff = new extras.AnimatedSprite(loader.resources.characters1.spritesheet!.animations.puff);
+  puff.animationSpeed = 1 / 8;
+  puff.loop = true;
+
+  const villain = newContainer();
+  const stage = newContainer(
     parentSize.width - baseLayer.width,
     parentSize.height - baseLayer.height
   );
+  puff.visible = false;
 
-  villain.addChild(baseLayer, layer3, layer2, layer1);
-  return villain;
+  villain.addChild(baseLayer, ...createVillainLayers());
+  stage.addChild(villain, puff);
+
+  return {
+    stage,
+    animateKill: async () => {
+      puff.visible = true;
+      puff.play();
+      const fadeAnim = new Promise(resolve => {
+        new Tween(villain)
+          .to({ alpha: 0 }, 1500)
+          .onComplete(resolve)
+          .start();
+      });
+      await Promise.all([SoundManager.playWin(), fadeAnim]);
+      puff.visible = false;
+      puff.gotoAndStop(0);
+    },
+    createNew: async () => {
+      villain.removeChildren(1);
+      villain.addChild(...createVillainLayers());
+      villain.alpha = 1;
+      villain.x = baseLayer.width; // out of the screen
+
+      const t = new Tween(villain).to({ x: 0 }, 1500).start();
+      await Promise.all([
+        SoundManager.playTaunt(),
+        new Promise(resolve => {
+          t.onComplete(resolve);
+        }),
+      ]);
+    },
+  };
 }
 
 function GlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
