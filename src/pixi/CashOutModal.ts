@@ -14,7 +14,9 @@ import {
 } from './utils';
 import { Button } from './utils/Button';
 
-export function CashOutModal(opts: ScreenContext & { player: Player }): Disposable {
+export function CashOutModal(
+  opts: ScreenContext & { player: Player; troniumPrice: number }
+): Disposable {
   const Padding = 20;
 
   const modal = Modal({
@@ -34,7 +36,7 @@ export function CashOutModal(opts: ScreenContext & { player: Player }): Disposab
   const troniumIcon = smallIcon('IcoTronium');
   const msg4 = newText(`${opts.player.tronium}`, 'H2');
   const msg5 = newText('You get:', 'Body1');
-  const msg6 = newText(`${opts.player.tronium * 50} TRX`, 'H2');
+  const msg6 = newText(`${opts.player.tronium * opts.troniumPrice} TRX`, 'H2');
 
   const bottomMsg = newText('Will be  transfered to your Tronlink Wallet', 'Body1');
   const btnSellSprite = newSprite('BtnCashout.png');

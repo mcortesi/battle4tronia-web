@@ -114,11 +114,14 @@ export class Orchestrator implements ModelActions {
   }
 
   openAddMoreModal = () => {
-    this.ui.openAddMoreModal();
+    this.ui.openAddMoreModal(this.game.troniumPrice);
   };
 
   openCashOutModal = () => {
-    this.ui.openCashOutModal(this.game.player);
+    this.ui.openCashOutModal({
+      player: this.game.player,
+      troniumPrice: this.game.troniumPrice,
+    });
   };
 
   exitBattle = () => this.goHome();

@@ -108,6 +108,8 @@ export interface API {
   getGlobalStats(): Promise<GlobalStats>;
 
   getPlayerStats(): Promise<PlayerStats>;
+
+  getTroniumPrice(): Promise<number>;
 }
 
 function clonePlayer(player: Player) {
@@ -289,6 +291,10 @@ export class FakeApi implements API {
       },
       villainsDefeated: 55,
     };
+  }
+
+  async getTroniumPrice() {
+    return 1.5;
   }
 }
 

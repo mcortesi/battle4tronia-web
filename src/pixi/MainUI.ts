@@ -93,15 +93,20 @@ export class MainUI {
     );
   }
 
-  openAddMoreModal() {
-    this.setModal(AddMoreModal(this.ctx));
+  openAddMoreModal(troniumPrice: number) {
+    this.setModal(
+      AddMoreModal({
+        ...this.ctx,
+        troniumPrice,
+      })
+    );
   }
 
-  openCashOutModal(player: Player) {
+  openCashOutModal(opts: { player: Player; troniumPrice: number }) {
     this.setModal(
       CashOutModal({
         ...this.ctx,
-        player,
+        ...opts,
       })
     );
   }

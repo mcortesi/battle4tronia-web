@@ -99,16 +99,19 @@ function createUI(opts: BattleScreenProps) {
   const uiShield = newSprite('UIShield.png');
   const lowBalanceText = newText('Need more tronium', 'Body2');
   const winText = newText('', 'H3');
+  const epicnessScore = newText('0', 'H3');
 
   centerX(opts.size.width, uiShield);
   centerX(opts.size.width, lowBalanceText);
   centerX(opts.size.width, winText);
+  centerX(opts.size.width, epicnessScore);
 
   uiShield.y = 436;
+  epicnessScore.y = 500;
   lowBalanceText.y = 645;
   winText.y = 35;
 
-  stage.addChild(uiShield, lowBalanceText, winText);
+  stage.addChild(uiShield, lowBalanceText, winText, epicnessScore);
 
   lowBalanceText.visible = false;
   winText.visible = false;
@@ -127,6 +130,10 @@ function createUI(opts: BattleScreenProps) {
       setTimeout(() => {
         winText.visible = false;
       }, duration);
+    },
+    setEpicness: (value: number) => {
+      epicnessScore.text = value.toString();
+      centerX(opts.size.width, epicnessScore);
     },
     linesSelectorUI,
     betSelectorUI,
@@ -182,6 +189,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
         ui.scoresUI.setFame(result.player.fame);
         updateTronium(result.player.tronium);
         ui.hpBarUI.updateValue(result.currentBattle.villain.hp);
+        ui.setEpicness(result.currentBattle.epicness);
 
         if (result.currentBattle.status === BattleStatus.FINISHED) {
           await ui.villain.animateKill();

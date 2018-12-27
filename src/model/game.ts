@@ -8,6 +8,7 @@ export interface ClientSpinResult {
 }
 
 export class GameClient {
+  troniumPrice: number;
   private api: API;
   private status: GameStatus = GameStatus.INSTALL_TRONLINK;
   private _player: null | Player = null;
@@ -52,6 +53,7 @@ export class GameClient {
   }
 
   async init() {
+    this.troniumPrice = await this.api.getTroniumPrice();
     await this.refreshStatus();
     switch (this.status) {
       case GameStatus.INSTALL_TRONLINK:

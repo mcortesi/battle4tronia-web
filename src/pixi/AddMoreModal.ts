@@ -15,7 +15,7 @@ import { Button } from './utils/Button';
 
 // screen: { width: 1366, height: 688 },
 
-export function AddMoreModal(opts: ScreenContext): Disposable {
+export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Disposable {
   let currentValue: null | { tronium: number; trx: number } = null;
   const Padding = 30;
 
@@ -36,6 +36,7 @@ export function AddMoreModal(opts: ScreenContext): Disposable {
   btnBuy.disable = true;
 
   const optionBoxes = createOptionBoxes({
+    troniumPrice: opts.troniumPrice,
     size: modal.bodySize,
     onSelect: value => {
       btnBuy.disable = false;
@@ -65,9 +66,11 @@ export function AddMoreModal(opts: ScreenContext): Disposable {
 }
 
 function createOptionBoxes({
+  troniumPrice,
   size,
   onSelect,
 }: {
+  troniumPrice: number;
   size: { width: number; height: number };
   onSelect: (value: { tronium: number; trx: number }) => void;
 }) {
@@ -82,19 +85,19 @@ function createOptionBoxes({
   const boxes = [
     SelectBox({
       tronium: 100,
-      trx: 50,
+      trx: troniumPrice * 100,
       icon: 'IcoPack1.png',
       onClick: () => select(0),
     }),
     SelectBox({
       tronium: 500,
-      trx: 50 * 5,
+      trx: troniumPrice * 500,
       icon: 'IcoPack2.png',
       onClick: () => select(1),
     }),
     SelectBox({
       tronium: 1000,
-      trx: 50 * 10,
+      trx: troniumPrice * 1000,
       icon: 'IcoPack3.png',
       onClick: () => select(2),
     }),
