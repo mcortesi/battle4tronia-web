@@ -1,6 +1,7 @@
 import { rndElem, shuffle, transpose } from '../utils';
 import { Bet } from './api';
 import { BoostChoice } from './base';
+import { SoundId } from '../pixi/SoundManager';
 
 export const ReelSize = {
   rows: 3,
@@ -24,10 +25,10 @@ export class Card {
   static ALL: Card[] = [];
   static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
 
-  static HeroA = new Card('punch', CardKind.Attack, true);
-  static HeroB = new Card('boomerang', CardKind.Attack, true);
-  static HeroC = new Card('sword', CardKind.Attack, true);
-  static HeroD = new Card('tronium', CardKind.Attack, true);
+  static Punch = new Card('punch', CardKind.Attack, true);
+  static Boomerang = new Card('boomerang', CardKind.Attack, true);
+  static Sword = new Card('sword', CardKind.Attack, true);
+  static Tronium = new Card('tronium', CardKind.Attack, true);
 
   static TrashA = new Card('tA', CardKind.Trash, false);
   static TrashB = new Card('tB', CardKind.Trash, false);
@@ -167,12 +168,12 @@ function b1ABCD4T(): CardPosition[] {
 function b2ABCD1NP2T(): CardPosition[] {
   const [attackCard, diffAttackCard] = shuffle(
     rndElem([
-      [Card.HeroA, Card.HeroB],
-      [Card.HeroA, Card.HeroC],
-      [Card.HeroA, Card.HeroD],
-      [Card.HeroB, Card.HeroC],
-      [Card.HeroB, Card.HeroD],
-      [Card.HeroC, Card.HeroD],
+      [Card.Punch, Card.Boomerang],
+      [Card.Punch, Card.Sword],
+      [Card.Punch, Card.Tronium],
+      [Card.Boomerang, Card.Sword],
+      [Card.Boomerang, Card.Tronium],
+      [Card.Sword, Card.Tronium],
     ])
   );
 
@@ -188,12 +189,12 @@ function b2ABCD1NP2T(): CardPosition[] {
 function b2ABCD2NP1T(): CardPosition[] {
   const [attackCard, diffAttackCard] = shuffle(
     rndElem([
-      [Card.HeroA, Card.HeroB],
-      [Card.HeroA, Card.HeroC],
-      [Card.HeroA, Card.HeroD],
-      [Card.HeroB, Card.HeroC],
-      [Card.HeroB, Card.HeroD],
-      [Card.HeroC, Card.HeroD],
+      [Card.Punch, Card.Boomerang],
+      [Card.Punch, Card.Sword],
+      [Card.Punch, Card.Tronium],
+      [Card.Boomerang, Card.Sword],
+      [Card.Boomerang, Card.Tronium],
+      [Card.Sword, Card.Tronium],
     ])
   );
 
@@ -236,7 +237,9 @@ export class Move {
     return result.result;
   }
 
-  static createAll(table: Array<[string, number, number, number, number, () => CardPosition[]]>) {
+  static createAll(
+    table: Array<[string, number, number, number, number, () => CardPosition[], SoundId]>
+  ) {
     if (Move.ALL.length > 0) {
       throw new Error('Moves Already created!');
     }
@@ -268,7 +271,8 @@ export class Move {
     readonly payout: number,
     readonly damage: number,
     readonly epicness: number,
-    private builder: () => CardPosition[]
+    private builder: () => CardPosition[],
+    readonly soundId: SoundId
   ) {}
 
   isWin() {
@@ -306,6 +310,7 @@ export interface BetResult {
   winnings: Winnings;
   reels: CardPosition[][];
   rowWinStatus: boolean[];
+  sound: SoundId;
 }
 
 export function winningsFor(bet: Bet, combinations: Move[]) {
@@ -331,10 +336,20 @@ export function winningsFor(bet: Bet, combinations: Move[]) {
   };
 }
 
+function getFeaturedMove(moves: Move[]) {
+  const winningMoves = moves.filter(c => c.isWin());
+  if (winningMoves.length > 0) {
+    return winningMoves.reduce((best, curr) => (best.payout >= curr.payout ? best : curr));
+  }
+  return moves.reduce((best, curr) => (best.epicness >= curr.epicness ? best : curr));
+}
+
 export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
   const winnings = winningsFor(bet, combinations);
   const stillMove = () => Move.rnd().buildStill();
   const pos = combinations.map(c => c.build());
+
+  const featuredMove = getFeaturedMove(combinations);
 
   console.log('WIN_COMB', combinations.map(c => c.id));
   switch (bet.lines) {
@@ -343,18 +358,21 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
         winnings,
         reels: transpose([stillMove(), pos[0], stillMove()]),
         rowWinStatus: [false, combinations[0].isWin(), false],
+        sound: featuredMove.soundId,
       };
     case 2:
       return {
         winnings,
         reels: transpose([pos[0], stillMove(), pos[1]]),
         rowWinStatus: [combinations[0].isWin(), false, combinations[1].isWin()],
+        sound: featuredMove.soundId,
       };
     case 3:
       return {
         winnings,
         reels: transpose(pos),
         rowWinStatus: combinations.map(c => c.isWin()),
+        sound: featuredMove.soundId,
       };
 
     default:
@@ -363,40 +381,40 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
 }
 
 // prettier-ignore
-const MovesTable: Array<[string, number, number, number, number, () => CardPosition[]]> = [
+const MovesTable: Array<[string, number, number, number, number, () => CardPosition[], SoundId]> = [
   // ID          PROB    PAYOUT DAMAGE EPICNESS   MOVE GENERATOR
-  ['1S4*'	      , 0.0015 , 30	  , 45   , 3333   , scatter                         ],
-  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 83     , b3of(Card.HeroA)                ],
-  ['3B2T'	      , 0.0500 , 0.7  , 7    , 100    , b3of(Card.HeroB)                ],
-  ['3C2T'	      , 0.0400 , 1.2  , 14   , 125    , b3of(Card.HeroC)                ],
-  ['3D2T'	      , 0.0080 , 7.7  , 29   , 625    , b3of(Card.HeroD)                ],
-  ['4A1T'	      , 0.0312 , 1	  , 5    , 160    , b4of(Card.HeroA)                ],
-  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 192    , b4of(Card.HeroB)                ],
-  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 240    , b4of(Card.HeroC)                ],
-  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 1202   , b4of(Card.HeroD)                ],
-  ['5A'	        , 0.0150 , 2.5	, 6	   , 333    , b5of(Card.HeroA)                ],
-  ['5B'	        , 0.0125 , 3.5	, 12.5 , 400    , b5of(Card.HeroB)                ],
-  ['5C'	        , 0.0100 , 18	  , 25	 , 500    , b5of(Card.HeroC)                ],
-  ['5D'	        , 0.0020 , 50	  , 50	 , 2500   , b5of(Card.HeroD)                ],
-  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 625    , b3and2(Card.HeroA, Card.HeroB)  ],
-  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 694    , b3and2(Card.HeroA, Card.HeroC)  ],
-  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 772    , b3and2(Card.HeroA, Card.HeroD)  ],
-  ['3B2A'	      , 0.0067 , 1	  , 10	 , 750    , b3and2(Card.HeroB, Card.HeroA)  ],
-  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 833    , b3and2(Card.HeroB, Card.HeroC)  ],
-  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 926    , b3and2(Card.HeroB, Card.HeroD)  ],
-  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 938    , b3and2(Card.HeroC, Card.HeroA)  ],
-  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 1042   , b3and2(Card.HeroC, Card.HeroB)  ],
-  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 1157   , b3and2(Card.HeroC, Card.HeroD)  ],
-  ['3D2A'	      , 0.0011 , 8	  , 32	 , 4688   , b3and2(Card.HeroD, Card.HeroA)  ],
-  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 5208   , b3and2(Card.HeroD, Card.HeroB)  ],
-  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 5787   , b3and2(Card.HeroD, Card.HeroC)  ],
-  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 1000   , b3ABCD1SN1T                     ],
-  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 1500   , b4ABCD1SN                       ],
-  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0      , b2ABCD3T                        ],
-  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0      , b1ABCD4T                        ],
-  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD1NP2T                     ],
-  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD2NP1T                     ],
-  ['5T'	        , 0.2116 , 0	  , 0	   , 0      , b5T                             ],
+  ['1S4*'	      , 0.0015 , 30	  , 45   , 3333   , scatter                             , 'card-scatter'   ],
+  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 83     , b3of(Card.Punch)                    , 'card-punch'     ],
+  ['3B2T'	      , 0.0500 , 0.7  , 7    , 100    , b3of(Card.Boomerang)                , 'card-boomerang' ],
+  ['3C2T'	      , 0.0400 , 1.2  , 14   , 125    , b3of(Card.Sword)                    , 'card-sword'     ],
+  ['3D2T'	      , 0.0080 , 7.7  , 29   , 625    , b3of(Card.Tronium)                  , 'card-tronium'   ],
+  ['4A1T'	      , 0.0312 , 1	  , 5    , 160    , b4of(Card.Punch)                    , 'card-punch'     ],
+  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 192    , b4of(Card.Boomerang)                , 'card-boomerang' ],
+  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 240    , b4of(Card.Sword)                    , 'card-sword'     ],
+  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 1202   , b4of(Card.Tronium)                  , 'card-tronium'   ],
+  ['5A'	        , 0.0150 , 2.5	, 6	   , 333    , b5of(Card.Punch)                    , 'card-punch'     ],
+  ['5B'	        , 0.0125 , 3.5	, 12.5 , 400    , b5of(Card.Boomerang)                , 'card-boomerang' ],
+  ['5C'	        , 0.0100 , 18	  , 25	 , 500    , b5of(Card.Sword)                    , 'card-sword'     ],
+  ['5D'	        , 0.0020 , 50	  , 50	 , 2500   , b5of(Card.Tronium)                  , 'card-tronium'   ],
+  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 625    , b3and2(Card.Punch, Card.Boomerang)  , 'card-punch'     ],
+  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 694    , b3and2(Card.Punch, Card.Sword)      , 'card-punch'     ],
+  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 772    , b3and2(Card.Punch, Card.Tronium)    , 'card-punch'     ],
+  ['3B2A'	      , 0.0067 , 1	  , 10	 , 750    , b3and2(Card.Boomerang, Card.Punch)  , 'card-boomerang' ],
+  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 833    , b3and2(Card.Boomerang, Card.Sword)  , 'card-boomerang' ],
+  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 926    , b3and2(Card.Boomerang, Card.Tronium), 'card-boomerang' ],
+  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 938    , b3and2(Card.Sword, Card.Punch)      , 'card-sword'     ],
+  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 1042   , b3and2(Card.Sword, Card.Boomerang)  , 'card-sword'     ],
+  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 1157   , b3and2(Card.Sword, Card.Tronium)    , 'card-sword'     ],
+  ['3D2A'	      , 0.0011 , 8	  , 32	 , 4688   , b3and2(Card.Tronium, Card.Punch)    , 'card-tronium'   ],
+  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 5208   , b3and2(Card.Tronium, Card.Boomerang), 'card-tronium'   ],
+  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 5787   , b3and2(Card.Tronium, Card.Sword)    , 'card-tronium'   ],
+  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 1000   , b3ABCD1SN1T                         , 'card-scatterneg'],
+  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 1500   , b4ABCD1SN                           , 'card-scatterneg'],
+  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0      , b2ABCD3T                            , 'card-trashA'     ],
+  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0      , b1ABCD4T                            , 'card-trashB'     ],
+  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD1NP2T                         , 'card-trashC'     ],
+  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD2NP1T                         , 'card-trashD'     ],
+  ['5T'	        , 0.2116 , 0	  , 0	   , 0      , b5T                                 , 'card-trashE'     ],
 ];
 
 Move.createAll(MovesTable);

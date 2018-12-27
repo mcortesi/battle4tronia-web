@@ -5,6 +5,7 @@ import { BetResult, Card } from '../../model/reel';
 import { genArray, transpose } from '../../utils';
 import { Position, UIComponent } from '../commons';
 import { newContainer } from '../utils';
+import SoundManager from '../SoundManager';
 
 const BG_SELECTED_COLOR = 0xd8d8d8;
 
@@ -84,7 +85,6 @@ export class ReelsUI extends UIComponent {
       .repeat(3)
       .onStart(() => {
         this.stage.addChild(g);
-
         for (let r = 0; r < betResult.reels.length; r++) {
           for (let c = 0; c < betResult.reels[r].length; c++) {
             const res = betResult.reels[r][c];
@@ -118,6 +118,9 @@ export class ReelsUI extends UIComponent {
     };
     this.currAnimation = new Tween.Tween(animData)
       .to({ y: this.opts.cellHeight * 60 }, 5000)
+      .onStart(() => {
+        SoundManager.startSpin();
+      })
       .onUpdate((curr: typeof animData) => {
         const delta = curr.y - curr.prev;
 
@@ -181,11 +184,16 @@ export class ReelsUI extends UIComponent {
       tweens[tweens.length - 1].chain(this.animeWin(result));
     }
 
+    tweens[0].onComplete(() => {
+      SoundManager.stopSpin(700);
+    });
+
     return new Promise(resolve => {
       tweens[tweens.length - 1].onComplete(() => {
         this.reels.forEach(r => {
           r.sprites.sort((a, b) => a.y - b.y);
         });
+        SoundManager.play(result.sound);
         resolve();
       });
       this.currAnimation!.stop();

@@ -1,9 +1,8 @@
-import { Container, Point, Text, Sprite } from 'pixi.js';
+import { Container, Point, Sprite, Text } from 'pixi.js';
 import { BoostChoice, LineChoice } from '../../model/base';
 import { bigIcon, smallIcon } from '../basic';
 import { Position } from '../commons';
-import SoundManager from '../SoundManager';
-import { newContainer, newSprite, newText, centerX, centerGroupX } from '../utils';
+import { centerGroupX, centerX, newContainer, newSprite, newText } from '../utils';
 import { Button } from '../utils/Button';
 
 export interface SelectorUI<T> {
@@ -105,7 +104,7 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
     leftArrowSprite.x = leftArrowSprite.width;
     leftArrowSprite.scale.x = -1;
 
-    this.prevBtn = Button.from(leftArrowSprite, this.prev);
+    this.prevBtn = Button.from(leftArrowSprite, this.prev, { soundId: 'btnNegative' });
 
     this.nextBtn = Button.from(
       bigIcon('IcoArrow', {
@@ -137,14 +136,12 @@ abstract class ArrowSelector<T> implements SelectorUI<T> {
 
   next = () => {
     if (this.hasNext()) {
-      SoundManager.playBet();
       this.opts.setValue(this.idx + 1);
     }
   };
 
   prev = () => {
     if (this.hasPrev()) {
-      SoundManager.playBet();
       this.opts.setValue(this.idx - 1);
     }
   };

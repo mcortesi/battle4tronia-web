@@ -1,19 +1,27 @@
 import { Rectangle, Sprite, Texture } from 'pixi.js';
 import { newSprite } from '.';
 import { UIComponent } from '../commons';
+import SoundManager from '../SoundManager';
 
 export interface ButtonOpts {
   onClick: () => void;
   texture?: Texture | string;
   sprite?: Sprite;
   hitArea?: Rectangle;
+  soundId: 'btnPositive' | 'btnNegative';
 }
+
 export class Button extends UIComponent {
-  static from(sprite: Sprite, onClick: () => void, other: { hitArea?: Rectangle } = {}) {
+  static from(
+    sprite: Sprite,
+    onClick: () => void,
+    other: { hitArea?: Rectangle; soundId?: 'btnPositive' | 'btnNegative' } = {}
+  ) {
     return new Button({
       ...other,
       sprite,
       onClick,
+      soundId: other.soundId || 'btnPositive',
     });
   }
 
@@ -30,8 +38,12 @@ export class Button extends UIComponent {
     if (opts.hitArea) {
       this.stage.hitArea = opts.hitArea;
     }
-    this.stage.on('click', opts.onClick);
+    this.stage.on('click', () => {
+      SoundManager.play(opts.soundId);
+      opts.onClick();
+    });
   }
+
   get disable() {
     return this.stage.buttonMode;
   }

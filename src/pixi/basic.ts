@@ -1,6 +1,5 @@
 import { Container, Point } from 'pixi.js';
 import { Layout } from './constants';
-import SoundManager from './SoundManager';
 import { LayoutOptions, newSprite } from './utils';
 import { Button } from './utils/Button';
 
@@ -76,12 +75,7 @@ export function primaryBtn(
     ),
   });
 
-  const onClick = () => {
-    SoundManager.playSpin();
-    action();
-  };
-
-  const btn = Button.from(btnSprite, onClick);
+  const btn = Button.from(btnSprite, action);
   parent.addChild(btn.stage);
   return btn;
 }

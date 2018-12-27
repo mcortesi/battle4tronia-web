@@ -1,6 +1,7 @@
 import { loader } from 'pixi.js';
 import WebFont from 'webfontloader';
 import { GlobalDispatcher } from './GlobalDispatcher';
+import SoundManager from './SoundManager';
 
 const ResouceMap = {
   // backgrounds
@@ -24,8 +25,13 @@ export class AssetLoader {
   }
 
   async loadAll() {
-    await Promise.all([this.loadFonts(), this.loadLoadingStageResources()]);
+    await Promise.all([this.loadSounds(), this.loadFonts(), this.loadLoadingStageResources()]);
     await this.loadOtherResources();
+  }
+
+  private async loadSounds() {
+    await SoundManager.load();
+    this.progressDelta(30);
   }
 
   private loadFonts() {
@@ -59,7 +65,7 @@ export class AssetLoader {
 
   private loadOtherResources() {
     const resourceKeys = Object.keys(ResouceMap);
-    const delta = Math.floor(90 / resourceKeys.length);
+    const delta = Math.floor(60 / resourceKeys.length);
     // loader.reset();
     for (const key of resourceKeys) {
       loader.add(key, ResouceMap[key]);

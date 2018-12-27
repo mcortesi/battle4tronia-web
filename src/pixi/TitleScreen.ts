@@ -28,7 +28,6 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
       Modal({
         screenStage: parent,
         screenSize: size,
-        size: { width: (size.width * 2) / 3, height: (size.height * 2) / 3 },
         onClose: () => {
           console.log('se cerro!');
         },

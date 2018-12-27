@@ -1,11 +1,12 @@
-import { Container, Graphics, Point } from 'pixi.js';
+import { Container, Point } from 'pixi.js';
 import { Player } from '../model/api';
 import { bigIcon, HowtoPlayBtn, primaryBtn, smallIcon } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox, SecondaryStatBox } from './StatBox';
-import { newContainer, newSprite, newText } from './utils';
+import { newContainer, newSprite, newText, postionAfterX, verticalAlignCenter } from './utils';
+import { Button } from './utils/Button';
 
 export interface HomeScreenProps {
   size: Dimension;
@@ -151,73 +152,66 @@ function BalanceBox(opts: {
 
   const icon = bigIcon('IcoTronium');
   const score = newText(opts.value.toString(), 'H2');
-  score.x = icon.x + icon.width + 10;
-  score.y = 3;
+  const addMoreSprite = newSprite('BtnAddMore.png');
+  const cashoutSprite = newSprite('BtnCashoutSmall.png');
 
-  const btnAddMore = GraphicBtn({
-    text: 'Add more',
-    color: 0x07bbea,
-    fill: true,
-    position: new Point(score.x + score.width + 10, 11),
-    onClick: opts.addMore,
-  });
+  postionAfterX(icon, score, 10);
+  postionAfterX(score, addMoreSprite, 10);
+  postionAfterX(addMoreSprite, cashoutSprite, 10);
 
-  const btnCashOut = GraphicBtn({
-    text: 'Cash Out',
-    color: 0xffffff,
-    fill: false,
-    position: new Point(btnAddMore.x + btnAddMore.width + 10, 11),
-    onClick: opts.cashOut,
-  });
+  verticalAlignCenter(0, icon, score, addMoreSprite, cashoutSprite);
+  container.addChild(icon, score, addMoreSprite, cashoutSprite);
 
-  container.addChild(icon, score);
-  container.addChild(btnAddMore);
-  container.addChild(btnCashOut);
+  Button.from(addMoreSprite, opts.addMore);
+  Button.from(cashoutSprite, opts.cashOut);
 
   return {
     stage: container,
     setBalance: (newVal: number) => {
       score.text = newVal.toString();
-      btnAddMore.x = score.x + score.width + 10;
-      btnCashOut.x = btnAddMore.x + btnAddMore.width + 10;
+      postionAfterX(score, addMoreSprite, 10);
+      postionAfterX(addMoreSprite, cashoutSprite, 10);
     },
   };
 }
 
-function GraphicBtn(opts: {
-  text: string;
-  position: Point;
-  fill: boolean;
-  color: number;
-  onClick: () => void;
-}) {
-  const margin = 4;
-  const labelText = newText(opts.text, 'Body2', {
-    position: new Point(margin, margin),
-  });
+// function GraphicBtn(opts: {
+//   text: string;
+//   position: Point;
+//   fill: boolean;
+//   color: number;
+//   onClick: () => void;
+// }) {
+//   const margin = 4;
+//   const labelText = newText(opts.text, 'Body2', {
+//     position: new Point(margin, margin),
+//   });
 
-  const g = new Graphics();
+//   const g = new Graphics();
 
-  if (opts.fill) {
-    g.beginFill(opts.color);
-  } else {
-    g.lineStyle(1, opts.color);
-  }
-  g.drawRoundedRect(0, 0, labelText.width + margin * 2, labelText.height + margin * 2, 5);
+//   if (opts.fill) {
+//     g.beginFill(opts.color);
+//   } else {
+//     g.lineStyle(1, opts.color);
+//   }
+//   g.drawRoundedRect(0, 0, labelText.width + margin * 2, labelText.height + margin * 2, 5);
 
-  if (opts.fill) {
-    g.endFill();
-  }
+//   if (opts.fill) {
+//     g.endFill();
+//   }
 
-  g.addChild(labelText);
+//   g.addChild(labelText);
 
-  g.position.set(opts.position.x, opts.position.y);
+//   g.position.set(opts.position.x, opts.position.y);
 
-  g.interactive = true;
-  g.buttonMode = true;
-  g.on('click', opts.onClick);
-  return g;
-}
+//   g.interactive = true;
+//   g.buttonMode = true;
+//   g.on('click', () => {
+//     SoundManager.playBtn();
+//     opts.onClick();
+//   });
+//   return g;
+// }
 
 function Hero(parentSize: Dimension) {
   const hero = newSprite('Hero.png');

@@ -213,6 +213,8 @@ function Villain(parentSize: Dimension) {
 function GlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
   const container = newContainer(opts.x, opts.y);
   Button.from(smallIcon('IcoHowtoPlay'), opts.onHelp).addTo(container);
-  Button.from(smallIcon('IcoClose', { position: new Point(49, 0) }), opts.onClose).addTo(container);
+  Button.from(smallIcon('IcoClose', { position: new Point(49, 0) }), opts.onClose, {
+    soundId: 'btnNegative',
+  }).addTo(container);
   return container;
 }

@@ -14,6 +14,7 @@ import { newContainer } from './utils';
 import debounce from 'lodash.debounce';
 import { AddMoreModal } from './AddMoreModal';
 import { CashOutModal } from './CashOutModal';
+import SoundManager from './SoundManager';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
@@ -58,11 +59,13 @@ export class MainUI {
   }
 
   enterTitle() {
+    SoundManager.enterHome();
     this.ensureMainBackground();
     this.setScreen(TitleScreen(this.ctx));
   }
 
   enterHome(player: Player) {
+    SoundManager.enterHome();
     this.ensureMainBackground();
     this.setScreen(
       HomeScreen({
@@ -78,6 +81,7 @@ export class MainUI {
     attack: LineChoice;
   }) {
     this.clearMainBackground();
+    SoundManager.enterBattle();
     this.setScreen(
       BattleScreen({
         ...this.ctx,
