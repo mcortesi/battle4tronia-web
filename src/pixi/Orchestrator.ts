@@ -88,6 +88,7 @@ export class Orchestrator implements ModelActions {
     await this.game.sellTronium(amount);
     this.gd.playerUpdated(this.game.player);
     this.gd.closeCashOutModal();
+    await this.goTitle();
   };
 
   requestSpin = async () => {
