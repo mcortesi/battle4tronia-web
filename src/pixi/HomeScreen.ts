@@ -5,7 +5,14 @@ import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox, SecondaryStatBox } from './StatBox';
-import { newContainer, newSprite, newText, postionAfterX, verticalAlignCenter } from './utils';
+import {
+  newContainer,
+  newSprite,
+  newText,
+  postionAfterX,
+  verticalAlignCenter,
+  centerX,
+} from './utils';
 import { Button } from './utils/Button';
 
 export interface HomeScreenProps {
@@ -21,7 +28,13 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
 
   stage.addChild(Hero(size));
 
-  primaryBtn('toBattle', () => gd.requestBattle(), stage);
+  const btnToBattle = primaryBtn('toBattle', () => gd.requestBattle(), stage);
+
+  const lowBalanceText = newText('Need more tronium', 'Body2');
+  centerX(size.width, lowBalanceText);
+  lowBalanceText.y = 645;
+  lowBalanceText.visible = false;
+  stage.addChild(lowBalanceText);
 
   const balanceBox = BalanceBox({
     position: new Point(25, 25),
@@ -123,9 +136,18 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     totalKillsBox.stage
   );
 
+  const updateBalanceStatus = (p: Player) => {
+    const enabled = p.tronium > 0;
+    btnToBattle.disable = !enabled;
+    lowBalanceText.visible = !enabled;
+  };
+
+  updateBalanceStatus(player);
+
   const unregister = gd.registerForUIEvents({
     playerUpdated: (p: Player) => {
       balanceBox.setBalance(p.tronium);
+      updateBalanceStatus(p);
     },
     setPlayerStats: (playerStats: PlayerStats) => {
       playerBestFightBox.setValue(playerStats.bestFight.epicness.toString());
