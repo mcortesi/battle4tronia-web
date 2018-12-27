@@ -51,14 +51,14 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
     position: new Point(100 + RanksWidth / 2, BoxesTopMargin),
     width: RanksWidth / 2,
     header: 'HIGHEST THIS WEEK',
-    value: '-- TRX',
-    footer: 'IN 55 SECS',
+    value: '--',
+    footer: 'TRONIUM',
   });
   stage.addChild(weekHighestBox.stage);
 
-  const unregister = gd.registerForTitleScreen({
+  const unregister = gd.registerForUIEvents({
     setGlobalStats: stats => {
-      weekHighestBox.setValue(`${stats.bestFightWeek.troniums} TRX`);
+      weekHighestBox.setValue(`${stats.bestFightWeek.troniums}`);
       defeatedInvadersBox.setValue(stats.villainsDefeated.toString());
       ranksBox.updateRanks(stats.allTime);
     },

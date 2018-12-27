@@ -52,11 +52,15 @@ export class Orchestrator implements ModelActions {
 
   async goHome() {
     this.ui.enterHome(this.game.player);
-    await this.requestGlobalStats();
+    const globalStats = await this.game.getGlobalStats(false);
+    this.gd.setGlobalStats(globalStats);
+    const playerStats = await this.game.getPlayerStats();
+    this.gd.setPlayerStats(playerStats);
   }
   async goTitle() {
     this.ui.enterTitle();
-    await this.requestGlobalStats();
+    const stats = await this.game.getGlobalStats();
+    this.gd.setGlobalStats(stats);
   }
 
   requestConnect = async () => {
@@ -72,16 +76,6 @@ export class Orchestrator implements ModelActions {
       attack: this.currentAttack,
       boost: this.currentBoost,
     });
-  };
-
-  requestGlobalStats = async () => {
-    const stats = await this.game.getGlobalStats();
-    this.gd.setGlobalStats(stats);
-  };
-
-  requestPlayerStats = async () => {
-    const stats = await this.game.getPlayerStats();
-    this.gd.setPlayerStats(stats);
   };
 
   requestBuyTronium = async (amount: number) => {

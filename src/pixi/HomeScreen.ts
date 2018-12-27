@@ -1,5 +1,5 @@
 import { Container, Point } from 'pixi.js';
-import { Player } from '../model/api';
+import { Player, PlayerStats } from '../model/api';
 import { bigIcon, HowtoPlayBtn, primaryBtn, smallIcon } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
@@ -73,7 +73,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     position: new Point(TableLayout.x[0], TableLayout.y[0]),
     width: ColWidth,
     header: 'YOUR BEST FIGHT',
-    value: '3.588',
+    value: '--',
     footer: 'EPICNESS',
   });
 
@@ -81,14 +81,14 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     position: new Point(TableLayout.x[0], TableLayout.y[1]),
     width: ColWidth,
     header: 'BEST IN TRONIA',
-    value: '55555',
+    value: '--',
   });
 
   const playerBestMatchBox = MainStatBox({
     position: new Point(TableLayout.x[1], TableLayout.y[0]),
     width: ColWidth,
     header: 'HIGHEST EARNINGS',
-    value: '0.15 TRX',
+    value: '--',
     footer: 'IN ONE MATCH',
   });
 
@@ -96,14 +96,14 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     position: new Point(TableLayout.x[1], TableLayout.y[1]),
     width: ColWidth,
     header: 'BEST IN TRONIA',
-    value: '0.15 TRX',
+    value: '--',
   });
 
   const playerKillsBox = MainStatBox({
     position: new Point(TableLayout.x[2], TableLayout.y[0]),
     width: ColWidth,
     header: 'CALL TO ARMS',
-    value: '35',
+    value: '--',
     footer: 'INVADERS DEFEATED',
   });
 
@@ -111,7 +111,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     position: new Point(TableLayout.x[2], TableLayout.y[1]),
     width: ColWidth,
     header: 'EVERYWHERE',
-    value: '1000',
+    value: '--',
   });
 
   stage.addChild(
@@ -123,13 +123,20 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     totalKillsBox.stage
   );
 
-  // const unregister = gd.registerForHomeScreen({
-  //   setPlayerStats: (playerStats: PlayerStats) => {},
-  // });
-
   const unregister = gd.registerForUIEvents({
     playerUpdated: (p: Player) => {
       balanceBox.setBalance(p.tronium);
+    },
+    setPlayerStats: (playerStats: PlayerStats) => {
+      playerBestFightBox.setValue(playerStats.bestFight.epicness.toString());
+      playerKillsBox.setValue(playerStats.villainsDefeated.toString());
+      playerBestMatchBox.setValue(`${playerStats.bestFight.troniums}`);
+    },
+
+    setGlobalStats: globalStats => {
+      bestFightBox.setValue(globalStats.allTime[0].epicness.toString());
+      bestMatchBox.setValue(`${globalStats.allTime[0].troniums}`);
+      totalKillsBox.setValue(globalStats.villainsDefeated.toString());
     },
   });
 

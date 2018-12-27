@@ -1,4 +1,4 @@
-import { genArray } from '../utils';
+import { genArray, wait } from '../utils';
 import { Move, winningsFor } from './reel';
 
 export type Address = string;
@@ -206,6 +206,7 @@ export class FakeApi implements API {
   }
 
   async spin(bet: Bet): Promise<SpinResult> {
+    await wait(1000);
     if (!this.battle) {
       throw new Error('Not in battle');
     }
@@ -233,12 +234,13 @@ export class FakeApi implements API {
   }
 
   async getGlobalStats(): Promise<GlobalStats> {
+    await wait(2000);
     return {
       allTime: [
         {
           playerName: 'Rob',
           epicness: 100,
-          troniums: 1000000000000000000000,
+          troniums: 1000000,
           seconds: 90000,
         },
         {
@@ -277,7 +279,16 @@ export class FakeApi implements API {
   }
 
   async getPlayerStats(): Promise<PlayerStats> {
-    return null as any;
+    await wait(2000);
+    return {
+      bestFight: {
+        seconds: 55,
+        epicness: 100,
+        troniums: 500,
+        playerName: 'Cono',
+      },
+      villainsDefeated: 55,
+    };
   }
 }
 

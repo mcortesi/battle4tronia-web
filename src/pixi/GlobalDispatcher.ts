@@ -13,13 +13,7 @@ export interface UIEvents {
   playerUpdated(player: Player): void;
   closeAddMoreModal(): void;
   closeCashOutModal(): void;
-}
-
-export interface TitleScreenActions {
   setGlobalStats(stats: GlobalStats): void;
-}
-
-export interface HomeScreenActions {
   setPlayerStats(stats: PlayerStats): void;
 }
 
@@ -38,8 +32,6 @@ export interface BattleModelActions {
 export interface ModelActions {
   requestConnect(): void;
   requestBattle(): void;
-  requestGlobalStats(): void;
-  requestPlayerStats(): void;
   requestSpin(): void;
   requestBuyTronium(amount: number): void;
   requestSellTronium(amount: number): void;
@@ -58,8 +50,6 @@ type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
 
 type AllActions =
   | HowToPlayActions
-  | TitleScreenActions
-  | HomeScreenActions
   | BattleScreenActions
   | BattleModelActions
   | LoadScreenActions
@@ -69,17 +59,13 @@ type AllActions =
 export class GlobalDispatcher
   implements
     HowToPlayActions,
-    TitleScreenActions,
-    HomeScreenActions,
     BattleModelActions,
     BattleScreenActions,
     LoadScreenActions,
     UIEvents,
     ModelActions {
   private howToPlayListeners: HowToPlayActions[] = [];
-  private titleScreenListeners: TitleScreenActions[] = [];
   private loadScreenListeners: LoadScreenActions[] = [];
-  private homeScreenListeners: HomeScreenActions[] = [];
   private battleScreenListeners: BattleScreenActions[] = [];
   private battleModelListeners: BattleModelActions[] = [];
   private modelListeners: ModelActions[] = [];
@@ -104,18 +90,7 @@ export class GlobalDispatcher
       this.loadScreenListeners = this.loadScreenListeners.filter(x => x !== listener);
     };
   }
-  registerForTitleScreen(listener: TitleScreenActions): () => void {
-    this.titleScreenListeners.push(listener);
-    return () => {
-      this.titleScreenListeners = this.titleScreenListeners.filter(x => x !== listener);
-    };
-  }
-  registerForHomeScreen(listener: HomeScreenActions): () => void {
-    this.homeScreenListeners.push(listener);
-    return () => {
-      this.homeScreenListeners = this.homeScreenListeners.filter(x => x !== listener);
-    };
-  }
+
   registerForBattleScreen(listener: BattleScreenActions): () => void {
     this.battleScreenListeners.push(listener);
     return () => {
@@ -188,12 +163,6 @@ export class GlobalDispatcher
   requestBattle(): void {
     this.fireEvent(this.modelListeners, 'requestBattle');
   }
-  requestGlobalStats(): void {
-    this.fireEvent(this.modelListeners, 'requestGlobalStats');
-  }
-  requestPlayerStats(): void {
-    this.fireEvent(this.modelListeners, 'requestPlayerStats');
-  }
   requestSpin(): void {
     this.fireEvent(this.modelListeners, 'requestSpin');
   }
@@ -216,11 +185,11 @@ export class GlobalDispatcher
   }
 
   setPlayerStats(stats: PlayerStats): void {
-    this.fireEvent(this.homeScreenListeners, 'setPlayerStats', stats);
+    this.fireEvent(this.uiEventsListeners, 'setPlayerStats', stats);
   }
 
   setGlobalStats(stats: GlobalStats): void {
-    this.fireEvent(this.titleScreenListeners, 'setGlobalStats', stats);
+    this.fireEvent(this.uiEventsListeners, 'setGlobalStats', stats);
   }
 
   setLoadPercentage(x: number): void {

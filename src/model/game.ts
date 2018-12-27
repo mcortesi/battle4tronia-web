@@ -1,6 +1,5 @@
-import { API, Battle, Bet, GameStatus, Player, SpinResult } from './api';
+import { API, Battle, Bet, GameStatus, GlobalStats, Player, SpinResult, PlayerStats } from './api';
 import { BetResult, Move, toBetResult } from './reel';
-import { wait } from '../utils';
 export interface ClientSpinResult {
   player: Player;
   bet: Bet;
@@ -13,6 +12,8 @@ export class GameClient {
   private status: GameStatus = GameStatus.INSTALL_TRONLINK;
   private _player: null | Player = null;
   private _battle: null | Battle = null;
+  private _globalStats: null | GlobalStats = null;
+  private _playerStats: null | PlayerStats = null;
 
   constructor(api: API) {
     this.api = api;
@@ -82,19 +83,21 @@ export class GameClient {
     return this._battle;
   }
 
-  async getGlobalStats() {
-    await wait(2000);
-    return this.api.getGlobalStats();
+  async getGlobalStats(force: boolean = true) {
+    if (force || this._globalStats == null) {
+      this._globalStats = await this.api.getGlobalStats();
+    }
+    return this._globalStats;
   }
 
-  async getPlayerStats() {
-    await wait(2000);
-    return this.api.getPlayerStats();
+  async getPlayerStats(force: boolean = true) {
+    if (force || this._playerStats == null) {
+      this._playerStats = await this.api.getPlayerStats();
+    }
+    return this._playerStats;
   }
 
   async spin(bet: Bet): Promise<ClientSpinResult> {
-    // FIXME
-    await wait(1000);
     const res: SpinResult = await this.api.spin(bet);
     this._player = res.player;
     this._battle = res.currentBattle;
