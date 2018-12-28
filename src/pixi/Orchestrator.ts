@@ -44,14 +44,28 @@ export class Orchestrator implements ModelActions {
     this.ui.enterLoading();
     await this.loader.loadAll();
     await this.game.init();
-    if (this.game.connected) {
+
+    if (this.game.status === GameStatus.ERROR) {
+      this.ui.openErrorModal();
+    } else if (
+      this.game.player &&
+      [GameStatus.INSTALL_TRONLINK, GameStatus.LOGIN_TRONLINK].indexOf(this.game.status) < 0
+    ) {
       await this.goHome();
     } else {
       await this.goTitle();
     }
   }
 
+  freezeGame() {
+    this.ui.openErrorModal();
+  }
+
   async goHome() {
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
     this.loggedIn = true;
     this.ui.enterHome(this.game.player);
     const globalStats = await this.game.getGlobalStats(false);
@@ -92,6 +106,13 @@ export class Orchestrator implements ModelActions {
   };
 
   requestBattle = async () => {
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
+    this.currentAttack = LineChoice.DEFAULT;
+    this.currentBoost = BoostChoice.DEFAULT;
+
     const battle = await this.game.getCurrentBattle();
     this.ui.enterBattle({
       player: this.game.player,
@@ -107,21 +128,33 @@ export class Orchestrator implements ModelActions {
 
   requestBuyTronium = async (amount: number) => {
     await this.game.buyTronium(amount);
-    this.gd.playerUpdated(this.game.player);
     this.gd.closeAddMoreModal();
+
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
+    this.gd.playerUpdated(this.game.player);
     if (!this.loggedIn) {
       await this.goHome();
     }
   };
 
   requestSellTronium = async (amount: number) => {
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
     await this.game.sellTronium(amount);
     this.gd.playerUpdated(this.game.player);
     this.gd.closeCashOutModal();
-    await this.goTitle();
   };
 
   requestSpin = async () => {
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
     this.gd.startSpinning(
       this.game.player.tronium - this.currentBoost.bet * this.currentAttack.value
     );
@@ -140,7 +173,7 @@ export class Orchestrator implements ModelActions {
 
   updateBetBalanceCheck() {
     const bet = this.currentBoost.bet * this.currentAttack.value;
-    this.gd.canBetWithCurrentBalance(bet <= this.game.player.tronium);
+    this.gd.canBetWithCurrentBalance(bet <= this.game.player!.tronium);
   }
 
   openAddMoreModal = () => {
@@ -148,6 +181,10 @@ export class Orchestrator implements ModelActions {
   };
 
   openCashOutModal = () => {
+    if (this.game.player == null) {
+      this.freezeGame();
+      return;
+    }
     this.ui.openCashOutModal({
       player: this.game.player,
       troniumPrice: this.game.troniumPrice,

@@ -274,7 +274,7 @@ function Villain(parentSize: Dimension) {
       puff.play();
       const fadeAnim = new Promise(resolve => {
         new Tween(villain)
-          .to({ alpha: 0 }, 1500)
+          .to({ alpha: 0 }, 2000)
           .onComplete(resolve)
           .start();
       });

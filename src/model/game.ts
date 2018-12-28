@@ -25,9 +25,6 @@ export class GameClient {
   }
 
   get player() {
-    if (this._player == null) {
-      throw new Error('not current player!');
-    }
     return this._player;
   }
 
@@ -55,18 +52,7 @@ export class GameClient {
   async init() {
     this.troniumPrice = await this.api.getTroniumPrice();
     await this.refreshStatus();
-    switch (this.status) {
-      case GameStatus.INSTALL_TRONLINK:
-      case GameStatus.LOGIN_TRONLINK:
-      case GameStatus.NO_CHANNEL_OPENED:
-        break;
-      case GameStatus.NOT_ENOUGH_BALANCE:
-      case GameStatus.READY:
-        this._player = await this.api.getPlayer();
-        break;
-      case GameStatus.ERROR:
-        break;
-    }
+    await this.refreshPlayer();
   }
 
   async connect() {
@@ -122,7 +108,7 @@ export class GameClient {
     } else {
       throw new Error(`Invalid Game Status: ${this.status}`);
     }
-    return this.player;
+    return this.player!;
   }
 
   async sellTronium(amount: number): Promise<Player> {
@@ -134,7 +120,7 @@ export class GameClient {
     } else {
       throw new Error(`Invalid Game Status: ${this.status}`);
     }
-    return this.player;
+    return this.player!;
   }
 
   changeName(name: string) {

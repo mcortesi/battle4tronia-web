@@ -88,7 +88,7 @@ export interface API {
 
   addTronium(tronium: number): Promise<boolean>;
 
-  getPlayer(): Promise<Player>;
+  getPlayer(): Promise<Player | null>;
 
   updatePlayerName(name: string): Promise<Player>;
 
