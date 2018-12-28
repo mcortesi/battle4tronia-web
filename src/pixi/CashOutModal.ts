@@ -22,7 +22,6 @@ export function CashOutModal(
   const modal = Modal({
     screenSize: opts.size,
     screenStage: opts.parent,
-    onClose: () => dispose(),
   });
   const Width = modal.bodySize.width;
 
@@ -74,7 +73,7 @@ export function CashOutModal(
 
   const dispose = () => {
     unregister();
-    modal.destroy();
+    modal.dispose();
   };
 
   return {

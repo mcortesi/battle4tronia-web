@@ -19,7 +19,6 @@ import { Button } from './utils/Button';
 
 export interface UIState {
   boostIdx: number;
-
   linesIdx: number;
 }
 

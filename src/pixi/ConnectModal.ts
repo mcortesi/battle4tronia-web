@@ -1,4 +1,4 @@
-import { Graphics } from 'pixi.js';
+import { Graphics, Point } from 'pixi.js';
 import { Disposable, ScreenContext } from './MainUI';
 import { Modal } from './Modal';
 import {
@@ -12,22 +12,106 @@ import {
   postionOnBottom,
 } from './utils';
 import { Button } from './utils/Button';
+import { smallIcon } from './basic';
+import { TextField } from './utils/TextField';
 
 // screen: { width: 1366, height: 688 },
 
-export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Disposable {
-  let currentValue: null | { tronium: number; trx: number } = null;
-  const Padding = 30;
+function centeredParagraph(width: number, msg: string) {
+  const stage = newContainer();
+  let nextY = 0;
+  for (const line of msg.split('\n')) {
+    const lineText = newText(line, 'Body1');
+    centerX(width, lineText);
+    lineText.y = nextY;
+    nextY += lineText.height;
+    stage.addChild(lineText);
+  }
+  return stage;
+}
+
+const MessageModal = (title: string, msg: string) => (opts: ScreenContext): Disposable => {
+  const Padding = 40;
 
   const modal = Modal({
+    scale: new Point(1, 0.7),
     screenSize: opts.size,
     screenStage: opts.parent,
   });
 
-  const title1 = newText('GET SUPPLIES!', 'H2');
+  const closeSprite = smallIcon('IcoClose');
+  closeSprite.scale.set(0.8, 0.8);
+  closeSprite.y = 5;
+  closeSprite.x = modal.bodySize.width - closeSprite.width - 5;
+
+  const titleText = newText(title, 'H2');
+
+  titleText.y = Padding;
+  centerX(modal.bodySize.width, titleText);
+
+  const p = centeredParagraph(modal.bodySize.width, msg);
+  // centerY(modal.bodySize.height, p);
+  p.y = titleText.y + titleText.height + Padding * 1.7;
+
+  modal.body.addChild(closeSprite, titleText, p);
+
+  Button.from(
+    closeSprite,
+    () => {
+      modal.dispose();
+    },
+    { soundId: 'btnNegative' }
+  );
+  return modal;
+};
+
+export const HowtoPlayModal = MessageModal('JUGA PAPU!!', 'Y no preguntes boludeces');
+
+export const ErrorModal = MessageModal(
+  'OOPS! WE FOUND AND ERROR',
+  'There was an error with your game connection\nPlease reload game.'
+);
+
+export const GetTronlinkModal = MessageModal(
+  'GET TRONLINK',
+  'In order to play the game, you need to have\nTronLink Wallet installed'
+);
+
+export const TronlinkLoggedOutModal = MessageModal(
+  'PLEASE LOGIN TRONLINK',
+  'Your Tronlink wallet is not logged.\nPlease unlock'
+);
+
+export function ConnectModal(opts: ScreenContext & { troniumPrice: number }): Disposable {
+  let currentValue: null | { tronium: number; trx: number } = null;
+  const Padding = 25;
+
+  const modal = Modal({
+    scale: new Point(1.2, 1.2),
+    screenSize: opts.size,
+    screenStage: opts.parent,
+  });
+
+  const title1 = newText('YOUR JOURNEY STARTS', 'H2');
+
+  const msg0 = centeredParagraph(
+    modal.bodySize.width,
+    'How shall the bards sing your battles?\nChoose your name:'
+  );
+  const nameField = new TextField({ size: { width: 300, height: 40 }, maxLength: 26 });
+  const msg = [
+    "You won't get far without tronium",
+    "A Hero's best friend!",
+    'Choose your pack!',
+  ].join('\n');
+  const p = centeredParagraph(modal.bodySize.width, msg);
+
   const btnBuySprite = newSprite('BtnBuy.png');
 
   const btnBuy = Button.from(btnBuySprite, () => {
+    if (nameField.value.trim().length > 0) {
+      opts.gd.requestNameChange(nameField.value.trim());
+    }
     if (currentValue) {
       opts.gd.requestBuyTronium(currentValue.tronium);
     }
@@ -44,12 +128,19 @@ export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Di
   });
 
   centerX(modal.bodySize.width, title1);
-  title1.y = Padding;
   centerX(modal.bodySize.width, btnBuySprite);
-  optionBoxes.y = 130;
+
+  centerX(modal.bodySize.width, nameField.stage);
+
+  title1.y = Padding;
+  postionAfterY(title1, msg0, Padding);
+  postionAfterY(msg0, nameField.stage, Padding * 0.3);
+  postionAfterY(nameField.stage, p, Padding);
+  postionAfterY(p, optionBoxes, Padding * 0.5);
+
   postionOnBottom(modal.bodySize.height, Padding / 2, btnBuySprite);
 
-  modal.body.addChild(title1, btnBuySprite, optionBoxes);
+  modal.body.addChild(title1, btnBuySprite, p, optionBoxes, msg0, nameField.stage);
 
   const unregister = opts.gd.registerForUIEvents({
     closeAddMoreModal: () => dispose(),

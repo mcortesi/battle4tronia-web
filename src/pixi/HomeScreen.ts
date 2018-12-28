@@ -44,7 +44,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   });
   stage.addChild(balanceBox.stage);
 
-  stage.addChild(HowtoPlayBtn(gd.showHowToPlay).stage);
+  stage.addChild(HowtoPlayBtn(gd.showHowToPlay.bind(gd)).stage);
 
   stage.addChild(
     newText(player.name, 'H1', {

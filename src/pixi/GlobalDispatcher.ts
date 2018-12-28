@@ -3,8 +3,6 @@ import { ClientSpinResult } from '../model/game';
 import { GlobalStats, PlayerStats, Player, Battle } from '../model/api';
 
 export interface HowToPlayActions {
-  showHowToPlay(): void;
-  hideHowToPlay(): void;
   nextHowToPlaySlide(): void;
   prevHowToPlaySlide(): void;
 }
@@ -33,11 +31,13 @@ export interface ModelActions {
   requestConnect(): void;
   requestBattle(): void;
   requestSpin(): void;
+  requestNameChange(name: string): void;
   requestBuyTronium(amount: number): void;
   requestSellTronium(amount: number): void;
   exitBattle(): void;
   openAddMoreModal(): void;
   openCashOutModal(): void;
+  showHowToPlay(): void;
 }
 
 export interface LoadScreenActions {
@@ -124,11 +124,9 @@ export class GlobalDispatcher
   }
 
   showHowToPlay(): void {
-    this.fireEvent(this.howToPlayListeners, 'showHowToPlay');
+    this.fireEvent(this.modelListeners, 'showHowToPlay');
   }
-  hideHowToPlay(): void {
-    this.fireEvent(this.howToPlayListeners, 'hideHowToPlay');
-  }
+
   nextHowToPlaySlide(): void {
     this.fireEvent(this.howToPlayListeners, 'nextHowToPlaySlide');
   }
@@ -165,6 +163,9 @@ export class GlobalDispatcher
   }
   requestSpin(): void {
     this.fireEvent(this.modelListeners, 'requestSpin');
+  }
+  requestNameChange(name: string): void {
+    this.fireEvent(this.modelListeners, 'requestNameChange', name);
   }
   requestBuyTronium(amount: number): void {
     this.fireEvent(this.modelListeners, 'requestBuyTronium', amount);

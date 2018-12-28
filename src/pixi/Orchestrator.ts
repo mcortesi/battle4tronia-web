@@ -1,15 +1,16 @@
+import { BattleStatus, GameStatus } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
 import { GameClient } from '../model/game';
 import { AssetLoader } from './AssetLoader';
 import { Layout } from './constants';
 import { GlobalDispatcher, ModelActions } from './GlobalDispatcher';
 import { MainUI } from './MainUI';
-import { BattleStatus } from '../model/api';
 
 export class Orchestrator implements ModelActions {
   private game: GameClient;
   private gd: GlobalDispatcher;
   private loader: AssetLoader;
+  private loggedIn = false;
 
   private currentBoost: BoostChoice;
   private currentAttack: LineChoice;
@@ -51,6 +52,7 @@ export class Orchestrator implements ModelActions {
   }
 
   async goHome() {
+    this.loggedIn = true;
     this.ui.enterHome(this.game.player);
     const globalStats = await this.game.getGlobalStats(false);
     this.gd.setGlobalStats(globalStats);
@@ -58,14 +60,35 @@ export class Orchestrator implements ModelActions {
     this.gd.setPlayerStats(playerStats);
   }
   async goTitle() {
+    this.loggedIn = false;
     this.ui.enterTitle();
     const stats = await this.game.getGlobalStats();
     this.gd.setGlobalStats(stats);
   }
 
   requestConnect = async () => {
-    await this.game.connect();
-    await this.goHome();
+    const status = await this.game.refreshStatus();
+    switch (status) {
+      case GameStatus.ERROR:
+        this.ui.openErrorModal();
+        break;
+      case GameStatus.INSTALL_TRONLINK:
+        this.ui.openGetTronlinkModal();
+        break;
+      case GameStatus.LOGIN_TRONLINK:
+        this.ui.openTronlinkLoggedOutModal();
+        break;
+      case GameStatus.NO_CHANNEL_OPENED:
+        this.ui.openConnectModal(this.game.troniumPrice);
+
+        break;
+      case GameStatus.NOT_ENOUGH_BALANCE:
+      case GameStatus.READY:
+        await this.goHome();
+        break;
+      default:
+        this.ui.openErrorModal();
+    }
   };
 
   requestBattle = async () => {
@@ -78,10 +101,17 @@ export class Orchestrator implements ModelActions {
     });
   };
 
+  requestNameChange = (name: string) => {
+    this.game.changeName(name);
+  };
+
   requestBuyTronium = async (amount: number) => {
     await this.game.buyTronium(amount);
     this.gd.playerUpdated(this.game.player);
     this.gd.closeAddMoreModal();
+    if (!this.loggedIn) {
+      await this.goHome();
+    }
   };
 
   requestSellTronium = async (amount: number) => {
@@ -122,6 +152,10 @@ export class Orchestrator implements ModelActions {
       player: this.game.player,
       troniumPrice: this.game.troniumPrice,
     });
+  };
+
+  showHowToPlay = () => {
+    this.ui.openHowtoPlayModal();
   };
 
   exitBattle = () => this.goHome();

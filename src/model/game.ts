@@ -9,8 +9,8 @@ export interface ClientSpinResult {
 
 export class GameClient {
   troniumPrice: number;
+  status: GameStatus = GameStatus.INSTALL_TRONLINK;
   private api: API;
-  private status: GameStatus = GameStatus.INSTALL_TRONLINK;
   private _player: null | Player = null;
   private _battle: null | Battle = null;
   private _globalStats: null | GlobalStats = null;
@@ -135,5 +135,9 @@ export class GameClient {
       throw new Error(`Invalid Game Status: ${this.status}`);
     }
     return this.player;
+  }
+
+  changeName(name: string) {
+    return this.api.updatePlayerName(name);
   }
 }

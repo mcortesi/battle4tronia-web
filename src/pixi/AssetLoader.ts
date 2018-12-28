@@ -75,14 +75,15 @@ export class AssetLoader {
     });
     return new Promise(resolve => {
       loader.load(() => {
-        this.progressDelta(100 - this.loadProgress);
+        this.loadProgress = 100;
+        this.gd.setLoadPercentage(100);
         resolve();
       });
     });
   }
 
   private progressDelta(delta: number) {
-    this.loadProgress += delta;
+    this.loadProgress = Math.min(this.loadProgress + delta, 98);
     this.gd.setLoadPercentage(this.loadProgress);
   }
 }

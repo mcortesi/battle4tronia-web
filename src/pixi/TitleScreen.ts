@@ -6,7 +6,6 @@ import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import { MainStatBox } from './StatBox';
 import { newContainer, newText } from './utils';
-import { Modal } from './Modal';
 
 interface TitleScreenProps {
   size: Dimension;
@@ -23,17 +22,7 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
 
   primaryBtn('connect', gd.requestConnect.bind(gd), stage);
 
-  stage.addChild(
-    HowtoPlayBtn(() => {
-      Modal({
-        screenStage: parent,
-        screenSize: size,
-        onClose: () => {
-          console.log('se cerro!');
-        },
-      });
-    }).stage
-  );
+  stage.addChild(HowtoPlayBtn(gd.showHowToPlay.bind(gd)).stage);
 
   const ranksBox = GeneralRanks({ position: new Point(100, 150), width: RanksWidth });
   stage.addChild(ranksBox.stage);

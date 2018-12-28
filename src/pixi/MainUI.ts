@@ -15,6 +15,13 @@ import debounce from 'lodash.debounce';
 import { AddMoreModal } from './AddMoreModal';
 import { CashOutModal } from './CashOutModal';
 import SoundManager from './SoundManager';
+import {
+  ErrorModal,
+  GetTronlinkModal,
+  TronlinkLoggedOutModal,
+  ConnectModal,
+  HowtoPlayModal,
+} from './ConnectModal';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
@@ -102,6 +109,15 @@ export class MainUI {
     );
   }
 
+  openConnectModal(troniumPrice: number) {
+    this.setModal(
+      ConnectModal({
+        ...this.ctx,
+        troniumPrice,
+      })
+    );
+  }
+
   openCashOutModal(opts: { player: Player; troniumPrice: number }) {
     this.setModal(
       CashOutModal({
@@ -109,6 +125,20 @@ export class MainUI {
         ...opts,
       })
     );
+  }
+
+  openHowtoPlayModal() {
+    this.setModal(HowtoPlayModal(this.ctx));
+  }
+
+  openErrorModal() {
+    this.setModal(ErrorModal(this.ctx));
+  }
+  openGetTronlinkModal() {
+    this.setModal(GetTronlinkModal(this.ctx));
+  }
+  openTronlinkLoggedOutModal() {
+    this.setModal(TronlinkLoggedOutModal(this.ctx));
   }
 
   private ensureMainBackground() {
