@@ -333,7 +333,7 @@ export function winningsFor(bet: Bet, combinations: Move[]) {
   );
 
   return {
-    payout: Math.round(baseWinnings.payout * bet.tronium * bet.lines),
+    payout: Math.round(baseWinnings.payout * bet.tronium * bet.level),
     damage: Math.round(baseWinnings.damage * damageMultiplier),
     epicness: Math.round(baseWinnings.epicness * damageMultiplier),
   };
