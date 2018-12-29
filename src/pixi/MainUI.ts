@@ -22,6 +22,7 @@ import {
   ConnectModal,
   HowtoPlayModal,
 } from './ConnectModal';
+import { pageView } from '../ga';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
@@ -62,17 +63,20 @@ export class MainUI {
   }
 
   enterLoading() {
+    pageView('loading');
     this.setScreen(LoadingScreen(this.ctx));
   }
 
   enterTitle() {
     SoundManager.enterHome();
+    pageView('title');
     this.ensureMainBackground();
     this.setScreen(TitleScreen(this.ctx));
   }
 
   enterHome(player: Player) {
     SoundManager.enterHome();
+    pageView('home');
     this.ensureMainBackground();
     this.setScreen(
       HomeScreen({
@@ -88,6 +92,7 @@ export class MainUI {
     attack: LineChoice;
   }) {
     this.clearMainBackground();
+    pageView('battle');
     SoundManager.enterBattle();
     this.setScreen(
       BattleScreen({
