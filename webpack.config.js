@@ -108,7 +108,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Tron DEX',
+      title: 'Battle For Tronia',
       template: path.join(__dirname, 'templates/index.html'),
     }),
     // remove automatic load of all moment js locales

@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "build": "webpack",
+    "build": "webpack && cp -r public/assets dist/",
+    "deploy": "firebase deploy",
     "watch": "webpack --watch",
     "start": "webpack-dev-server",
     "lint": "tslint --project . --format stylish"
@@ -47,6 +48,7 @@
     "url-loader": "^1.1.1",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.1",
+    "firebase-tools": "^6.2.2",
     "webpack-dev-server": "^3.1.8"
   },
   "dependencies": {
