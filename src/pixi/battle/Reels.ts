@@ -1,13 +1,10 @@
 import * as Tween from '@tweenjs/tween.js';
 import { Container, extras, filters, Graphics, loader } from 'pixi.js';
-import { LineChoice } from '../../model/base';
 import { BetResult, Card } from '../../model/reel';
 import { genArray, transpose } from '../../utils';
 import { Position, UIComponent } from '../commons';
-import { newContainer } from '../utils';
 import SoundManager from '../SoundManager';
-
-const BG_SELECTED_COLOR = 0xd8d8d8;
+import { newContainer } from '../utils';
 
 const AnimatedSprite = extras.AnimatedSprite;
 
@@ -29,35 +26,13 @@ interface Reel {
 
 export class ReelsUI extends UIComponent {
   stage: Container;
-  rowGraphics: Graphics[];
   reels: Reel[];
   private currAnimation: Tween.Tween | null = null;
 
   constructor(private readonly opts: ReelsOptions) {
     super();
     this.stage = newContainer(opts.x, opts.y);
-    this.drawBackground();
     this.drawSymbols();
-  }
-
-  public selectLines(lineChoice: LineChoice) {
-    switch (lineChoice.value) {
-      case 1:
-        this.rowGraphics[0].visible = false;
-        this.rowGraphics[1].visible = true;
-        this.rowGraphics[2].visible = false;
-        break;
-      case 2:
-        this.rowGraphics[0].visible = true;
-        this.rowGraphics[1].visible = false;
-        this.rowGraphics[2].visible = true;
-        break;
-      case 3:
-        this.rowGraphics[0].visible = true;
-        this.rowGraphics[1].visible = true;
-        this.rowGraphics[2].visible = true;
-        break;
-    }
   }
 
   animeWin(betResult: BetResult) {
@@ -305,33 +280,6 @@ export class ReelsUI extends UIComponent {
     reel.stage.removeChild(reel.sprites[idx]);
     reel.sprites[idx] = s;
     reel.stage.addChild(reel.sprites[idx]);
-  }
-
-  private drawBackground() {
-    const { rows, columns, cellHeight, cellWidth, colSeparation } = this.opts;
-
-    this.rowGraphics = [];
-    for (let row = 0; row < rows; row++) {
-      const rowG = new Graphics();
-      rowG.alpha = 0.1;
-      rowG.beginFill(BG_SELECTED_COLOR);
-      // rowG.beginFill(0xffffff).lineStyle(1, 0x979797);
-      this.rowGraphics.push(rowG);
-      for (let col = 0; col < columns; col++) {
-        rowG.drawRect(
-          col * (cellWidth + colSeparation),
-          row * cellHeight,
-          cellWidth + colSeparation,
-          cellHeight
-        );
-        // const color = (col + rows * row) % 2 === 0 ? 0xc7c7c7 : 0xd8d8d8;
-        // const s = createSlotCell(cellWidth, cellHeight, color);
-        // s.position.set(col * (cellWidth + rowSeparation), row * cellHeight);
-        // slotGroup.addChild(s);
-      }
-    }
-
-    this.stage.addChild(...this.rowGraphics);
   }
 }
 

@@ -64,7 +64,6 @@ export class TextField {
     });
 
     this.stage.on('removed', () => {
-      console.log('me removieron!');
       this.domField.remove();
     });
   }

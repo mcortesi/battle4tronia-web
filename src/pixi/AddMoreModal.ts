@@ -10,6 +10,7 @@ import {
   newText,
   postionAfterY,
   postionOnBottom,
+  newAnimatedSprite,
 } from './utils';
 import { Button } from './utils/Button';
 
@@ -24,8 +25,8 @@ export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Di
     screenStage: opts.parent,
   });
 
-  const title1 = newText('GET SUPPLIES!', 'H2');
-  const btnBuySprite = newSprite('BtnBuy.png');
+  const title1 = newText('GET SUPPLIES!', 'BlackH2');
+  const btnBuySprite = newAnimatedSprite('BtnBuy.png', 'BtnBuyDisabled.png');
 
   const btnBuy = Button.from(btnBuySprite, () => {
     if (currentValue) {
@@ -115,8 +116,8 @@ function SelectBox(opts: { tronium: number; icon: string; trx: number; onClick: 
   const stage = newContainer();
 
   const icon = newSprite(opts.icon);
-  const troniumText = newText(`x ${opts.tronium.toString()}`, 'Body1');
-  const trxText = newText(`${opts.trx} TRX`, 'Body1');
+  const troniumText = newText(`x ${opts.tronium.toString()}`, 'BlackBody1');
+  const trxText = newText(`${opts.trx} TRX`, 'BlackBody1');
 
   horizontalAlignCenter(0, icon, troniumText, trxText);
   postionAfterY(icon, troniumText, 10);
@@ -125,7 +126,7 @@ function SelectBox(opts: { tronium: number; icon: string; trx: number; onClick: 
   stage.addChild(icon, troniumText, trxText);
 
   const iconBorder = new Graphics()
-    .lineStyle(2, 0xffffff)
+    .lineStyle(2, 0x000000)
     .drawRoundedRect(icon.x, icon.y, icon.width, icon.height, 5);
   iconBorder.visible = false;
   stage.addChild(iconBorder);

@@ -15,14 +15,9 @@ import debounce from 'lodash.debounce';
 import { AddMoreModal } from './AddMoreModal';
 import { CashOutModal } from './CashOutModal';
 import SoundManager from './SoundManager';
-import {
-  ErrorModal,
-  GetTronlinkModal,
-  TronlinkLoggedOutModal,
-  ConnectModal,
-  HowtoPlayModal,
-} from './ConnectModal';
+import { ErrorModal, GetTronlinkModal, TronlinkLoggedOutModal, ConnectModal } from './ConnectModal';
 import { pageView } from '../ga';
+import { HowtoPlayModal } from './Modal';
 
 export class MainUI {
   private currentScreen: Disposable | null = null;
@@ -133,7 +128,12 @@ export class MainUI {
   }
 
   openHowtoPlayModal() {
-    this.setModal(HowtoPlayModal(this.ctx));
+    this.setModal(
+      HowtoPlayModal({
+        screenSize: this.ctx.size,
+        screenStage: this.ctx.parent,
+      })
+    );
   }
 
   openErrorModal() {

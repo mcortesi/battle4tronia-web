@@ -1,4 +1,4 @@
-import { Container, Point, Sprite, Text, Texture, utils, TextStyle } from 'pixi.js';
+import { Container, Point, Sprite, Text, Texture, utils, TextStyle, extras } from 'pixi.js';
 import { Dimension, Position } from '../commons';
 import { TextStyles } from '../constants';
 
@@ -39,6 +39,10 @@ function applyLayoutOptions(
   if (opts.scale) {
     obj.scale.set(opts.scale.x, opts.scale.y);
   }
+}
+
+export function newAnimatedSprite(...textures: string[]) {
+  return new extras.AnimatedSprite(textures.map(getTexture));
 }
 
 export function newSprite(
@@ -99,6 +103,10 @@ export function postionAfterX(before: Container, elem: Container, separation: nu
 
 export function postionOnBottom(parentHeight: number, delta: number, elem: Container) {
   elem.y = parentHeight - delta - elem.height;
+}
+
+export function postionOnRight(parentWidth: number, delta: number, elem: Container) {
+  elem.x = parentWidth - delta - elem.width;
 }
 
 export function verticalAlignCenter(baseY: number, ...sprites: Container[]) {

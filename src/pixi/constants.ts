@@ -8,8 +8,8 @@ export const Layout = {
     y: 507,
   },
   scoreBox: {
-    x: 28,
-    y: 20,
+    x: 10,
+    y: 10,
     textX: 60,
     labelY: 35,
     fameY: 95 - 20,
@@ -68,35 +68,53 @@ export const Layout = {
   },
 };
 
-export const TextStyles = {
-  H1: new TextStyle({
-    fontFamily: 'Exo 2',
-    fontSize: 40 * window.devicePixelRatio,
-    fontWeight: '900',
-    fill: 'white',
-  }),
-  H2: new TextStyle({
-    fontFamily: 'Exo 2',
-    fontSize: 30 * window.devicePixelRatio,
-    fontWeight: '900',
-    fill: 'white',
-  }),
-  H3: new TextStyle({
-    fontFamily: 'Exo 2',
-    fontSize: 24 * window.devicePixelRatio,
-    fontWeight: '900',
-    fill: 'white',
-  }),
-  Body1: new TextStyle({
-    fontFamily: 'Exo 2',
-    fontSize: 18 * window.devicePixelRatio,
-    fontWeight: '400',
-    fill: 'white',
-  }),
-  Body2: new TextStyle({
-    fontFamily: 'Exo 2',
-    fontSize: 12 * window.devicePixelRatio,
-    fontWeight: '400',
-    fill: 'white',
-  }),
+const H1 = new TextStyle({
+  fontFamily: 'Exo 2',
+  fontSize: 40 * window.devicePixelRatio,
+  fontWeight: '900',
+  fill: 'white',
+});
+const H2 = new TextStyle({
+  fontFamily: 'Exo 2',
+  fontSize: 30 * window.devicePixelRatio,
+  fontWeight: '900',
+  fill: 'white',
+});
+const H3 = new TextStyle({
+  fontFamily: 'Exo 2',
+  fontSize: 24 * window.devicePixelRatio,
+  fontWeight: '900',
+  fill: 'white',
+});
+const Body1 = new TextStyle({
+  fontFamily: 'Exo 2',
+  fontSize: 18 * window.devicePixelRatio,
+  fontWeight: '400',
+  fill: 'white',
+});
+const Body2 = new TextStyle({
+  fontFamily: 'Exo 2',
+  fontSize: 12 * window.devicePixelRatio,
+  fontWeight: '400',
+  fill: 'white',
+});
+
+const asBlack = (s: TextStyle) => {
+  const cloned = s.clone();
+  cloned.fill = 'black';
+  return cloned;
 };
+export const TextStyles = {
+  H1,
+  H2,
+  H3,
+  Body1,
+  Body2,
+  BlackH1: asBlack(H1),
+  BlackH2: asBlack(H2),
+  BlackH3: asBlack(H3),
+  BlackBody1: asBlack(Body1),
+  BlackBody2: asBlack(Body2),
+};
+
+export const BlackTextStyles = {};

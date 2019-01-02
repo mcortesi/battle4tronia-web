@@ -1,5 +1,5 @@
 import { Dimension } from './commons';
-import { newContainer, newSprite } from './utils';
+import { newContainer, newSprite, newAnimatedSprite } from './utils';
 import { Point, filters } from 'pixi.js';
 
 export function MainBackground(size: Dimension) {
@@ -37,6 +37,19 @@ export function BattleBackground(size: Dimension) {
     position: new Point(243, 11),
   });
 
-  container.addChild(bg, board);
-  return container;
+  const selectedLine = newAnimatedSprite(
+    'UIBoardLine1.png',
+    'UIBoardLine2.png',
+    'IcoBoardLine3.png'
+  );
+  selectedLine.position.set(243, 11);
+
+  container.addChild(bg, board, selectedLine);
+
+  return {
+    stage: container,
+    showLine: (x: 1 | 2 | 3) => {
+      selectedLine.gotoAndStop(x - 1);
+    },
+  };
 }

@@ -1,21 +1,29 @@
 import { Tween } from '@tweenjs/tween.js';
-import { Container, extras, loader, Point } from 'pixi.js';
+import { Container, extras, loader } from 'pixi.js';
 import { Battle, BattleStatus, Player } from '../model/api';
 import { BoostChoice, LineChoice } from '../model/base';
 import { Lock, rndInt } from '../utils';
 import { BattleBackground } from './backgrounds';
-import { primaryBtn, smallIcon } from './basic';
+import { bigIcon, FightBtn } from './basic';
 import { Bar } from './battle/Bars';
 import { BoostSelector, LinesSelector } from './battle/ChoiceSelector';
 import { ReelsUI } from './battle/Reels';
 import { ScoreBox } from './battle/ScoreBox';
-import { Dimension, Position } from './commons';
+import { Dimension } from './commons';
 import { Layout } from './constants';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
 import SoundManager from './SoundManager';
-import { newContainer, newSprite, newText, centerX } from './utils';
-import { Button } from './utils/Button';
+import {
+  centerX,
+  newAnimatedSprite,
+  newContainer,
+  newSprite,
+  newText,
+  postionAfterX,
+  postionOnRight,
+} from './utils';
+import { Button, ToggleButton } from './utils/Button';
 
 export interface UIState {
   boostIdx: number;
@@ -36,7 +44,9 @@ function createUI(opts: BattleScreenProps) {
   const stage = newContainer(0, 0);
   opts.parent.addChild(stage);
 
-  stage.addChild(BattleBackground(opts.size));
+  const boardBg = BattleBackground(opts.size);
+  stage.addChild(boardBg.stage);
+  boardBg.showLine(opts.attack.value);
 
   const scoresUI = new ScoreBox({
     ...Layout.scoreBox,
@@ -44,7 +54,6 @@ function createUI(opts: BattleScreenProps) {
     initTronium: opts.player.tronium,
   }).addTo(stage);
   const reelsUI = new ReelsUI(Layout.reels).addTo(stage);
-  reelsUI.selectLines(opts.attack);
 
   const energyBarUI = new Bar({
     ...Layout.energyBar,
@@ -57,20 +66,22 @@ function createUI(opts: BattleScreenProps) {
     ...Layout.hpBar,
     maxValue: opts.battle.villain.maxHp,
     initValue: opts.battle.villain.hp,
+    unit: 'HP',
   }).addTo(stage);
 
   stage.addChild(Hero(opts.size));
   const villain = Villain(opts.size);
   stage.addChild(villain.stage);
 
-  stage.addChild(
-    GlobalButtons({
-      x: 1260,
-      y: 27,
-      onClose: opts.gd.exitBattle.bind(opts.gd),
-      onHelp: opts.gd.showHowToPlay.bind(opts.gd),
-    })
-  );
+  const btnBar = ButtonBar({
+    onClose: opts.gd.exitBattle.bind(opts.gd),
+    onHelp: opts.gd.showHowToPlay.bind(opts.gd),
+  });
+
+  btnBar.y = 10;
+  postionOnRight(opts.size.width, 10, btnBar);
+
+  stage.addChild(btnBar);
 
   // Bet Controls
   const betSelectorUI = new BoostSelector({
@@ -94,7 +105,7 @@ function createUI(opts: BattleScreenProps) {
     },
   });
 
-  const spinBtn = primaryBtn('fight', opts.gd.requestSpin.bind(opts.gd), stage);
+  const spinBtn = FightBtn(opts.size, opts.gd.requestSpin.bind(opts.gd));
   const uiShield = newSprite('UIShield.png');
   const lowBalanceText = newText('Need more tronium', 'Body2');
   const winText = newText('', 'H3');
@@ -105,12 +116,12 @@ function createUI(opts: BattleScreenProps) {
   centerX(opts.size.width, winText);
   centerX(opts.size.width, epicnessScore);
 
-  uiShield.y = 436;
-  epicnessScore.y = 500;
+  uiShield.y = 450;
+  epicnessScore.y = 510;
   lowBalanceText.y = 645;
   winText.y = 35;
 
-  stage.addChild(uiShield, lowBalanceText, winText, epicnessScore);
+  stage.addChild(uiShield, spinBtn.stage, lowBalanceText, winText, epicnessScore);
 
   lowBalanceText.visible = false;
   winText.visible = false;
@@ -141,6 +152,7 @@ function createUI(opts: BattleScreenProps) {
     scoresUI,
     lowBalanceText,
     reelsUI,
+    boardBg,
   };
 }
 
@@ -161,7 +173,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
   const unregister1 = gd.registerForBattleModel({
     setAttackChoice: (attack: LineChoice) => {
       ui.linesSelectorUI.update(LineChoice.indexOf(attack));
-      ui.reelsUI.selectLines(attack);
+      ui.boardBg.showLine(attack.value);
     },
     setBoostChoice: (boost: BoostChoice) => {
       ui.betSelectorUI.update(BoostChoice.indexOf(boost));
@@ -299,11 +311,35 @@ function Villain(parentSize: Dimension) {
   };
 }
 
-function GlobalButtons(opts: Position & { onClose: () => void; onHelp: () => void }) {
-  const container = newContainer(opts.x, opts.y);
-  Button.from(smallIcon('IcoHowtoPlay'), opts.onHelp).addTo(container);
-  Button.from(smallIcon('IcoClose', { position: new Point(49, 0) }), opts.onClose, {
-    soundId: 'btnNegative',
-  }).addTo(container);
+function ButtonBar(opts: { onClose: () => void; onHelp: () => void }) {
+  const container = newContainer();
+
+  const musicSprite = newAnimatedSprite('IcoMusicOn.png', 'IcoMusicOff.png');
+  const volumeSprite = newAnimatedSprite('IcoVolumeOn.png', 'IcoVolumeOff.png');
+  const howtoPlaySprite = bigIcon('IcoHowtoPlay');
+  const closeSprite = bigIcon('IcoClose');
+
+  postionAfterX(musicSprite, volumeSprite, 10);
+  postionAfterX(volumeSprite, howtoPlaySprite, 10);
+  postionAfterX(howtoPlaySprite, closeSprite, 10);
+
+  container.addChild(musicSprite, volumeSprite, howtoPlaySprite, closeSprite);
+
+  Button.from(howtoPlaySprite, opts.onHelp);
+  Button.from(closeSprite, opts.onClose, { soundId: 'btnNegative' });
+  ToggleButton.from(
+    musicSprite,
+    () => {
+      SoundManager.toggleMusic();
+    },
+    SoundManager.musicOn
+  );
+  ToggleButton.from(
+    volumeSprite,
+    () => {
+      SoundManager.toggleVolume();
+    },
+    SoundManager.volumeOn
+  );
   return container;
 }

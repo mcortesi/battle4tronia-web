@@ -5,7 +5,7 @@ import { Modal } from './Modal';
 import {
   centerGroupX,
   centerX,
-  newSprite,
+  newAnimatedSprite,
   newText,
   postionAfterY,
   postionBeforeY,
@@ -25,20 +25,20 @@ export function CashOutModal(
   });
   const Width = modal.bodySize.width;
 
-  const title = newText('CASHOUT', 'H2');
+  const title = newText('CASHOUT', 'BlackH2');
   title.position.set((Width - title.width) / 2, Padding);
   modal.body.addChild(title);
 
-  const msg1 = newText('We  hope you enjoyed your  time at Tronia!', 'Body1');
-  const msg2 = newText('Come back any time soon!', 'Body1');
-  const msg3 = newText('You have:', 'Body1');
+  const msg1 = newText('We  hope you enjoyed your  time at Tronia!', 'BlackBody1');
+  const msg2 = newText('Come back any time soon!', 'BlackBody1');
+  const msg3 = newText('You have:', 'BlackBody1');
   const troniumIcon = smallIcon('IcoTronium');
-  const msg4 = newText(`${opts.player.tronium}`, 'H2');
-  const msg5 = newText('You get:', 'Body1');
-  const msg6 = newText(`${opts.player.tronium * opts.troniumPrice} TRX`, 'H2');
+  const msg4 = newText(`${opts.player.tronium}`, 'BlackH2');
+  const msg5 = newText('You get:', 'BlackBody1');
+  const msg6 = newText(`${opts.player.tronium * opts.troniumPrice} TRX`, 'BlackH2');
 
-  const bottomMsg = newText('Will be  transfered to your Tronlink Wallet', 'Body1');
-  const btnSellSprite = newSprite('BtnCashout.png');
+  const bottomMsg = newText('Will be  transfered to your Tronlink Wallet', 'BlackBody1');
+  const btnSellSprite = newAnimatedSprite('BtnCashout.png', 'BtnCashoutDisabled.png');
 
   centerX(Width, msg1);
   centerX(Width, msg2);
@@ -63,13 +63,17 @@ export function CashOutModal(
 
   modal.body.addChild(msg1, msg2, msg3, msg4, msg5, msg6, troniumIcon, bottomMsg, btnSellSprite);
 
-  Button.from(btnSellSprite, () => {
+  const sellBtn = Button.from(btnSellSprite, () => {
     opts.gd.requestSellTronium(10);
   });
 
   const unregister = opts.gd.registerForUIEvents({
     closeCashOutModal: () => dispose(),
   });
+
+  if (opts.player.tronium === 0) {
+    sellBtn.disable = true;
+  }
 
   const dispose = () => {
     unregister();

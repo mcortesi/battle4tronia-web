@@ -72,10 +72,11 @@ const Taunts: SoundId[] = [
 ];
 
 export class SoundManager {
+  volumeOn = true;
+  musicOn = true;
   private howl: Howl;
   private currentSpin: null | number = null;
-  private homeSound: null | number = null;
-  private battleSounds: null | number[] = null;
+  private musicSounds: number[] = [];
   private toStopOnFade: Set<number> = new Set();
   private endListeners: Map<number, () => void> = new Map();
 
@@ -96,15 +97,39 @@ export class SoundManager {
     });
   }
 
+  toggleMusic() {
+    this.musicOn = !this.musicOn;
+    this.musicSounds.forEach(id => {
+      this.howl.mute(!(this.musicOn && this.volumeOn), id);
+    });
+    return this.musicOn;
+  }
+
+  toggleVolume() {
+    this.volumeOn = !this.volumeOn;
+    this.howl.mute(!this.volumeOn);
+    this.musicSounds.forEach(id => {
+      this.howl.mute(!(this.musicOn && this.volumeOn), id);
+    });
+    return this.volumeOn;
+  }
+
   enterHome() {
-    if (this.battleSounds) {
-      this.battleSounds.forEach(s => this.howl.stop(s));
-      this.battleSounds = null;
-    }
-    if (!this.homeSound) {
-      this.homeSound = this.play('bg-home');
-      this.howl.volume(0.1, this.homeSound);
-    }
+    this.changeMusic('bg-home');
+  }
+  enterBattle() {
+    this.changeMusic('bg-battle', 'bg-battle2');
+  }
+
+  changeMusic(...soundIds: SoundId[]) {
+    this.musicSounds.forEach(id => {
+      this.howl.stop(id);
+    });
+    this.musicSounds = soundIds.map(s => {
+      const id = this.play(s);
+      this.howl.mute(!(this.musicOn && this.volumeOn), id);
+      return id;
+    });
   }
 
   load() {
@@ -115,15 +140,6 @@ export class SoundManager {
         this.howl.once('load', resolve);
       }
     });
-  }
-
-  enterBattle() {
-    if (this.homeSound) {
-      this.howl.stop(this.homeSound);
-      this.homeSound = null;
-    }
-    this.battleSounds = [this.play('bg-battle'), this.play('bg-battle2')];
-    this.battleSounds.forEach(s => this.howl.volume(0.1, s));
   }
 
   startSpin() {

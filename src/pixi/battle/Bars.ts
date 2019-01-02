@@ -8,6 +8,7 @@ export interface BarOpts extends Position, Dimension {
   initValue: number;
   maxValue: number;
   leftToRight?: boolean;
+  unit?: string;
 }
 
 export class Bar extends UIComponent {
@@ -44,7 +45,8 @@ export class Bar extends UIComponent {
     this.outerBar.endFill();
     outerStage.addChild(this.outerBar);
 
-    this.label = newText(opts.initValue.toString(), 'Body1');
+    const txt = this.opts.unit ? `${opts.initValue} ${this.opts.unit}` : opts.initValue.toString();
+    this.label = newText(txt, 'Body1');
 
     centerX(this.opts.width, this.label);
     centerY(this.opts.height, this.label);
@@ -57,7 +59,7 @@ export class Bar extends UIComponent {
 
   updateValue(newValue: number) {
     const newWidth = (this.opts.width * newValue) / this.maxValue;
-    this.label.text = newValue.toString();
+    this.label.text = this.opts.unit ? `${newValue} ${this.opts.unit}` : newValue.toString();
     centerX(this.opts.width, this.label);
     new Tween(this.outerBar).to({ width: newWidth }, 300).start();
   }

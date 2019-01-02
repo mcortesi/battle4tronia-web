@@ -26,8 +26,8 @@ export class Card {
   static ALL_BYKIND: Map<CardKind, Card[]> = new Map();
 
   static Punch = new Card('punch', CardKind.Attack, true);
-  static Boomerang = new Card('boomerang', CardKind.Attack, true);
   static Sword = new Card('sword', CardKind.Attack, true);
+  static Boomerang = new Card('boomerang', CardKind.Attack, true);
   static Tronium = new Card('tronium', CardKind.Attack, true);
 
   static TrashA = new Card('tA', CardKind.Trash, false);
@@ -386,38 +386,38 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
 // prettier-ignore
 const MovesTable: Array<[string, number, number, number, number, () => CardPosition[], SoundId, string | null]> = [
   // ID          PROB    PAYOUT DAMAGE EPICNESS   MOVE GENERATOR                         SOUND ID            WIN MSG
-  ['1S4*'	      , 0.0015 , 30	  , 45   , 3333   , scatter                             , 'card-scatter'    , 'Blast off!'                   ],
-  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 83     , b3of(Card.Punch)                    , 'card-punch'      , 'Punch in the face!'           ],
-  ['3B2T'	      , 0.0500 , 0.7  , 7    , 100    , b3of(Card.Boomerang)                , 'card-boomerang'  , 'Swift as the wind!'           ],
-  ['3C2T'	      , 0.0400 , 1.2  , 14   , 125    , b3of(Card.Sword)                    , 'card-sword'      , 'Blade swipe!'                 ],
-  ['3D2T'	      , 0.0080 , 7.7  , 29   , 625    , b3of(Card.Tronium)                  , 'card-tronium'    , 'Sweet bounty!'                ],
-  ['4A1T'	      , 0.0312 , 1	  , 5    , 160    , b4of(Card.Punch)                    , 'card-punch'      , 'Super punch!'                 ],
-  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 192    , b4of(Card.Boomerang)                , 'card-boomerang'  , 'Fast as an eagle!'            ],
-  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 240    , b4of(Card.Sword)                    , 'card-sword'      , 'Blade Fury!'                  ],
-  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 1202   , b4of(Card.Tronium)                  , 'card-tronium'    , 'Great bounty!'                ],
-  ['5A'	        , 0.0150 , 2.5	, 6	   , 333    , b5of(Card.Punch)                    , 'card-punch'      , 'The hand of Tronia'           ],
-  ['5B'	        , 0.0125 , 3.5	, 12.5 , 400    , b5of(Card.Boomerang)                , 'card-boomerang'  , 'The eagle\'s battlecry'       ],
-  ['5C'	        , 0.0100 , 18	  , 25	 , 500    , b5of(Card.Sword)                    , 'card-sword'      , 'Blade dancer'                 ],
-  ['5D'	        , 0.0020 , 50	  , 50	 , 2500   , b5of(Card.Tronium)                  , 'card-tronium'    , 'The heart of Tronia'          ],
-  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 625    , b3and2(Card.Punch, Card.Boomerang)  , 'card-punch'      , 'Flying punch!'                ],
-  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 694    , b3and2(Card.Punch, Card.Sword)      , 'card-punch'      , 'Steady blade!'                ],
-  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 772    , b3and2(Card.Punch, Card.Tronium)    , 'card-punch'      , 'Tronium overcharge!'          ],
-  ['3B2A'	      , 0.0067 , 1	  , 10	 , 750    , b3and2(Card.Boomerang, Card.Punch)  , 'card-boomerang'  , 'Flying punch!'                ],
-  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 833    , b3and2(Card.Boomerang, Card.Sword)  , 'card-boomerang'  , 'Tronian chainsaw!'            ],
-  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 926    , b3and2(Card.Boomerang, Card.Tronium), 'card-boomerang'  , 'Tronium overcharge!'          ],
-  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 938    , b3and2(Card.Sword, Card.Punch)      , 'card-sword'      , 'Steady blade!'                ],
-  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 1042   , b3and2(Card.Sword, Card.Boomerang)  , 'card-sword'      , 'Tronian chainsaw!'            ],
-  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 1157   , b3and2(Card.Sword, Card.Tronium)    , 'card-sword'      , 'Tronium overcharge!'          ],
-  ['3D2A'	      , 0.0011 , 8	  , 32	 , 4688   , b3and2(Card.Tronium, Card.Punch)    , 'card-tronium'    , 'Tronium overcharge!'          ],
-  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 5208   , b3and2(Card.Tronium, Card.Boomerang), 'card-tronium'    , 'Tronium overcharge!'          ],
-  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 5787   , b3and2(Card.Tronium, Card.Sword)    , 'card-tronium'    , 'Tronium overcharge!'          ],
-  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 1000   , b3ABCD1SN1T                         , 'card-scatterneg' , 'Enemy dodge'                  ],
-  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 1500   , b4ABCD1SN                           , 'card-scatterneg' , 'Enemy dodge'                  ],
-  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0      , b2ABCD3T                            , 'card-trashA'     , 'Almost hit'                   ],
-  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0      , b1ABCD4T                            , 'card-trashB'     , 'Attack blocked'               ],
-  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD1NP2T                         , 'card-trashC'     , 'Very close'                   ],
-  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0      , b2ABCD2NP1T                         , 'card-trashD'     , 'Tail block'                   ],
-  ['5T'	        , 0.2116 , 0	  , 0	   , 0      , b5T                                 , 'card-trashE'     , 'Blinding dust counter attack' ],
+  ['1S4*'	      , 0.0015 , 30	  , 45   , 333   , scatter                             , 'card-scatter'    , "Wizards weren't joking with this!"    ],
+  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 8     , b3of(Card.Punch)                    , 'card-punch'      , "Eat it grunt!"                        ],
+  ['3B2T'	      , 0.0500 , 0.7  , 7    , 10    , b3of(Card.Sword)                    , 'card-sword'      , "Taste my steel"                       ],
+  ['3C2T'	      , 0.0400 , 1.2  , 14   , 13    , b3of(Card.Boomerang)                , 'card-boomerang'  , "Swift Troomerang!"                    ],
+  ['3D2T'	      , 0.0080 , 7.7  , 29   , 63    , b3of(Card.Tronium)                  , 'card-tronium'    , "I found Tronium!"                     ],
+  ['4A1T'	      , 0.0312 , 1	  , 5    , 16    , b4of(Card.Punch)                    , 'card-punch'      , "Squishy sand bag!"                    ],
+  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 19    , b4of(Card.Sword)                    , 'card-sword'      , "I'm gonna chop you!"                  ],
+  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 24    , b4of(Card.Boomerang)                , 'card-boomerang'  , "Twisted just like you grunts!"        ],
+  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 120   , b4of(Card.Tronium)                  , 'card-tronium'    , "I'm the tronium hunter"               ],
+  ['5A'	        , 0.0150 , 2.5	, 6	   , 33    , b5of(Card.Punch)                    , 'card-punch'      , "Somersault and punch!"                ],
+  ['5B'	        , 0.0125 , 3.5	, 12.5 , 40    , b5of(Card.Sword)                    , 'card-sword'      , "Chop chop chop potato"                ],
+  ['5C'	        , 0.0100 , 18	  , 25	 , 50    , b5of(Card.Boomerang)                , 'card-boomerang'  , "and that my friends.. is a headshot!" ],
+  ['5D'	        , 0.0020 , 50	  , 50	 , 250   , b5of(Card.Tronium)                  , 'card-tronium'    , "Tronia wants me to win!"              ],
+  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 63    , b3and2(Card.Punch, Card.Sword)      , 'card-punch'      , "You won't escape this!"               ],
+  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 69    , b3and2(Card.Punch, Card.Boomerang)  , 'card-punch'      , "and that my friends.. is a headshot!" ],
+  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 77    , b3and2(Card.Punch, Card.Tronium)    , 'card-punch'      , "Tronium overcharge!"                  ],
+  ['3B2A'	      , 0.0067 , 1	  , 10	 , 75    , b3and2(Card.Sword, Card.Punch)      , 'card-sword'      , "Steady blade!"                        ],
+  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 83    , b3and2(Card.Sword, Card.Boomerang)  , 'card-sword'      , "Hits like an eagle with steel claws!" ],
+  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 93    , b3and2(Card.Sword, Card.Tronium)    , 'card-sword'      , "Tronium overcharge!"                  ],
+  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 94    , b3and2(Card.Boomerang, Card.Punch)  , 'card-boomerang'  , "Take that you grunt!"                 ],
+  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 104   , b3and2(Card.Boomerang, Card.Sword)  , 'card-boomerang'  , "Gonna chop you like a chainsaw!"      ],
+  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 116   , b3and2(Card.Boomerang, Card.Tronium), 'card-boomerang'  , "Tronium overcharge!"                  ],
+  ['3D2A'	      , 0.0011 , 8	  , 32	 , 469   , b3and2(Card.Tronium, Card.Punch)    , 'card-tronium'    , "Tronium overcharge!"                  ],
+  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 521   , b3and2(Card.Tronium, Card.Sword)    , 'card-tronium'    , "Tronium overcharge!"                  ],
+  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 579   , b3and2(Card.Tronium, Card.Boomerang), 'card-tronium'    , "Tronium overcharge!"                  ],
+  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 100   , b3ABCD1SN1T                         , 'card-scatterneg' , "Enemy dodge"                          ],
+  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 150   , b4ABCD1SN                           , 'card-scatterneg' , "Enemy dodge"                          ],
+  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0     , b2ABCD3T                            , 'card-trashA'     , "Almost hit"                           ],
+  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0     , b1ABCD4T                            , 'card-trashB'     , "He blocked the attacks!"              ],
+  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD1NP2T                         , 'card-trashC'     , "Very close"                           ],
+  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD2NP1T                         , 'card-trashD'     , "Darn lizard!"                         ],
+  ['5T'	        , 0.2116 , 0	  , 0	   , 0     , b5T                                 , 'card-trashE'     , "That grunt threw dust at my face"     ],
 ]
 
 Move.createAll(MovesTable);

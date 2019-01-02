@@ -12,8 +12,6 @@ const ResouceMap = {
   cards: '/assets/spriteCards.json',
   characters1: '/assets/characters1.json',
   characters2: '/assets/characters2.json',
-
-  btnBuy: '/assets/btnBuy.png',
 };
 
 export class AssetLoader {

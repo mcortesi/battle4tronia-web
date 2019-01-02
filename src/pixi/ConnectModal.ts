@@ -12,7 +12,6 @@ import {
   postionOnBottom,
 } from './utils';
 import { Button } from './utils/Button';
-import { smallIcon } from './basic';
 import { TextField } from './utils/TextField';
 
 // screen: { width: 1366, height: 688 },
@@ -21,7 +20,7 @@ function centeredParagraph(width: number, msg: string) {
   const stage = newContainer();
   let nextY = 0;
   for (const line of msg.split('\n')) {
-    const lineText = newText(line, 'Body1');
+    const lineText = newText(line, 'BlackBody1');
     centerX(width, lineText);
     lineText.y = nextY;
     nextY += lineText.height;
@@ -39,12 +38,7 @@ const MessageModal = (title: string, msg: string) => (opts: ScreenContext): Disp
     screenStage: opts.parent,
   });
 
-  const closeSprite = smallIcon('IcoClose');
-  closeSprite.scale.set(0.8, 0.8);
-  closeSprite.y = 5;
-  closeSprite.x = modal.bodySize.width - closeSprite.width - 5;
-
-  const titleText = newText(title, 'H2');
+  const titleText = newText(title, 'BlackH2');
 
   titleText.y = Padding;
   centerX(modal.bodySize.width, titleText);
@@ -53,19 +47,10 @@ const MessageModal = (title: string, msg: string) => (opts: ScreenContext): Disp
   // centerY(modal.bodySize.height, p);
   p.y = titleText.y + titleText.height + Padding * 1.7;
 
-  modal.body.addChild(closeSprite, titleText, p);
+  modal.body.addChild(titleText, p);
 
-  Button.from(
-    closeSprite,
-    () => {
-      modal.dispose();
-    },
-    { soundId: 'btnNegative' }
-  );
   return modal;
 };
-
-export const HowtoPlayModal = MessageModal('JUGA PAPU!!', 'Y no preguntes boludeces');
 
 export const ErrorModal = MessageModal(
   'OOPS! WE FOUND AND ERROR',
@@ -92,7 +77,7 @@ export function ConnectModal(opts: ScreenContext & { troniumPrice: number }): Di
     screenStage: opts.parent,
   });
 
-  const title1 = newText('YOUR JOURNEY STARTS', 'H2');
+  const title1 = newText('YOUR JOURNEY STARTS', 'BlackH2');
 
   const msg0 = centeredParagraph(
     modal.bodySize.width,
@@ -206,8 +191,8 @@ function SelectBox(opts: { tronium: number; icon: string; trx: number; onClick: 
   const stage = newContainer();
 
   const icon = newSprite(opts.icon);
-  const troniumText = newText(`x ${opts.tronium.toString()}`, 'Body1');
-  const trxText = newText(`${opts.trx} TRX`, 'Body1');
+  const troniumText = newText(`x ${opts.tronium.toString()}`, 'BlackBody1');
+  const trxText = newText(`${opts.trx} TRX`, 'BlackBody1');
 
   horizontalAlignCenter(0, icon, troniumText, trxText);
   postionAfterY(icon, troniumText, 10);
@@ -216,7 +201,7 @@ function SelectBox(opts: { tronium: number; icon: string; trx: number; onClick: 
   stage.addChild(icon, troniumText, trxText);
 
   const iconBorder = new Graphics()
-    .lineStyle(2, 0xffffff)
+    .lineStyle(2, 0x000000)
     .drawRoundedRect(icon.x, icon.y, icon.width, icon.height, 5);
   iconBorder.visible = false;
   stage.addChild(iconBorder);

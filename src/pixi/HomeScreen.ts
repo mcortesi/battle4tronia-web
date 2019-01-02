@@ -1,6 +1,6 @@
 import { Container, Point } from 'pixi.js';
 import { Player, PlayerStats } from '../model/api';
-import { bigIcon, HowtoPlayBtn, primaryBtn, smallIcon } from './basic';
+import { bigIcon, smallIcon, ToBattleBtn, HowtoPlayBtn, WatchStoryBtn } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';
 import { Disposable } from './MainUI';
@@ -11,9 +11,11 @@ import {
   newText,
   postionAfterX,
   verticalAlignCenter,
-  centerX,
+  newAnimatedSprite,
+  postionOnRight,
 } from './utils';
-import { Button } from './utils/Button';
+import { Button, ToggleButton } from './utils/Button';
+import SoundManager from './SoundManager';
 
 export interface HomeScreenProps {
   size: Dimension;
@@ -28,16 +30,18 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
 
   stage.addChild(Hero(size));
 
-  const btnToBattle = primaryBtn('toBattle', () => gd.requestBattle(), stage);
+  const btnBar = ButtonBar();
 
-  const lowBalanceText = newText('Need more tronium', 'Body2');
-  centerX(size.width, lowBalanceText);
-  lowBalanceText.y = 645;
-  lowBalanceText.visible = false;
-  stage.addChild(lowBalanceText);
+  const btnToBattle = ToBattleBtn(size, gd.requestBattle.bind(gd), gd.openAddMoreModal.bind(gd));
+
+  postionOnRight(size.width, 10, btnBar);
+  btnBar.y = 10;
+
+  stage.addChild(btnToBattle.stage);
+  stage.addChild(btnBar);
 
   const balanceBox = BalanceBox({
-    position: new Point(25, 25),
+    position: new Point(10, 10),
     value: player.tronium,
     addMore: gd.openAddMoreModal.bind(gd),
     cashOut: gd.openCashOutModal.bind(gd),
@@ -45,6 +49,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   stage.addChild(balanceBox.stage);
 
   stage.addChild(HowtoPlayBtn(gd.showHowToPlay.bind(gd)).stage);
+  stage.addChild(WatchStoryBtn(gd.showHowToPlay.bind(gd)).stage);
 
   stage.addChild(
     newText(player.name, 'H1', {
@@ -53,7 +58,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     })
   );
 
-  const fameIco = smallIcon('IcoFame', {
+  const fameIco = smallIcon('IcoShield', {
     position: new Point(0, 250 + 6),
   });
   const fameText = newText(player.fame.toString(), 'H2', {
@@ -138,8 +143,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
 
   const updateBalanceStatus = (p: Player) => {
     const enabled = p.tronium > 0;
-    btnToBattle.disable = !enabled;
-    lowBalanceText.visible = !enabled;
+    btnToBattle.setCanGoToBattle(enabled);
   };
 
   updateBalanceStatus(player);
@@ -247,4 +251,31 @@ function Hero(parentSize: Dimension) {
   hero.x = 0;
   hero.y = parentSize.height - hero.height;
   return hero;
+}
+
+function ButtonBar() {
+  const container = newContainer();
+
+  const musicSprite = newAnimatedSprite('IcoMusicOn.png', 'IcoMusicOff.png');
+  const volumeSprite = newAnimatedSprite('IcoVolumeOn.png', 'IcoVolumeOff.png');
+
+  postionAfterX(musicSprite, volumeSprite, 10);
+
+  container.addChild(musicSprite, volumeSprite);
+
+  ToggleButton.from(
+    musicSprite,
+    () => {
+      SoundManager.toggleMusic();
+    },
+    SoundManager.musicOn
+  );
+  ToggleButton.from(
+    volumeSprite,
+    () => {
+      SoundManager.toggleVolume();
+    },
+    SoundManager.volumeOn
+  );
+  return container;
 }

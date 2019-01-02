@@ -132,8 +132,11 @@ export class FakeApi implements API {
   private player: Player;
   private battle: null | Battle = null;
 
-  constructor() {
-    this.status = GameStatus.NO_CHANNEL_OPENED;
+  constructor(
+    status: GameStatus = GameStatus.NO_CHANNEL_OPENED,
+    private loggedOut: boolean = false
+  ) {
+    this.status = status;
     this.player = {
       name: 'Papu',
       tronium: 0,
@@ -154,6 +157,7 @@ export class FakeApi implements API {
   }
 
   async openChannel(tronium: number): Promise<boolean> {
+    this.loggedOut = false;
     this.status = GameStatus.READY;
     this.player.tronium += tronium;
     return true;
@@ -164,16 +168,20 @@ export class FakeApi implements API {
     return true;
   }
 
-  async getPlayer(): Promise<Player> {
-    return clonePlayer(this.player);
+  async getPlayer(): Promise<Player | null> {
+    if (this.loggedOut) {
+      return null;
+    } else {
+      return clonePlayer(this.player);
+    }
   }
 
   async updatePlayerName(name: string): Promise<Player> {
     this.player.name = name;
-    return this.getPlayer();
+    return clonePlayer(this.player);
   }
 
-  updatePlayerItems(
+  async updatePlayerItems(
     item1: null | Collectable,
     item2: null | Collectable,
     item3: null | Collectable,
@@ -183,7 +191,7 @@ export class FakeApi implements API {
     this.player.item2 = item2;
     this.player.item3 = item3;
     this.player.item4 = item4;
-    return this.getPlayer();
+    return clonePlayer(this.player);
   }
 
   async getCurrentBattle(): Promise<Battle> {

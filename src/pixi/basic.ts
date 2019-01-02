@@ -1,63 +1,37 @@
 import { Container, Point } from 'pixi.js';
+import { Dimension } from './commons';
 import { Layout } from './constants';
-import { LayoutOptions, newSprite } from './utils';
+import SoundManager from './SoundManager';
+import { centerX, LayoutOptions, newAnimatedSprite, newSprite, postionOnBottom } from './utils';
 import { Button } from './utils/Button';
 
-export type IconName = 'IcoTronium' | 'IcoFame' | 'IcoClose' | 'IcoHowtoPlay' | 'IcoArrow';
+export type IconName = 'IcoTronium' | 'IcoShield' | 'IcoClose' | 'IcoHowtoPlay' | 'IcoArrow';
 
 const PrimeryButtons = {
-  fight: {
-    image: 'BtnFight.png',
-    size: {
-      width: 200,
-      height: 100,
-    },
-    // width & height - shadow * 2.
-    // x starts in -100 since anchor is 0.5
-    // hitArea: new Rectangle(-100, 20, 200, 100),
-  },
-  toBattle: {
-    image: 'BtnToBattle.png',
-    shadowLength: 0,
-    size: {
-      width: 250,
-      height: 100,
-    },
-    // hitArea: new Rectangle(-125, 0, 250, 100),
-  },
   connect: {
     image: 'BtnConnect.png',
-    shadowLength: 0,
     size: {
       width: 250,
       height: 100,
     },
-    // hitArea: new Rectangle(-125, 0, 250, 100),
   },
 };
 
-const IconType = {
-  small: { width: 24, height: 24 },
-  big: { width: 55, height: 55 },
-};
-
-function icon(
-  name: IconName,
-  type: keyof typeof IconType,
-  opts: Pick<LayoutOptions, 'anchor' | 'position'> = {}
-) {
+function icon(name: IconName, opts: Pick<LayoutOptions, 'anchor' | 'position'> = {}) {
   return newSprite(name + '.png', {
     ...opts,
-    size: IconType[type],
   });
 }
 
 export function smallIcon(name: IconName, opts: Pick<LayoutOptions, 'anchor' | 'position'> = {}) {
-  return icon(name, 'small', opts);
+  const i = icon(name, opts);
+  i.width = 24;
+  i.height = 24;
+  return i;
 }
 
 export function bigIcon(name: IconName, opts: Pick<LayoutOptions, 'anchor' | 'position'> = {}) {
-  return icon(name, 'big', opts);
+  return icon(name, opts);
 }
 
 export function primaryBtn(
@@ -80,7 +54,56 @@ export function primaryBtn(
   return btn;
 }
 
+export function FightBtn(parentSize: Dimension, action: () => void) {
+  const BottomMargin = 50;
+  const btnSprite = newAnimatedSprite('BtnFight.png', 'BtnSpin.png');
+
+  centerX(parentSize.width, btnSprite);
+  postionOnBottom(parentSize.height, BottomMargin, btnSprite);
+
+  const btn = Button.from(btnSprite, action);
+  return btn;
+}
+
+export function ToBattleBtn(
+  parentSize: Dimension,
+  actionBattle: () => void,
+  actionNotBattle: () => void
+) {
+  const BottomMargin = 50;
+  const btnSprite = newAnimatedSprite('BtnToBattle.png', 'BtnGetTronium.png');
+
+  centerX(parentSize.width, btnSprite);
+  postionOnBottom(parentSize.height, BottomMargin, btnSprite);
+
+  btnSprite.buttonMode = true;
+  btnSprite.interactive = true;
+
+  let canGotoBattle = true;
+  btnSprite.on('click', () => {
+    SoundManager.play('btnPositive');
+    if (canGotoBattle) {
+      actionBattle();
+    } else {
+      actionNotBattle();
+    }
+  });
+
+  return {
+    stage: btnSprite,
+    setCanGoToBattle: (val: boolean) => {
+      canGotoBattle = val;
+      btnSprite.gotoAndStop(canGotoBattle ? 0 : 1);
+    },
+  };
+}
+
 export function HowtoPlayBtn(onClick: () => void) {
-  const btn = newSprite('BtnHowtoPlay.png', { position: new Point(1065, 346) });
+  const btn = newSprite('BtnHowtoPlay.png', { position: new Point(1202, 376) });
+  return Button.from(btn, onClick);
+}
+
+export function WatchStoryBtn(onClick: () => void) {
+  const btn = newSprite('BtnStory.png', { position: new Point(1067, 358) });
   return Button.from(btn, onClick);
 }
