@@ -1,4 +1,5 @@
-import { API, Battle, Bet, GameStatus, GlobalStats, Player, SpinResult, PlayerStats } from './api';
+import { API } from './api';
+import { Battle, Bet, GameStatus, GlobalStats, Player, SpinResult, PlayerStats } from './model';
 import { BetResult, Move, toBetResult } from './reel';
 export interface ClientSpinResult {
   player: Player;

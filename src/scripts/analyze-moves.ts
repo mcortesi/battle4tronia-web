@@ -1,5 +1,5 @@
 import { winningsFor, Move } from '../model/reel';
-import { Bet } from '../model/api';
+import { Bet } from '../model/model';
 import { genArray } from '../utils';
 
 function runSimulation(name: string, iterations: number, bet: Bet) {

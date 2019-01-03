@@ -1,5 +1,5 @@
 import { Container, Point } from 'pixi.js';
-import { Player, PlayerStats } from '../model/api';
+import { Player, PlayerStats } from '../model/model';
 import { bigIcon, smallIcon, ToBattleBtn, HowtoPlayBtn, WatchStoryBtn } from './basic';
 import { Dimension } from './commons';
 import { GlobalDispatcher } from './GlobalDispatcher';

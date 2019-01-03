@@ -1,4 +1,4 @@
-import { BattleStatus, GameStatus } from '../model/api';
+import { BattleStatus, GameStatus } from '../model/model';
 import { BoostChoice, LineChoice } from '../model/base';
 import { GameClient } from '../model/game';
 import { AssetLoader } from './AssetLoader';

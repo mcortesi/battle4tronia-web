@@ -1,6 +1,6 @@
 import { BoostChoice, LineChoice } from '../model/base';
 import { ClientSpinResult } from '../model/game';
-import { GlobalStats, PlayerStats, Player, Battle } from '../model/api';
+import { GlobalStats, PlayerStats, Player, Battle } from '../model/model';
 
 export interface HowToPlayActions {
   nextHowToPlaySlide(): void;

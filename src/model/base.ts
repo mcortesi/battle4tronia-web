@@ -1,4 +1,4 @@
-import { Line } from './api';
+import { Line } from './model';
 
 export class BoostChoice {
   static ALL: BoostChoice[] = [

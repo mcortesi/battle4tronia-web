@@ -1,5 +1,5 @@
 import { Application, Container } from 'pixi.js';
-import { Battle, Player } from '../model/api';
+import { Battle, Player } from '../model/model';
 import { BoostChoice, LineChoice } from '../model/base';
 import { BattleScreen } from './BattleScreen';
 import { Dimension } from './commons';

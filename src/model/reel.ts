@@ -1,6 +1,6 @@
 import { MoveSound } from '../pixi/SoundManager';
 import { rndElem, shuffle, transpose } from '../utils';
-import { Bet } from './api';
+import { Bet } from './model';
 import { BoostChoice } from './base';
 
 export const ReelSize = {

@@ -1,6 +1,6 @@
 import { Tween } from '@tweenjs/tween.js';
 import { Container, extras, loader } from 'pixi.js';
-import { Battle, BattleStatus, Player } from '../model/api';
+import { Battle, BattleStatus, Player } from '../model/model';
 import { BoostChoice, LineChoice } from '../model/base';
 import { Lock, rndInt } from '../utils';
 import { BattleBackground } from './backgrounds';

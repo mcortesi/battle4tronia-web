@@ -1,4 +1,4 @@
-import { Player } from '../model/api';
+import { Player } from '../model/model';
 import { smallIcon } from './basic';
 import { Disposable, ScreenContext } from './MainUI';
 import { Modal } from './Modal';

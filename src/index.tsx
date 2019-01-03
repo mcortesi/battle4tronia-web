@@ -1,7 +1,8 @@
 import { GlobalDispatcher } from './pixi/GlobalDispatcher';
 import { Orchestrator } from './pixi/Orchestrator';
 import { AssetLoader } from './pixi/AssetLoader';
-import { FakeApi, API, GameStatus } from './model/api';
+import { FakeApi, API } from './model/api';
+import { GameStatus } from './model/model';
 import { GameClient } from './model/game';
 
 export async function startApp() {
