@@ -4,46 +4,54 @@ import { rndElem } from '../utils';
 const Spec = {
   src: ['/assets/sounds.ogg', '/assets/sounds.m4a', '/assets/sounds.mp3', '/assets/sounds.ac3'],
   sprite: {
-    battleEndA: [0, 6612.086167800453],
-    battleEndB: [8000, 6806.575963718821],
-    battleEndC: [16000, 6417.64172335601],
-    'bg-battle2': [24000, 5511.0657596371875, true],
-    btnNegative: [31000, 127.6190476190493],
-    btnPositive: [33000, 234.64852607709474],
-    'card-boomerang': [35000, 1944.7165532879822],
-    'card-punch': [38000, 1555.804988662132],
-    'card-scatter': [41000, 4472.902494331066],
-    'card-scatterneg': [47000, 3500.521541950114],
-    'card-sword': [52000, 3306.0544217687066],
-    'card-trashA': [57000, 1750.2721088435394],
-    'card-trashB': [60000, 1166.8480725623594],
-    'card-trashC': [63000, 972.3809523809521],
-    'card-trashD': [65000, 972.3582766439876],
-    'card-trashE': [67000, 1361.3151927437598],
-    'card-tronium': [70000, 3889.501133786851],
-    taunt1: [75000, 1166.8480725623594],
-    taunt10: [78000, 2722.630385487534],
-    taunt11: [82000, 2333.6734693877615],
-    taunt12: [86000, 2333.6734693877615],
-    taunt13: [90000, 1750.2721088435324],
-    taunt14: [93000, 1944.716553287975],
-    taunt15: [96000, 2917.120181405892],
-    taunt16: [100000, 3306.0544217687066],
-    taunt17: [105000, 2139.206349206347],
-    taunt18: [109000, 1750.2721088435324],
-    taunt19: [112000, 2722.630385487534],
-    taunt2: [116000, 2333.6734693877615],
-    taunt3: [120000, 2333.6734693877615],
-    taunt4: [124000, 1944.716553287975],
-    taunt5: [127000, 2722.6303854875196],
-    taunt6: [131000, 3111.564625850349],
-    taunt7: [136000, 1166.8480725623454],
-    taunt8: [139000, 2333.6734693877474],
-    taunt9: [143000, 1555.8049886621177],
-    villainEntry: [146000, 2528.1632653061197],
-    'bg-battle': [150000, 57260.40816326531, true],
-    'bg-home': [209000, 54595.91836734694, true],
-    spin: [265000, 5250.6122448979795, true],
+    'bg-battle': [0, 57260.4081632653, true],
+    'bg-home': [59000, 54595.91836734694, true],
+    spin: [115000, 5250.612244897965, true],
+    'bg-battle2': [141000, 5511.065759637177, true],
+    battleEndA: [122000, 2026.3038548752802],
+    battleEndB: [126000, 2274.444444444441],
+    battleEndC: [130000, 1964.6712018140704],
+    battleEndD: [133000, 2354.875283446717],
+    battleEndE: [137000, 2019.4557823129173],
+    btnNegative: [148000, 127.6190476190493],
+    btnPositive: [150000, 234.64852607710895],
+    'move-blockA': [152000, 3500.521541950121],
+    'move-blockB': [157000, 2016.0317460317572],
+    'move-blockC': [161000, 1612.1088435374133],
+    'move-blockD': [164000, 2224.8072562358348],
+    'move-boomerang': [168000, 1944.716553287975],
+    'move-punch': [171000, 1555.8049886621177],
+    'move-scatter': [174000, 4472.902494331066],
+    'move-sword': [180000, 3306.054421768721],
+    'move-trashA': [185000, 1750.2721088435464],
+    'move-trashB': [188000, 1166.8480725623454],
+    'move-trashC': [191000, 972.380952380945],
+    'move-trashD': [193000, 972.3582766440018],
+    'move-trashE': [195000, 1361.315192743774],
+    'move-trashF': [198000, 1071.3378684807253],
+    'move-trashG': [201000, 1341.7233560090835],
+    'move-tronium': [204000, 3889.501133786837],
+    taunt1: [209000, 1978.3900226757396],
+    taunt10: [212000, 1485.4875283446631],
+    taunt11: [215000, 2474.6485260770896],
+    taunt12: [219000, 2187.165532879817],
+    taunt13: [223000, 1540.2721088435385],
+    taunt14: [226000, 2447.278911564638],
+    taunt15: [230000, 1992.0634920634939],
+    taunt16: [233000, 1865.4195011338004],
+    taunt17: [236000, 2748.48072562358],
+    taunt18: [240000, 2950.4308390022798],
+    taunt19: [244000, 1506.0317460317378],
+    taunt2: [247000, 2217.959183673457],
+    taunt20: [251000, 1519.7278911564638],
+    taunt3: [254000, 1759.2970521541815],
+    taunt4: [257000, 2642.380952380961],
+    taunt5: [261000, 2936.734693877554],
+    taunt6: [265000, 941.2698412698433],
+    taunt7: [267000, 2238.4807256235604],
+    taunt8: [271000, 2313.809523809539],
+    taunt9: [275000, 2255.623582766418],
+    villainEntry: [279000, 1718.2312925170322],
   },
 };
 
@@ -97,6 +105,8 @@ export class SoundManager {
     });
   }
 
+  soundChooser = (...soundIds: SoundId[]) => () => this.play(rndElem(soundIds));
+
   toggleMusic() {
     this.musicOn = !this.musicOn;
     this.musicSounds.forEach(id => {
@@ -114,22 +124,22 @@ export class SoundManager {
     return this.volumeOn;
   }
 
+  play(id: SoundId) {
+    return this.howl.play(id);
+  }
+
+  async playAndWait(id: SoundId) {
+    const num = this.play(id);
+    return new Promise(resolve => {
+      this.endListeners.set(num, resolve);
+    });
+  }
+
   enterHome() {
     this.changeMusic('bg-home');
   }
   enterBattle() {
     this.changeMusic('bg-battle', 'bg-battle2');
-  }
-
-  changeMusic(...soundIds: SoundId[]) {
-    this.musicSounds.forEach(id => {
-      this.howl.stop(id);
-    });
-    this.musicSounds = soundIds.map(s => {
-      const id = this.play(s);
-      this.howl.mute(!(this.musicOn && this.volumeOn), id);
-      return id;
-    });
   }
 
   load() {
@@ -152,9 +162,6 @@ export class SoundManager {
       this.currentSpin = null;
     }
   }
-  // playSpin() {
-  //   this.play('spin');
-  // }
 
   playWin() {
     const winSounds: SoundId[] = ['battleEndA', 'battleEndB', 'battleEndC'];
@@ -166,21 +173,41 @@ export class SoundManager {
     await this.playAndWait(rndElem(Taunts));
   }
 
-  play(id: SoundId) {
-    return this.howl.play(id);
-  }
-
-  async playAndWait(id: SoundId) {
-    const num = this.play(id);
-    return new Promise(resolve => {
-      this.endListeners.set(num, resolve);
-    });
-  }
-
-  fadeAndStop(id: number, duration: number) {
+  private fadeAndStop(id: number, duration: number) {
     this.howl.fade(1, 0, duration, id);
     this.toStopOnFade.add(id);
   }
+
+  private changeMusic(...soundIds: SoundId[]) {
+    this.musicSounds.forEach(id => {
+      this.howl.stop(id);
+    });
+    this.musicSounds = soundIds.map(s => {
+      const id = this.play(s);
+      this.howl.mute(!(this.musicOn && this.volumeOn), id);
+      return id;
+    });
+  }
 }
 
-export default new SoundManager();
+const SM = new SoundManager();
+
+export const MoveSound = {
+  punch: () => SM.play('move-punch'),
+  boomerang: () => SM.play('move-boomerang'),
+  sword: () => SM.play('move-sword'),
+  tronium: () => SM.play('move-tronium'),
+  scatter: () => SM.play('move-scatter'),
+  block: SM.soundChooser('move-blockA', 'move-blockB', 'move-blockC', 'move-blockD'),
+  trash: SM.soundChooser(
+    'move-trashA',
+    'move-trashB',
+    'move-trashC',
+    'move-trashD',
+    'move-trashE',
+    'move-trashF',
+    'move-trashG'
+  ),
+};
+
+export default SM;
