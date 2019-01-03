@@ -15,9 +15,10 @@ interface ModalOpts {
   screenStage: Container;
   screenSize: Dimension;
   scale?: Point;
+  decorator?: string;
 }
 
-export function Modal({ scale, screenSize, screenStage }: ModalOpts) {
+export function Modal({ scale, screenSize, screenStage, decorator }: ModalOpts) {
   const bodySize = {
     width: 510 * (scale ? scale.x : 1),
     height: 460 * (scale ? scale.y : 1),
@@ -37,7 +38,13 @@ export function Modal({ scale, screenSize, screenStage }: ModalOpts) {
   centerX(screenSize.width, bodyFrame);
   centerY(screenSize.height, bodyFrame);
 
-  // const prueba = newSprite(Texture.WHITE, { size: bodySize });
+  stage.addChild(darkShadow, bodyFrame);
+  if (decorator) {
+    const decoSprite = newSprite(decorator);
+    decoSprite.x = bodyFrame.x + bodyFrame.width - decoSprite.width;
+    decoSprite.y = bodyFrame.y + bodyFrame.height - decoSprite.height;
+    stage.addChild(decoSprite);
+  } // const prueba = newSprite(Texture.WHITE, { size: bodySize });
   // prueba.name = 'ACA';
   // prueba.x = bodyFrame.x + padding.x;
   // prueba.y = bodyFrame.y + padding.y;
@@ -54,7 +61,7 @@ export function Modal({ scale, screenSize, screenStage }: ModalOpts) {
   closeBtnSprite.y = 10;
   body.addChild(closeBtnSprite);
 
-  stage.addChild(darkShadow, bodyFrame, body);
+  stage.addChild(body);
 
   const dispose = () => {
     body.removeChildren();
@@ -83,7 +90,7 @@ export function Modal({ scale, screenSize, screenStage }: ModalOpts) {
   };
 }
 
-function BackShadow(screenSize: Dimension) {
+export function BackShadow(screenSize: Dimension) {
   const darkShadow = newSprite(Texture.WHITE, { size: screenSize });
   darkShadow.name = 'Modal.BackShadow';
   darkShadow.tint = 0x000000;

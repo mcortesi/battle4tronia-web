@@ -22,6 +22,7 @@ export function CashOutModal(
   const modal = Modal({
     screenSize: opts.size,
     screenStage: opts.parent,
+    decorator: 'UIModalDecoSell.png',
   });
   const Width = modal.bodySize.width;
 

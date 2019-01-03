@@ -1,377 +1,484 @@
+{"frames": {
+
+"BtnAccept.png":
 {
-  "frames": {
-    "BtnAccept.png": {
-      "frame": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "sourceSize": { "w": 180, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnAddMore.png": {
-      "frame": { "x": 183, "y": 0, "w": 75, "h": 35 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 75, "h": 35 },
-      "sourceSize": { "w": 75, "h": 35 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnAgree.png": {
-      "frame": { "x": 261, "y": 0, "w": 180, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "sourceSize": { "w": 180, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnBuy.png": {
-      "frame": { "x": 444, "y": 0, "w": 125, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 125, "h": 70 },
-      "sourceSize": { "w": 125, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnBuyDisabled.png": {
-      "frame": { "x": 572, "y": 0, "w": 125, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 125, "h": 70 },
-      "sourceSize": { "w": 125, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnCancel.png": {
-      "frame": { "x": 700, "y": 0, "w": 180, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "sourceSize": { "w": 180, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnCashout.png": {
-      "frame": { "x": 883, "y": 0, "w": 180, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "sourceSize": { "w": 180, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnCashoutDisabled.png": {
-      "frame": { "x": 1066, "y": 0, "w": 180, "h": 70 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 180, "h": 70 },
-      "sourceSize": { "w": 180, "h": 70 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnCashoutSmall.png": {
-      "frame": { "x": 1249, "y": 0, "w": 75, "h": 35 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 75, "h": 35 },
-      "sourceSize": { "w": 75, "h": 35 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnConnect.png": {
-      "frame": { "x": 1327, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnFight.png": {
-      "frame": { "x": 1580, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnGetTronium.png": {
-      "frame": { "x": 1833, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnGotIt.png": {
-      "frame": { "x": 2086, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnHowtoPlay.png": {
-      "frame": { "x": 2339, "y": 0, "w": 100, "h": 150 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 150 },
-      "sourceSize": { "w": 100, "h": 150 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnSpin.png": {
-      "frame": { "x": 2442, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnStory.png": {
-      "frame": { "x": 2695, "y": 0, "w": 90, "h": 140 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 90, "h": 140 },
-      "sourceSize": { "w": 90, "h": 140 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnStoryBack.png": {
-      "frame": { "x": 2788, "y": 0, "w": 100, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 100 },
-      "sourceSize": { "w": 100, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnStoryNext.png": {
-      "frame": { "x": 2891, "y": 0, "w": 100, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 100 },
-      "sourceSize": { "w": 100, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnStoryRepeat.png": {
-      "frame": { "x": 2994, "y": 0, "w": 100, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 100 },
-      "sourceSize": { "w": 100, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "BtnToBattle.png": {
-      "frame": { "x": 3097, "y": 0, "w": 250, "h": 100 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 250, "h": 100 },
-      "sourceSize": { "w": 250, "h": 100 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoAlert.png": {
-      "frame": { "x": 3350, "y": 0, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoArrow.png": {
-      "frame": { "x": 3389, "y": 0, "w": 55, "h": 55 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 55 },
-      "sourceSize": { "w": 55, "h": 55 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoBoardLine3.png": {
-      "frame": { "x": 0, "y": 153, "w": 879, "h": 550 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
-      "sourceSize": { "w": 879, "h": 550 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoClose.png": {
-      "frame": { "x": 882, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoGear.png": {
-      "frame": { "x": 915, "y": 153, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoHowtoPlay.png": {
-      "frame": { "x": 954, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoMusicOff.png": {
-      "frame": { "x": 987, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoMusicOn.png": {
-      "frame": { "x": 1020, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoPack1.png": {
-      "frame": { "x": 1053, "y": 153, "w": 140, "h": 125 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 140, "h": 125 },
-      "sourceSize": { "w": 140, "h": 125 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoPack2.png": {
-      "frame": { "x": 1196, "y": 153, "w": 140, "h": 125 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 140, "h": 125 },
-      "sourceSize": { "w": 140, "h": 125 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoPack3.png": {
-      "frame": { "x": 1339, "y": 153, "w": 140, "h": 125 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 140, "h": 125 },
-      "sourceSize": { "w": 140, "h": 125 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoPen.png": {
-      "frame": { "x": 1482, "y": 153, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoShield.png": {
-      "frame": { "x": 1521, "y": 153, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoSpinner.png": {
-      "frame": { "x": 1560, "y": 153, "w": 150, "h": 150 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 150, "h": 150 },
-      "sourceSize": { "w": 150, "h": 150 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoTronium.png": {
-      "frame": { "x": 1713, "y": 153, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoVolumeOff.png": {
-      "frame": { "x": 1752, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoVolumeOn.png": {
-      "frame": { "x": 1785, "y": 153, "w": 30, "h": 30 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 30 },
-      "sourceSize": { "w": 30, "h": 30 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "IcoWifi.png": {
-      "frame": { "x": 1818, "y": 153, "w": 36, "h": 36 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 36 },
-      "sourceSize": { "w": 36, "h": 36 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIBoard.png": {
-      "frame": { "x": 1857, "y": 153, "w": 879, "h": 550 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
-      "sourceSize": { "w": 879, "h": 550 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIBoardLine1.png": {
-      "frame": { "x": 2739, "y": 153, "w": 879, "h": 550 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
-      "sourceSize": { "w": 879, "h": 550 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIBoardLine2.png": {
-      "frame": { "x": 0, "y": 706, "w": 879, "h": 550 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 879, "h": 550 },
-      "sourceSize": { "w": 879, "h": 550 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UILogo.png": {
-      "frame": { "x": 882, "y": 706, "w": 400, "h": 120 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 120 },
-      "sourceSize": { "w": 400, "h": 120 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIModal.png": {
-      "frame": { "x": 1285, "y": 706, "w": 625, "h": 550 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 625, "h": 550 },
-      "sourceSize": { "w": 625, "h": 550 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIModalHowtoPlay.png": {
-      "frame": { "x": 1913, "y": 706, "w": 1097, "h": 603 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 1097, "h": 603 },
-      "sourceSize": { "w": 1097, "h": 603 },
-      "anchor": { "x": 0, "y": 0 }
-    },
-    "UIShield.png": {
-      "frame": { "x": 3013, "y": 706, "w": 198, "h": 102 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 198, "h": 102 },
-      "sourceSize": { "w": 198, "h": 102 },
-      "anchor": { "x": 0, "y": 0 }
-    }
-  },
-  "animations": {
-    "IcoPack": ["IcoPack1.png", "IcoPack2.png", "IcoPack3.png"],
-    "UIBoardLine": ["UIBoardLine1.png", "UIBoardLine2.png"]
-  },
-  "meta": {
-    "app": "https://www.codeandweb.com/texturepacker",
-    "version": "1.0",
-    "image": "spriteUI.png",
-    "format": "RGBA8888",
-    "size": { "w": 3618, "h": 1309 },
-    "scale": "1",
-    "smartupdate": "$TexturePacker:SmartUpdate:0f6b0a4e1db88421da100de8e96ec20d:879e2ce60436d9411d4c5a48e387c5d6:de961cef2580a30f653f22442131ceb0$"
-  }
+	"frame": {"x":646,"y":0,"w":180,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":70},
+	"sourceSize": {"w":180,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnAddMore.png":
+{
+	"frame": {"x":198,"y":0,"w":75,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":75,"h":35},
+	"sourceSize": {"w":75,"h":35},
+	"anchor": {"x":0,"y":0}
+},
+"BtnAgree.png":
+{
+	"frame": {"x":0,"y":73,"w":180,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":70},
+	"sourceSize": {"w":180,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnBuy.png":
+{
+	"frame": {"x":1323,"y":0,"w":125,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":125,"h":70},
+	"sourceSize": {"w":125,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnBuyDisabled.png":
+{
+	"frame": {"x":1012,"y":0,"w":125,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":125,"h":70},
+	"sourceSize": {"w":125,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnCancel.png":
+{
+	"frame": {"x":1451,"y":0,"w":180,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":70},
+	"sourceSize": {"w":180,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnCashout.png":
+{
+	"frame": {"x":1140,"y":0,"w":180,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":70},
+	"sourceSize": {"w":180,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnCashoutDisabled.png":
+{
+	"frame": {"x":829,"y":0,"w":180,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":70},
+	"sourceSize": {"w":180,"h":70},
+	"anchor": {"x":0,"y":0}
+},
+"BtnCashoutSmall.png":
+{
+	"frame": {"x":276,"y":0,"w":75,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":75,"h":35},
+	"sourceSize": {"w":75,"h":35},
+	"anchor": {"x":0,"y":0}
+},
+"BtnConnect.png":
+{
+	"frame": {"x":183,"y":73,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnFight.png":
+{
+	"frame": {"x":436,"y":73,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnGetTronium.png":
+{
+	"frame": {"x":1504,"y":73,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnGotIt.png":
+{
+	"frame": {"x":0,"y":176,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnHowtoPlay.png":
+{
+	"frame": {"x":1379,"y":176,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150},
+	"anchor": {"x":0,"y":0}
+},
+"BtnSpin.png":
+{
+	"frame": {"x":792,"y":73,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnStory.png":
+{
+	"frame": {"x":1286,"y":176,"w":90,"h":140},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":140},
+	"sourceSize": {"w":90,"h":140},
+	"anchor": {"x":0,"y":0}
+},
+"BtnStoryBack.png":
+{
+	"frame": {"x":689,"y":73,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnStoryNext.png":
+{
+	"frame": {"x":1298,"y":73,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnStoryRepeat.png":
+{
+	"frame": {"x":1401,"y":73,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"BtnToBattle.png":
+{
+	"frame": {"x":1045,"y":73,"w":250,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":100},
+	"sourceSize": {"w":250,"h":100},
+	"anchor": {"x":0,"y":0}
+},
+"IcoAlert.png":
+{
+	"frame": {"x":432,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"IcoArrow.png":
+{
+	"frame": {"x":588,"y":0,"w":55,"h":55},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":55,"h":55},
+	"sourceSize": {"w":55,"h":55},
+	"anchor": {"x":0,"y":0}
+},
+"IcoBoardLine3.png":
+{
+	"frame": {"x":0,"y":557,"w":879,"h":550},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":879,"h":550},
+	"sourceSize": {"w":879,"h":550},
+	"anchor": {"x":0,"y":0}
+},
+"IcoClose.png":
+{
+	"frame": {"x":132,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoGear.png":
+{
+	"frame": {"x":354,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"IcoHowtoPlay.png":
+{
+	"frame": {"x":33,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoMusicOff.png":
+{
+	"frame": {"x":165,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoMusicOn.png":
+{
+	"frame": {"x":0,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoPack1.png":
+{
+	"frame": {"x":1143,"y":176,"w":140,"h":125},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":125},
+	"sourceSize": {"w":140,"h":125},
+	"anchor": {"x":0,"y":0}
+},
+"IcoPack2.png":
+{
+	"frame": {"x":857,"y":176,"w":140,"h":125},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":125},
+	"sourceSize": {"w":140,"h":125},
+	"anchor": {"x":0,"y":0}
+},
+"IcoPack3.png":
+{
+	"frame": {"x":1000,"y":176,"w":140,"h":125},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":125},
+	"sourceSize": {"w":140,"h":125},
+	"anchor": {"x":0,"y":0}
+},
+"IcoPen.png":
+{
+	"frame": {"x":393,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"IcoShield.png":
+{
+	"frame": {"x":510,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"IcoSpinner.png":
+{
+	"frame": {"x":1482,"y":176,"w":150,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":150},
+	"sourceSize": {"w":150,"h":150},
+	"anchor": {"x":0,"y":0}
+},
+"IcoTronium.png":
+{
+	"frame": {"x":549,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"IcoVolumeOff.png":
+{
+	"frame": {"x":99,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoVolumeOn.png":
+{
+	"frame": {"x":66,"y":0,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30},
+	"anchor": {"x":0,"y":0}
+},
+"IcoWifi.png":
+{
+	"frame": {"x":471,"y":0,"w":36,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
+	"sourceSize": {"w":36,"h":36},
+	"anchor": {"x":0,"y":0}
+},
+"UIBoard.png":
+{
+	"frame": {"x":0,"y":1110,"w":879,"h":550},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":879,"h":550},
+	"sourceSize": {"w":879,"h":550},
+	"anchor": {"x":0,"y":0}
+},
+"UIBoardLine1.png":
+{
+	"frame": {"x":882,"y":557,"w":879,"h":550},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":879,"h":550},
+	"sourceSize": {"w":879,"h":550},
+	"anchor": {"x":0,"y":0}
+},
+"UIBoardLine2.png":
+{
+	"frame": {"x":882,"y":1110,"w":879,"h":550},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":879,"h":550},
+	"sourceSize": {"w":879,"h":550},
+	"anchor": {"x":0,"y":0}
+},
+"UILogo.png":
+{
+	"frame": {"x":454,"y":176,"w":400,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":400,"h":120},
+	"sourceSize": {"w":400,"h":120},
+	"anchor": {"x":0,"y":0}
+},
+"UIModal.png":
+{
+	"frame": {"x":0,"y":1663,"w":625,"h":550},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":625,"h":550},
+	"sourceSize": {"w":625,"h":550},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoBroken.png":
+{
+	"frame": {"x":1140,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoBuy.png":
+{
+	"frame": {"x":456,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoFrog.png":
+{
+	"frame": {"x":0,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoName.png":
+{
+	"frame": {"x":912,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoOffline.png":
+{
+	"frame": {"x":228,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalDecoSell.png":
+{
+	"frame": {"x":684,"y":329,"w":225,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":225},
+	"sourceSize": {"w":225,"h":225},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalHowtoPlay.png":
+{
+	"frame": {"x":0,"y":2269,"w":1097,"h":603},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603},
+	"anchor": {"x":0,"y":0}
+},
+"UIModalLarge.png":
+{
+	"frame": {"x":628,"y":1663,"w":1097,"h":603},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603},
+	"anchor": {"x":0,"y":0}
+},
+"UIShield.png":
+{
+	"frame": {"x":253,"y":176,"w":198,"h":102},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":198,"h":102},
+	"sourceSize": {"w":198,"h":102},
+	"anchor": {"x":0,"y":0}
+}},
+"animations": {
+	"IcoPack": ["IcoPack1.png","IcoPack2.png","IcoPack3.png"],
+	"UIBoardLine": ["UIBoardLine1.png","UIBoardLine2.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "spriteUI.png",
+	"format": "RGBA8888",
+	"size": {"w":1761,"h":2872},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:172f9a387ed403b88928c45efdc526e0:41481d45c806cdfdec267c545b292a82:a2f1fc8724dcdf4e9701963c0ac3d8f0$"
+}
 }

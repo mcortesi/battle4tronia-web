@@ -23,6 +23,7 @@ export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Di
   const modal = Modal({
     screenSize: opts.size,
     screenStage: opts.parent,
+    decorator: 'UIModalDecoBuy.png',
   });
 
   const title1 = newText('GET SUPPLIES!', 'BlackH2');
