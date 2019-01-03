@@ -215,7 +215,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
         await ui.reelsUI.stopAnimation(result.result);
 
         if (result.result.featuredMove.winMsg) {
-          ui.showWinText(result.result.featuredMove.winMsg, 3000);
+          ui.showWinText(result.result.featuredMove.winMsg.toUpperCase(), 3000);
         }
 
         ui.scoresUI.setFame(result.player.fame);
