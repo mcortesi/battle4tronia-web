@@ -135,6 +135,7 @@ export class Orchestrator implements ModelActions {
       return;
     }
     this.gd.playerUpdated(this.game.player);
+    this.updateBetBalanceCheck();
     if (!this.loggedIn) {
       await this.goHome();
     }

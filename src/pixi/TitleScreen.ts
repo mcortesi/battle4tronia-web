@@ -106,7 +106,7 @@ function RankEntry(opts: { idx: number; width: number; epicness: number; playerN
   stage.addChild(g);
 
   const idxText = newText(`${opts.idx + 1}`, 'Body1');
-  const epicnessText = newText(`${opts.epicness.toFixed(0)} EPICNESS`, 'Body1');
+  const epicnessText = newText(`${opts.epicness.toFixed(0)} FAME`, 'Body1');
   const playerText = newText(opts.playerName, 'Body2');
 
   idxText.y = epicnessText.y = 10;

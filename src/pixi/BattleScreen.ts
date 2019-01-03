@@ -238,6 +238,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
         setSpinning(true);
         await ui.villain.createNew();
         ui.hpBarUI.reset(battle.villain.maxHp);
+        ui.setEpicness(0);
         setSpinning(false);
       } finally {
         spinLock.release();

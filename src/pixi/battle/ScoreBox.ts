@@ -33,8 +33,10 @@ export class ScoreBox extends UIComponent {
     this.currentFame = opts.initFame;
     this.currentTronium = opts.initTronium;
 
-    const troniumScore = this.createScoreRender('Tronium', opts.initTronium, 'IcoTronium');
-    const fameScore = this.createScoreRender('Fame', opts.initFame, 'IcoShield');
+    const troniumScore = createScoreRender('Tronium', opts.initTronium, 'IcoTronium');
+    const fameScore = createScoreRender('Fame', opts.initFame, 'IcoShield');
+
+    postionAfterY(troniumScore.stage, fameScore.stage, 10);
 
     const st = TextStyles.H2.clone();
     st.dropShadow = true;
@@ -43,7 +45,6 @@ export class ScoreBox extends UIComponent {
     this.troniumIncrease.tint = 0x2fe43f;
     this.troniumIncrease.visible = false;
 
-    postionAfterY(troniumScore.stage, fameScore.stage, 10);
     postionAfterX(troniumScore.stage, this.troniumIncrease, 20);
 
     this.troniumText = troniumScore.score;
@@ -68,24 +69,24 @@ export class ScoreBox extends UIComponent {
 
     this.currentTronium = newTronium;
   }
-
-  private createScoreRender(labelText: string, value: number, iconName: IconName) {
-    const container = newContainer();
-    const score = newText(value.toString(), 'H2');
-    const label = newText(labelText, 'Body2');
-    const icon = bigIcon(iconName);
-    container.addChild(icon, score, label);
-
-    postionAfterX(icon, score, 10);
-    postionAfterX(icon, label, 10);
-    postionAfterY(score, label, 5);
-    return {
-      score,
-      stage: container,
-    };
-  }
 }
 
+function createScoreRender(labelText: string, value: number, iconName: IconName) {
+  const container = newContainer();
+  const score = newText(value.toString(), 'H2');
+  const label = newText(labelText, 'Body2');
+  const icon = bigIcon(iconName);
+  container.addChild(icon, score, label);
+
+  postionAfterX(icon, score, 10);
+  postionAfterX(icon, label, 10);
+  postionAfterY(score, label, 5);
+
+  return {
+    score,
+    stage: container,
+  };
+}
 function animateIncrease(label: Text) {
   label.alpha = 0;
   label.visible = true;

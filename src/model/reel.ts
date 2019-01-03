@@ -387,7 +387,7 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
 
 // prettier-ignore
 const MovesTable: Array<[string, number, number, number, number, () => CardPosition[], SoundPlayer, string | null]> = [
-  // ID          PROB    PAYOUT DAMAGE EPICNESS   MOVE GENERATOR                         SOUND PLAYER            WIN MSG
+  // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
   ['1S4*'	      , 0.0015 , 30	  , 45   , 333   , scatter                             , MoveSound.scatter    , "Wizards weren't joking with this!"    ],
   ['3A2T'	      , 0.0600 , 0.5  , 4	   , 8     , b3of(Card.Punch)                    , MoveSound.punch      , "Eat it grunt!"                        ],
   ['3B2T'	      , 0.0500 , 0.7  , 7    , 10    , b3of(Card.Sword)                    , MoveSound.sword      , "Taste my steel"                       ],

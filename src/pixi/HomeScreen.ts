@@ -92,7 +92,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     width: ColWidth,
     header: 'YOUR BEST FIGHT',
     value: '--',
-    footer: 'EPICNESS',
+    footer: 'FAME',
   });
 
   const bestFightBox = SecondaryStatBox({
