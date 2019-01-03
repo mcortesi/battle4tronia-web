@@ -113,6 +113,8 @@ export function HowtoPlayModal({
   const darkShadow = BackShadow(screenSize);
 
   const bodyFrame = newSprite('UIModalHowtoPlay.png');
+  bodyFrame.interactive = true;
+  bodyFrame.defaultCursor = 'default';
   centerX(screenSize.width, bodyFrame);
   centerY(screenSize.height, bodyFrame);
 

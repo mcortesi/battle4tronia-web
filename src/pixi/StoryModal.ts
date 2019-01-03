@@ -34,6 +34,8 @@ export function StoryModal({
   const darkShadow = BackShadow(screenSize);
 
   const bodyFrame = newSprite('UIModalLarge.png');
+  bodyFrame.interactive = true;
+  bodyFrame.defaultCursor = 'default';
 
   const storySprite = newAnimatedSprite(
     'UIStoryTroy1.png',
