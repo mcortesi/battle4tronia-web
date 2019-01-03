@@ -1,7 +1,8 @@
 import { GlobalDispatcher } from './pixi/GlobalDispatcher';
 import { Orchestrator } from './pixi/Orchestrator';
 import { AssetLoader } from './pixi/AssetLoader';
-import { FakeApi, API } from './model/api';
+import { API, GameApi } from './model/api';
+import { FakeApi } from './model/FakeApi';
 import { GameStatus } from './model/model';
 import { GameClient } from './model/game';
 
@@ -12,7 +13,7 @@ export async function startApp() {
   } else if (window.location.hash === '#notpapu') {
     api = new FakeApi(GameStatus.NO_CHANNEL_OPENED, true);
   } else {
-    api = new FakeApi();
+    api = new GameApi();
   }
 
   const gameClient = new GameClient(api);

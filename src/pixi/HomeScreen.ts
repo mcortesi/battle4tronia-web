@@ -154,14 +154,14 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
       updateBalanceStatus(p);
     },
     setPlayerStats: (playerStats: PlayerStats) => {
-      playerBestFightBox.setValue(playerStats.bestFight.epicness.toString());
+      playerBestFightBox.setValue(playerStats.bestFightByEpicness.epicness.toString());
       playerKillsBox.setValue(playerStats.villainsDefeated.toString());
-      playerBestMatchBox.setValue(`${playerStats.bestFight.troniums}`);
+      playerBestMatchBox.setValue(`${playerStats.bestFightByTroniums.troniums}`);
     },
 
     setGlobalStats: globalStats => {
-      bestFightBox.setValue(globalStats.allTime[0].epicness.toString());
-      bestMatchBox.setValue(`${globalStats.allTime[0].troniums}`);
+      bestFightBox.setValue(globalStats.allTimeByEpicness[0].epicness.toString());
+      bestMatchBox.setValue(`${globalStats.allTimeByTroniunm[0].troniums}`);
       totalKillsBox.setValue(globalStats.villainsDefeated.toString());
     },
   });

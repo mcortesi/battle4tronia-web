@@ -1,16 +1,7 @@
-import { genArray, wait } from '../utils';
+import * as utils from './utils';
+import * as game from './helper';
 import { Move, winningsFor } from './reel';
-import {
-  GameStatus,
-  Player,
-  Collectable,
-  Battle,
-  Bet,
-  SpinResult,
-  GlobalStats,
-  PlayerStats,
-  BattleStatus,
-} from './model';
+import { GameStatus, Battle, Bet, SpinResult, Player, PlayerStats, GlobalStats } from './model';
 
 export interface API {
   /**
@@ -20,24 +11,17 @@ export interface API {
 
   openChannel(tronium: number): Promise<boolean>;
 
+  spin(bet: Bet): Promise<SpinResult>;
+
   addTronium(tronium: number): Promise<boolean>;
 
   getPlayer(): Promise<Player | null>;
 
   updatePlayerName(name: string): Promise<Player>;
 
-  updatePlayerItems(
-    item1: null | Collectable,
-    item2: null | Collectable,
-    item3: null | Collectable,
-    item4: null | Collectable
-  ): Promise<Player>;
-
   getCurrentBattle(): Promise<Battle>;
 
   closeChannel(): Promise<boolean>;
-
-  spin(bet: Bet): Promise<SpinResult>;
 
   getGlobalStats(): Promise<GlobalStats>;
 
@@ -46,229 +30,420 @@ export interface API {
   getTroniumPrice(): Promise<number>;
 }
 
-function clonePlayer(player: Player) {
-  return {
-    ...player,
-    collectables: ([] as Collectable[]).concat(player.collectables),
-  };
-}
-function cloneBattle(battle: Battle) {
-  return {
-    ...battle,
-    villain: {
-      ...battle.villain,
-    },
-  };
-}
+export class GameApi implements API {
+  private channel: null | utils.Channel;
+  private player: null | Player;
+  private battle: null | Battle;
 
-export class FakeApi implements API {
-  private status: GameStatus;
-  private player: Player;
-  private battle: null | Battle = null;
-
-  constructor(
-    status: GameStatus = GameStatus.NO_CHANNEL_OPENED,
-    private loggedOut: boolean = false
-  ) {
-    this.status = status;
-    this.player = {
-      name: 'Papu',
-      tronium: 0,
-      fame: 0,
-      collectables: [],
-      item1: null,
-      item2: null,
-      item3: null,
-      item4: null,
-    };
+  async getTroniumPrice(): Promise<number> {
+    const tronWeb = (window as any).tronWeb;
+    return utils.getTroniumPrice(tronWeb);
   }
 
-  /**
-   * Need to check this constantly (every x sec) to proactively check for errors
-   */
+  async getPlayer(): Promise<Player> {
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+    const player = await utils.getPlayer(address);
+    if (!player) {
+      throw new Error('No player');
+    }
+    return player;
+  }
+
+  async getCurrentBattle(): Promise<Battle> {
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+    const battle = await utils.getBattle(address);
+    if (!battle) {
+      throw new Error('No battle');
+    }
+    return battle;
+  }
+
   async getStatus(): Promise<GameStatus> {
-    return this.status;
+    // Checks if everything is correct (conencted, has credit, has a privateKey, etc.)
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+
+    // 1) Checked tronlink installed
+    if (!tronWeb) {
+      return GameStatus.INSTALL_TRONLINK;
+    }
+    // 2) Checked tronlink loggedin
+    if (!tronWeb.ready) {
+      return GameStatus.LOGIN_TRONLINK;
+    }
+    // 3) Checked if player has an open channel
+    try {
+      this.channel = await utils.getCurrentChannel(tronWeb);
+      this.player = await utils.getPlayer(address);
+      this.battle = await utils.getBattle(address);
+
+      console.log(this.channel);
+      console.log(this.player);
+      console.log(this.battle);
+
+      if (!this.channel) {
+        // No channel opened
+        return GameStatus.NO_CHANNEL_OPENED;
+      } else {
+        // If channel opened, check same public key
+        const wallet = utils.getWallet();
+        if (this.channel.publicKey !== wallet.publicKey) {
+          // No channel opened
+          return GameStatus.UNKNOWN_CHANNEL_OPENED;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return GameStatus.ERROR;
+    }
+
+    const trxBalance = await utils.getBalance(tronWeb, address);
+    if (trxBalance === 0) {
+      return GameStatus.NOT_ENOUGH_BALANCE;
+    }
+
+    return GameStatus.READY;
   }
 
   async openChannel(tronium: number): Promise<boolean> {
-    this.loggedOut = false;
-    this.status = GameStatus.READY;
-    this.player.tronium += tronium;
-    return true;
-  }
-
-  async addTronium(tronium: number): Promise<boolean> {
-    this.player.tronium += tronium;
-    return true;
-  }
-
-  async getPlayer(): Promise<Player | null> {
-    if (this.loggedOut) {
-      return null;
+    const status = await this.getStatus();
+    if (status === GameStatus.NO_CHANNEL_OPENED || status === GameStatus.UNKNOWN_CHANNEL_OPENED) {
+      const tronWeb = (window as any).tronWeb;
+      const address = tronWeb.defaultAddress.base58;
+      const wallet = utils.getWallet();
+      try {
+        switch (status) {
+          case GameStatus.NO_CHANNEL_OPENED: {
+            const price = await utils.getTroniumPrice(tronWeb);
+            const trx = tronium * price;
+            this.channel = await utils.openChannel(tronWeb, trx, wallet.publicKey);
+            break;
+          }
+          case GameStatus.UNKNOWN_CHANNEL_OPENED: {
+            // TODO this.channel = await utils.closeOpenChannel(tronWeb, tronium, wallet.publicKey);
+            break;
+          }
+        }
+        this.player = await utils.getPlayer(address);
+        this.battle = await utils.getBattle(address);
+        return true;
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
     } else {
-      return clonePlayer(this.player);
+      return false;
     }
   }
 
   async updatePlayerName(name: string): Promise<Player> {
-    this.player.name = name;
-    return clonePlayer(this.player);
-  }
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
 
-  async updatePlayerItems(
-    item1: null | Collectable,
-    item2: null | Collectable,
-    item3: null | Collectable,
-    item4: null | Collectable
-  ): Promise<Player> {
-    this.player.item1 = item1;
-    this.player.item2 = item2;
-    this.player.item3 = item3;
-    this.player.item4 = item4;
-    return clonePlayer(this.player);
-  }
-
-  async getCurrentBattle(): Promise<Battle> {
-    if (this.battle == null || this.battle.status === BattleStatus.FINISHED) {
-      this.battle = {
-        status: BattleStatus.READY,
-        villain: {
-          hp: 100,
-          maxHp: 100,
-        },
-        epicness: 0,
-        tronium: 0,
-      };
-    }
-    return cloneBattle(this.battle);
-  }
-
-  async closeChannel(): Promise<boolean> {
-    this.status = GameStatus.NO_CHANNEL_OPENED;
-    this.player.tronium = 0; // CASH OUT
-    return true;
+    return utils.updatePlayerName(address, name);
   }
 
   async spin(bet: Bet): Promise<SpinResult> {
-    if (!this.battle) {
-      throw new Error('Not in battle');
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+
+    // TODO: compare to last message bet
+    // const lastLocalBet = utils.getLocalLastMessage();
+    const lastServerBet = await utils.getServerLastMessage(address);
+
+    const round = game.getNextRoundFromLastMessage(lastServerBet!);
+
+    const playerRandom1 = Math.random() * 10000;
+    const playerRandom2 = Math.random() * 10000;
+    const playerRandom3 = Math.random() * 10000;
+
+    const wallet = utils.getWallet();
+    const playerRandomHash1 = utils.signMessage(playerRandom1.toString(), wallet.privateKey);
+    const playerRandomHash2 = utils.signMessage(playerRandom2.toString(), wallet.privateKey);
+    const playerRandomHash3 = utils.signMessage(playerRandom3.toString(), wallet.privateKey);
+
+    const messagePlayerOpened = {
+      playerAddress: address,
+      channelId: this.channel ? this.channel.channelId : 0,
+      round,
+      publicKey: wallet.publicKey,
+      bet,
+      player: this.player!,
+      type: utils.MessageType.PLAYER_OPENED,
+      playerRandomHash1,
+      playerRandomHash2,
+      playerRandomHash3,
+    };
+
+    const hashOpen = utils.getOpenBetMessageHash(
+      messagePlayerOpened.playerAddress,
+      messagePlayerOpened.player.tronium,
+      messagePlayerOpened.channelId,
+      messagePlayerOpened.round,
+      messagePlayerOpened.publicKey,
+      messagePlayerOpened.bet.level,
+      messagePlayerOpened.bet.tronium,
+      messagePlayerOpened.bet.lines,
+      utils.getPlayerRandomHash(
+        messagePlayerOpened.playerRandomHash1.v,
+        messagePlayerOpened.playerRandomHash1.r,
+        messagePlayerOpened.playerRandomHash1.s,
+        messagePlayerOpened.playerRandomHash2.v,
+        messagePlayerOpened.playerRandomHash2.r,
+        messagePlayerOpened.playerRandomHash2.s,
+        messagePlayerOpened.playerRandomHash3.v,
+        messagePlayerOpened.playerRandomHash3.r,
+        messagePlayerOpened.playerRandomHash3.s
+      )
+    );
+
+    const signatureForMessagePlayerOpened = utils.signHash(hashOpen);
+
+    /*if(lastServerBet && lastServerBet.type == "DELEAR_ACCEPTED") {
+      //There is a bet not closed
+      lastServerBet
+    }*/
+
+    const messagePlayerOpenedSigned: utils.MessagePlayerOpened = Object.assign(
+      messagePlayerOpened,
+      {
+        signature: signatureForMessagePlayerOpened,
+      }
+    );
+
+    const messageDealerAccepted: utils.MessageDealerAccepted = await utils.openBet(
+      messagePlayerOpenedSigned
+    );
+
+    // Check message validity
+    const delearSignature = messageDealerAccepted.signature;
+    // Removes player signature
+    delete messageDealerAccepted.signature;
+
+    // Check valid signature
+    const hashAccepted = utils.getAcceptedBetMessageHash(
+      messagePlayerOpened.playerAddress,
+      messagePlayerOpened.player.tronium,
+      messagePlayerOpened.channelId,
+      messagePlayerOpened.round,
+      messagePlayerOpened.publicKey,
+      messagePlayerOpened.bet.level,
+      messagePlayerOpened.bet.tronium,
+      messagePlayerOpened.bet.lines,
+      utils.getPlayerRandomHash(
+        messagePlayerOpened.playerRandomHash1.v,
+        messagePlayerOpened.playerRandomHash1.r,
+        messagePlayerOpened.playerRandomHash1.s,
+        messagePlayerOpened.playerRandomHash2.v,
+        messagePlayerOpened.playerRandomHash2.r,
+        messagePlayerOpened.playerRandomHash2.s,
+        messagePlayerOpened.playerRandomHash3.v,
+        messagePlayerOpened.playerRandomHash3.r,
+        messagePlayerOpened.playerRandomHash3.s
+      ),
+      utils.getDelearNumberHash(
+        messageDealerAccepted.dealerRandomNumber1,
+        messageDealerAccepted.dealerRandomNumber2,
+        messageDealerAccepted.dealerRandomNumber3
+      )
+    );
+    const signerEVMAddress = utils.recoverSignatureAddressFromHash(hashAccepted, delearSignature);
+    const signerAddress = utils.EVMAddressToAddress(signerEVMAddress);
+    // Adds player signature back
+    messageDealerAccepted.signature = delearSignature;
+
+    if (signerAddress !== utils.getDealearAddress()) {
+      throw new Error('Invalid message signature');
     }
 
-    const lineResults = genArray(bet.lines, () => Math.random());
+    // Check if signed message is equal to open open
+    if (
+      JSON.stringify(messagePlayerOpenedSigned) !==
+      JSON.stringify(messageDealerAccepted.messagePlayerOpened)
+    ) {
+      throw new Error('Invalid open player message in delear accepted message');
+    }
+
+    let finalRandom1: number;
+    let finalRandom2: null | number = null;
+    let finalRandom3: null | number = null;
+    const lineResults: number[] = [];
+
+    finalRandom1 = game.createRandom(playerRandom1, messageDealerAccepted.dealerRandomNumber1);
+    lineResults.push(finalRandom1);
+
+    if (messagePlayerOpenedSigned.bet.lines > 1) {
+      finalRandom2 = game.createRandom(playerRandom1, messageDealerAccepted.dealerRandomNumber2);
+      lineResults.push(finalRandom2);
+    }
+
+    if (messagePlayerOpenedSigned.bet.lines > 2) {
+      finalRandom3 = game.createRandom(playerRandom1, messageDealerAccepted.dealerRandomNumber3);
+      lineResults.push(finalRandom3);
+    }
+
+    console.log(lineResults);
     const winnings = winningsFor(bet, lineResults.map(x => Move.fromDice(x)));
+    const playerUpdated = game.updatePlayer(this.player!, messagePlayerOpenedSigned.bet, winnings);
 
-    const betCost = bet.lines * bet.tronium * bet.level;
-
-    this.player.tronium += winnings.payout - betCost;
-    this.battle.tronium += winnings.payout - betCost;
-
-    this.player.fame += winnings.epicness;
-    this.battle.epicness += winnings.epicness;
-
-    this.battle.villain.hp = Math.max(this.battle.villain.hp - winnings.damage, 0);
-    this.battle.status = this.battle.villain.hp <= 0 ? BattleStatus.FINISHED : BattleStatus.ONGOING;
-
-    return {
-      result: lineResults,
-      player: clonePlayer(this.player),
-      currentBattle: cloneBattle(this.battle),
-      bet,
+    const messagePlayerClosed = {
+      messageDealerAccepted,
+      playerUpdated,
+      playerRandomNumber1: playerRandom1,
+      playerRandomNumber2: playerRandom2,
+      playerRandomNumber3: playerRandom3,
+      type: utils.MessageType.PLAYER_CLOSED,
     };
+
+    // No need to hash with abi format, we can use simple stringify
+    const signatureForMessagePlayerClosed = utils.signMessage(
+      JSON.stringify(messagePlayerClosed),
+      wallet.privateKey
+    );
+    const messagePlayerClosedSigned: utils.MessagePlayerClosed = Object.assign(
+      messagePlayerClosed,
+      {
+        signature: signatureForMessagePlayerClosed,
+      }
+    );
+
+    const resp = await utils.closeBet(messagePlayerClosedSigned);
+
+    this.player = resp.player;
+    this.battle = resp.battle;
+
+    // TODO:  compare that server returns correct player
+
+    console.log('start compare players');
+    console.log(playerUpdated);
+    console.log(resp.player);
+    console.log('finish compare players');
+
+    const spinResult = {
+      player: this.player!,
+      bet: messagePlayerOpenedSigned.bet,
+      result: [finalRandom1, finalRandom2, finalRandom3].filter(el => el !== null) as any,
+      currentBattle: this.battle,
+    };
+
+    console.log(spinResult);
+
+    return spinResult;
+  }
+
+  async addTronium(tronium: number): Promise<boolean> {
+    const status = await this.getStatus();
+    if (status === GameStatus.READY) {
+      const tronWeb = (window as any).tronWeb;
+      const address = tronWeb.defaultAddress.base58;
+      const wallet = utils.getWallet();
+      let result = await utils.requestCloseAndOpenChannel(
+        address,
+        this.channel!.channelId,
+        wallet.publicKey
+      );
+      if (!result) {
+        return false;
+      }
+      const price = await utils.getTroniumPrice(tronWeb);
+      const trx = tronium * price;
+      result = await utils.closeOpenChannel(
+        tronWeb,
+        wallet.publicKey,
+        trx,
+        result.v,
+        result.r,
+        result.s
+      );
+      if (!result) {
+        return false;
+      }
+      this.channel = null;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async closeChannel(): Promise<boolean> {
+    const status = await this.getStatus();
+    if (status === GameStatus.READY) {
+      const tronWeb = (window as any).tronWeb;
+      const address = tronWeb.defaultAddress.base58;
+      let result = await utils.requestCloseChannel(
+        address,
+        this.channel!.channelId,
+        this.player!.tronium
+      );
+      if (!result) {
+        return false;
+      }
+      result = await utils.closeChannel(
+        tronWeb,
+        this.player!.tronium,
+        result.v,
+        result.r,
+        result.s
+      );
+      if (!result) {
+        return false;
+      }
+      this.channel = null;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async getGlobalStats(): Promise<GlobalStats> {
-    await wait(2000);
-    return {
-      allTime: [
-        {
-          playerName: 'Rob',
-          epicness: 100,
-          troniums: 1000000,
-          seconds: 90000,
+    const stats = await utils.getGlobalStats();
+    if (stats === null) {
+      return {
+        allTimeByEpicness: [],
+        allTimeByTroniunm: [],
+        villainsDefeated: 0,
+        bestFightWeekByEpicness: {
+          playerName: '',
+          epicness: 0,
+          troniums: 0,
+          seconds: 0,
         },
-        {
-          playerName: 'Cono',
-          epicness: 100,
-          troniums: 100000,
-          seconds: 90000,
+        bestFightWeekByTroniunm: {
+          playerName: '',
+          epicness: 0,
+          troniums: 0,
+          seconds: 0,
         },
-        {
-          playerName: 'Danny',
-          epicness: 100,
-          troniums: 100000,
-          seconds: 90000,
-        },
-        {
-          playerName: 'Really Long Name is HEREeeeeeeeeeeeeeeeeeeee',
-          epicness: 100,
-          troniums: 100000,
-          seconds: 90000,
-        },
-        {
-          playerName: 'Big',
-          epicness: 100,
-          troniums: 100000,
-          seconds: 90000,
-        },
-      ],
-      villainsDefeated: 3588,
-      bestFightWeek: {
-        seconds: 55,
-        epicness: 100,
-        troniums: 500,
-        playerName: 'Cono',
-      },
-    };
+      };
+    } else {
+      return stats;
+    }
   }
 
   async getPlayerStats(): Promise<PlayerStats> {
-    await wait(2000);
-    return {
-      bestFight: {
-        seconds: 55,
-        epicness: 100,
-        troniums: 500,
-        playerName: 'Cono',
-      },
-      villainsDefeated: 55,
-    };
-  }
-
-  async getTroniumPrice() {
-    return 1.5;
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+    const stats = await utils.getPlayerStats(address);
+    if (stats === null) {
+      return {
+        bestFightByEpicness: {
+          playerName: '',
+          epicness: 0,
+          troniums: 0,
+          seconds: 0,
+        },
+        bestFightByTroniums: {
+          playerName: '',
+          epicness: 0,
+          troniums: 0,
+          seconds: 0,
+        },
+        villainsDefeated: 0,
+      };
+    } else {
+      return stats;
+    }
   }
 }
-
-/* 
-Sequences:
-
-## User Stories
-
-1) When app loads, who do i know if there is an existent player, or no player?
-
-switch (getStatus() {
-  case INSTALL_TRONLINK:
-  case LOGIN_TRONLINK:
-  case NO_CHANNEL_OPENED:
-    goToTitle() // with the 'connect' btn
-    break;
-  case NOT_ENOUGH_BALANCE:
-  case READY:
-    goToHome(getPlayer())
-    break;
-  case ERROR:
-    goToErrorScreen()
-    break;
-})
-
-2) When going to "battle", what do i do?
-
-const b = getCurrentBattle()
-goToBattle(player, b)
-
-
-
-
-
-
-*/

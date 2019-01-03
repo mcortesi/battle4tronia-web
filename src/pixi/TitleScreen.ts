@@ -47,9 +47,9 @@ export function TitleScreen({ size, gd, parent }: TitleScreenProps): Disposable 
 
   const unregister = gd.registerForUIEvents({
     setGlobalStats: stats => {
-      weekHighestBox.setValue(`${stats.bestFightWeek.troniums}`);
+      weekHighestBox.setValue(`${stats.bestFightWeekByTroniunm.troniums}`);
       defeatedInvadersBox.setValue(stats.villainsDefeated.toString());
-      ranksBox.updateRanks(stats.allTime);
+      ranksBox.updateRanks(stats.allTimeByEpicness);
     },
   });
 

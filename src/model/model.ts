@@ -44,6 +44,7 @@ export const enum GameStatus {
   LOGIN_TRONLINK = 'LOGIN_TRONLINK',
   NO_CHANNEL_OPENED = 'NO_CHANNEL_OPENED',
   NOT_ENOUGH_BALANCE = 'NOT_ENOUGH_BALANCE',
+  UNKNOWN_CHANNEL_OPENED = 'UNKNOWN_CHANNEL_OPENED',
   READY = 'READY',
   ERROR = 'ERROR',
 }
@@ -53,12 +54,17 @@ export interface FightStats {
   troniums: number;
   seconds: number;
 }
+
 export interface PlayerStats {
-  bestFight: FightStats;
+  bestFightByEpicness: FightStats;
+  bestFightByTroniums: FightStats;
   villainsDefeated: number;
 }
+
 export interface GlobalStats {
-  allTime: FightStats[]; // sorted by famepoints descending
+  allTimeByEpicness: FightStats[]; // sorted by epicness descending
+  allTimeByTroniunm: FightStats[]; // sorted by tronium descending
   villainsDefeated: number; // total
-  bestFightWeek: FightStats;
+  bestFightWeekByEpicness: FightStats;
+  bestFightWeekByTroniunm: FightStats;
 }
