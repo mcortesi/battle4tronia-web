@@ -61,7 +61,8 @@ export class ScoreBox extends UIComponent {
     animateText(this.troniumText, this.currentTronium, newTronium);
     if (newTronium > this.currentTronium) {
       this.troniumIncrease.text = `+${newTronium - this.currentTronium}`;
-      postionAfterX(this.troniumText, this.troniumIncrease, 20);
+      const digitsDiff = newTronium.toString().length - this.currentTronium.toString().length;
+      postionAfterX(this.troniumText, this.troniumIncrease, 20 + 8 * digitsDiff);
       animateIncrease(this.troniumIncrease);
     }
 

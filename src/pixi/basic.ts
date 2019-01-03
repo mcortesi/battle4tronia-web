@@ -4,6 +4,7 @@ import { Layout } from './constants';
 import SoundManager from './SoundManager';
 import { centerX, LayoutOptions, newAnimatedSprite, newSprite, postionOnBottom } from './utils';
 import { Button } from './utils/Button';
+import { FightStatus } from './BattleScreen';
 
 export type IconName = 'IcoTronium' | 'IcoShield' | 'IcoClose' | 'IcoHowtoPlay' | 'IcoArrow';
 
@@ -54,15 +55,47 @@ export function primaryBtn(
   return btn;
 }
 
-export function FightBtn(parentSize: Dimension, action: () => void) {
+export function FightBtn(
+  parentSize: Dimension,
+  spinAction: () => void,
+  buyTroniumAction: () => void
+) {
   const BottomMargin = 50;
-  const btnSprite = newAnimatedSprite('BtnFight.png', 'BtnSpin.png');
+  const btnSprite = newAnimatedSprite('BtnFight.png', 'BtnSpin.png', 'BtnGetTronium.png');
 
   centerX(parentSize.width, btnSprite);
   postionOnBottom(parentSize.height, BottomMargin, btnSprite);
 
-  const btn = Button.from(btnSprite, action);
-  return btn;
+  btnSprite.buttonMode = true;
+  btnSprite.interactive = true;
+
+  let btnStatus: FightStatus = FightStatus.Ready;
+
+  btnSprite.on('click', () => {
+    SoundManager.play('btnPositive');
+    switch (btnStatus) {
+      case FightStatus.Ready:
+        spinAction();
+        break;
+      case FightStatus.NeedTronium:
+        buyTroniumAction();
+        break;
+    }
+  });
+
+  return {
+    stage: btnSprite,
+    setStatus: (st: FightStatus) => {
+      btnStatus = st;
+      if (btnStatus === FightStatus.Spinning) {
+        btnSprite.interactive = false;
+        btnSprite.gotoAndStop(1);
+      } else {
+        btnSprite.interactive = true;
+        btnSprite.gotoAndStop(btnStatus === FightStatus.NeedTronium ? 2 : 0);
+      }
+    },
+  };
 }
 
 export function ToBattleBtn(

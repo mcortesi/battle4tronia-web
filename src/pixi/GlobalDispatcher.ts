@@ -13,16 +13,10 @@ export interface UIEvents {
   closeCashOutModal(): void;
   setGlobalStats(stats: GlobalStats): void;
   setPlayerStats(stats: PlayerStats): void;
-}
-
-export interface BattleScreenActions {
   startSpinning(tronium: number): void;
   endSpinning(result: ClientSpinResult): void;
   resetBattle(battle: Battle): void;
   canBetWithCurrentBalance(isEnough: boolean): void;
-}
-
-export interface BattleModelActions {
   setBoostChoice(boostChoice: BoostChoice): void;
   setAttackChoice(attackChoice: LineChoice): void;
 }
@@ -48,26 +42,12 @@ export interface LoadScreenActions {
 
 type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
 
-type AllActions =
-  | HowToPlayActions
-  | BattleScreenActions
-  | BattleModelActions
-  | LoadScreenActions
-  | ModelActions
-  | UIEvents;
+type AllActions = HowToPlayActions | LoadScreenActions | ModelActions | UIEvents;
 
 export class GlobalDispatcher
-  implements
-    HowToPlayActions,
-    BattleModelActions,
-    BattleScreenActions,
-    LoadScreenActions,
-    UIEvents,
-    ModelActions {
+  implements HowToPlayActions, LoadScreenActions, UIEvents, ModelActions {
   private howToPlayListeners: HowToPlayActions[] = [];
   private loadScreenListeners: LoadScreenActions[] = [];
-  private battleScreenListeners: BattleScreenActions[] = [];
-  private battleModelListeners: BattleModelActions[] = [];
   private modelListeners: ModelActions[] = [];
   private uiEventsListeners: Array<Partial<UIEvents>> = [];
 
@@ -91,19 +71,6 @@ export class GlobalDispatcher
     };
   }
 
-  registerForBattleScreen(listener: BattleScreenActions): () => void {
-    this.battleScreenListeners.push(listener);
-    return () => {
-      this.battleScreenListeners = this.battleScreenListeners.filter(x => x !== listener);
-    };
-  }
-
-  registerForBattleModel(listener: BattleModelActions): () => void {
-    this.battleModelListeners.push(listener);
-    return () => {
-      this.battleModelListeners = this.battleModelListeners.filter(x => x !== listener);
-    };
-  }
   registerForModel(listener: ModelActions): () => void {
     this.modelListeners.push(listener);
     return () => {
@@ -135,24 +102,24 @@ export class GlobalDispatcher
   }
 
   startSpinning(tronium: number): void {
-    this.fireEvent(this.battleScreenListeners, 'startSpinning', tronium);
+    this.fireEvent(this.uiEventsListeners, 'startSpinning', tronium);
   }
   endSpinning(result: ClientSpinResult): void {
-    this.fireEvent(this.battleScreenListeners, 'endSpinning', result);
+    this.fireEvent(this.uiEventsListeners, 'endSpinning', result);
   }
   resetBattle(battle: Battle): void {
-    this.fireEvent(this.battleScreenListeners, 'resetBattle', battle);
+    this.fireEvent(this.uiEventsListeners, 'resetBattle', battle);
   }
   canBetWithCurrentBalance(isEnough: boolean): void {
-    this.fireEvent(this.battleScreenListeners, 'canBetWithCurrentBalance', isEnough);
+    this.fireEvent(this.uiEventsListeners, 'canBetWithCurrentBalance', isEnough);
   }
 
   setBoostChoice(boostChoice: BoostChoice): void {
-    this.fireEvent(this.battleModelListeners, 'setBoostChoice', boostChoice);
+    this.fireEvent(this.uiEventsListeners, 'setBoostChoice', boostChoice);
   }
 
   setAttackChoice(attackChoice: LineChoice): void {
-    this.fireEvent(this.battleModelListeners, 'setAttackChoice', attackChoice);
+    this.fireEvent(this.uiEventsListeners, 'setAttackChoice', attackChoice);
   }
 
   requestConnect(): void {

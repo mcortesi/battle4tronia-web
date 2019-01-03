@@ -30,6 +30,12 @@ export interface UIState {
   linesIdx: number;
 }
 
+export const enum FightStatus {
+  Ready,
+  Spinning,
+  NeedTronium,
+}
+
 export interface BattleScreenProps {
   player: Player;
   battle: Battle;
@@ -105,7 +111,11 @@ function createUI(opts: BattleScreenProps) {
     },
   });
 
-  const spinBtn = FightBtn(opts.size, opts.gd.requestSpin.bind(opts.gd));
+  const spinBtn = FightBtn(
+    opts.size,
+    opts.gd.requestSpin.bind(opts.gd),
+    opts.gd.openAddMoreModal.bind(opts.gd)
+  );
   const uiShield = newSprite('UIShield.png');
   const lowBalanceText = newText('Need more tronium', 'Body2');
   const winText = newText('', 'H3');
@@ -157,20 +167,36 @@ function createUI(opts: BattleScreenProps) {
 }
 
 function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher) {
-  let isSpinning = false;
-  let lowBalance = false;
+  let hasFunds: boolean = true;
+  let isSpinning: boolean = false;
+
+  const setSpinning = (value: boolean) => {
+    isSpinning = value;
+    if (isSpinning) {
+      ui.spinBtn.setStatus(FightStatus.Spinning);
+    } else {
+      ui.spinBtn.setStatus(hasFunds ? FightStatus.Ready : FightStatus.NeedTronium);
+    }
+  };
+  const setHasFunds = (value: boolean) => {
+    hasFunds = value;
+    if (isSpinning) {
+      ui.spinBtn.setStatus(FightStatus.Spinning);
+    } else {
+      ui.spinBtn.setStatus(hasFunds ? FightStatus.Ready : FightStatus.NeedTronium);
+    }
+  };
 
   const updateTronium = (tronium: number) => {
     ui.scoresUI.setTronium(tronium);
     ui.energyBarUI.updateValue(Math.min(100, tronium));
   };
 
-  const handleSpinButton = () => {
-    ui.spinBtn.disable = isSpinning || lowBalance;
-    ui.lowBalanceText.visible = lowBalance;
-  };
-
-  const unregister1 = gd.registerForBattleModel({
+  const spinLock = new Lock();
+  const unregister = gd.registerForUIEvents({
+    playerUpdated: (player: Player) => {
+      ui.scoresUI.setTronium(player.tronium);
+    },
     setAttackChoice: (attack: LineChoice) => {
       ui.linesSelectorUI.update(LineChoice.indexOf(attack));
       ui.boardBg.showLine(attack.value);
@@ -178,13 +204,8 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
     setBoostChoice: (boost: BoostChoice) => {
       ui.betSelectorUI.update(BoostChoice.indexOf(boost));
     },
-  });
-
-  const spinLock = new Lock();
-  const unregister2 = gd.registerForBattleScreen({
     startSpinning: async (tronium: number) => {
-      isSpinning = true;
-      handleSpinButton();
+      setSpinning(true);
       updateTronium(tronium);
       ui.reelsUI.startAnimation();
     },
@@ -206,8 +227,7 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
           await ui.villain.animateKill();
         }
 
-        isSpinning = false;
-        handleSpinButton();
+        setSpinning(false);
       } finally {
         spinLock.release();
       }
@@ -215,25 +235,19 @@ function attachController(ui: ReturnType<typeof createUI>, gd: GlobalDispatcher)
     resetBattle: async battle => {
       await spinLock.acquire();
       try {
-        isSpinning = true;
-        handleSpinButton();
+        setSpinning(true);
         await ui.villain.createNew();
         ui.hpBarUI.reset(battle.villain.maxHp);
-        isSpinning = false;
-        handleSpinButton();
+        setSpinning(false);
       } finally {
         spinLock.release();
       }
     },
-    canBetWithCurrentBalance: isEnough => {
-      lowBalance = !isEnough;
-      handleSpinButton();
-    },
+    canBetWithCurrentBalance: setHasFunds,
   });
 
   return () => {
-    unregister1();
-    unregister2();
+    unregister();
   };
 }
 

@@ -27,7 +27,7 @@ export class Orchestrator implements ModelActions {
 
     gd.registerForModel(this);
 
-    gd.registerForBattleModel({
+    gd.registerForUIEvents({
       setAttackChoice: (attack: LineChoice) => {
         this.currentAttack = attack;
         this.updateBetBalanceCheck();
