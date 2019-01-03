@@ -150,7 +150,6 @@ export class FakeApi implements API {
   }
 
   async spin(bet: Bet): Promise<SpinResult> {
-    await wait(1000);
     if (!this.battle) {
       throw new Error('Not in battle');
     }

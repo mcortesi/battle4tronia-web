@@ -96,3 +96,7 @@ export class Lock {
     }
   }
 }
+
+export function createTimer(ms: number) {
+  return wait(ms);
+}

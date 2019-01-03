@@ -1,7 +1,7 @@
 import * as Tween from '@tweenjs/tween.js';
 import { Container, extras, filters, Graphics, loader } from 'pixi.js';
 import { BetResult, Card } from '../../model/reel';
-import { genArray, transpose } from '../../utils';
+import { genArray, transpose, createTimer } from '../../utils';
 import { Position, UIComponent } from '../commons';
 import SoundManager from '../SoundManager';
 import { newContainer } from '../utils';
@@ -28,6 +28,7 @@ export class ReelsUI extends UIComponent {
   stage: Container;
   reels: Reel[];
   private currAnimation: Tween.Tween | null = null;
+  private currTimer: Promise<any> | null;
 
   constructor(private readonly opts: ReelsOptions) {
     super();
@@ -84,6 +85,7 @@ export class ReelsUI extends UIComponent {
   }
 
   public startAnimation() {
+    this.currTimer = createTimer(1000);
     const MAX = (this.opts.rows + 1) * this.opts.cellHeight;
 
     const animData = {
@@ -116,6 +118,10 @@ export class ReelsUI extends UIComponent {
   }
 
   public async stopAnimation(result: BetResult) {
+    if (this.currTimer) {
+      await this.currTimer;
+      this.currTimer = null;
+    }
     const lastColSymbols = result.reels.map(cps => cps.map(cp => cp.card));
 
     console.log(result.winnings);
