@@ -124,7 +124,8 @@ export class GameClient {
     return this.player!;
   }
 
-  changeName(name: string) {
-    return this.api.updatePlayerName(name);
+  async changeName(name: string) {
+    this._player = await this.api.updatePlayerName(name);
+    return this._player;
   }
 }

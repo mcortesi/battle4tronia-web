@@ -13,6 +13,7 @@ import {
   verticalAlignCenter,
   newAnimatedSprite,
   postionOnRight,
+  centerX,
 } from './utils';
 import { Button, ToggleButton } from './utils/Button';
 import SoundManager from './SoundManager';
@@ -49,14 +50,12 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   stage.addChild(balanceBox.stage);
 
   stage.addChild(HowtoPlayBtn(gd.showHowToPlay.bind(gd)).stage);
-  stage.addChild(WatchStoryBtn(gd.showHowToPlay.bind(gd)).stage);
+  stage.addChild(WatchStoryBtn(gd.openStoryModal.bind(gd)).stage);
 
-  stage.addChild(
-    newText(player.name, 'H1', {
-      position: new Point(size.width / 2, 200),
-      anchor: new Point(0.5, 0),
-    })
-  );
+  const playerNameText = newText(player.name, 'H1');
+  playerNameText.y = 200;
+
+  centerX(size.width, playerNameText);
 
   const fameIco = smallIcon('IcoShield', {
     position: new Point(0, 250 + 6),
@@ -68,7 +67,7 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
   fameIco.x = (size.width - fameWidth) / 2;
   fameText.x = fameIco.x + fameIco.width + 5;
 
-  stage.addChild(fameIco, fameText);
+  stage.addChild(playerNameText, fameIco, fameText);
 
   const ColWidth = size.width / 5;
   const TableLayout = {
@@ -152,6 +151,8 @@ export function HomeScreen({ size, gd, parent, player }: HomeScreenProps): Dispo
     playerUpdated: (p: Player) => {
       balanceBox.setBalance(p.tronium);
       updateBalanceStatus(p);
+      playerNameText.text = p.name;
+      centerX(size.width, playerNameText);
     },
     setPlayerStats: (playerStats: PlayerStats) => {
       playerBestFightBox.setValue(playerStats.bestFightByEpicness.epicness.toString());
@@ -207,44 +208,6 @@ function BalanceBox(opts: {
     },
   };
 }
-
-// function GraphicBtn(opts: {
-//   text: string;
-//   position: Point;
-//   fill: boolean;
-//   color: number;
-//   onClick: () => void;
-// }) {
-//   const margin = 4;
-//   const labelText = newText(opts.text, 'Body2', {
-//     position: new Point(margin, margin),
-//   });
-
-//   const g = new Graphics();
-
-//   if (opts.fill) {
-//     g.beginFill(opts.color);
-//   } else {
-//     g.lineStyle(1, opts.color);
-//   }
-//   g.drawRoundedRect(0, 0, labelText.width + margin * 2, labelText.height + margin * 2, 5);
-
-//   if (opts.fill) {
-//     g.endFill();
-//   }
-
-//   g.addChild(labelText);
-
-//   g.position.set(opts.position.x, opts.position.y);
-
-//   g.interactive = true;
-//   g.buttonMode = true;
-//   g.on('click', () => {
-//     SoundManager.playBtn();
-//     opts.onClick();
-//   });
-//   return g;
-// }
 
 function Hero(parentSize: Dimension) {
   const hero = newSprite('Hero.png');

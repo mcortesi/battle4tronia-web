@@ -1,0 +1,48 @@
+{"frames": {
+
+"UIStoryTroy5.png":
+{
+	"frame": {"x":1,"y":1,"w":1097,"h":603},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603}
+},
+"UIStoryTroy6.png":
+{
+	"frame": {"x":1103,"y":1,"w":1097,"h":603},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603}
+},
+"UIStoryTroy7.png":
+{
+	"frame": {"x":1,"y":609,"w":1097,"h":603},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603}
+},
+"UIStoryTroy8.png":
+{
+	"frame": {"x":609,"y":1103,"w":1097,"h":603},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1097,"h":603},
+	"sourceSize": {"w":1097,"h":603}
+}},
+"animations": {
+	"UIStoryTroy": ["UIStoryTroy5.png","UIStoryTroy6.png","UIStoryTroy7.png","UIStoryTroy8.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "TroniaStory-2.png",
+	"format": "RGBA8888",
+	"size": {"w":1707,"h":1707},
+	"scale": "1",
+	"related_multi_packs": [ "TroniaStory-1.json", "TroniaStory-3.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:a8f3d7d24cfa6349cbab08c99166a4c3:e1d1db585ef8c26bb0e7ee546140196e:a40a47b1359e9cfa29ea2274130db463$"
+}
+}

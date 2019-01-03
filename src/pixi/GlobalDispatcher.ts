@@ -19,6 +19,7 @@ export interface UIEvents {
   canBetWithCurrentBalance(isEnough: boolean): void;
   setBoostChoice(boostChoice: BoostChoice): void;
   setAttackChoice(attackChoice: LineChoice): void;
+  storyBuySucceed(): void;
 }
 
 export interface ModelActions {
@@ -27,8 +28,10 @@ export interface ModelActions {
   requestSpin(): void;
   requestNameChange(name: string): void;
   requestBuyTronium(amount: number): void;
+  requestBuyTroniumFromStory(amount: number): void;
   requestSellTronium(amount: number): void;
   exitBattle(): void;
+  openStoryModal(): void;
   openAddMoreModal(): void;
   openCashOutModal(): void;
   showHowToPlay(): void;
@@ -82,12 +85,20 @@ export class GlobalDispatcher
     this.fireEvent(this.uiEventsListeners, 'playerUpdated', player);
   }
 
+  storyBuySucceed(): void {
+    this.fireEvent(this.uiEventsListeners, 'storyBuySucceed');
+  }
+
   closeAddMoreModal(): void {
     this.fireEvent(this.uiEventsListeners, 'closeAddMoreModal');
   }
 
   closeCashOutModal(): void {
     this.fireEvent(this.uiEventsListeners, 'closeCashOutModal');
+  }
+
+  openStoryModal(): void {
+    this.fireEvent(this.modelListeners, 'openStoryModal');
   }
 
   showHowToPlay(): void {
@@ -136,6 +147,9 @@ export class GlobalDispatcher
   }
   requestBuyTronium(amount: number): void {
     this.fireEvent(this.modelListeners, 'requestBuyTronium', amount);
+  }
+  requestBuyTroniumFromStory(amount: number): void {
+    this.fireEvent(this.modelListeners, 'requestBuyTroniumFromStory', amount);
   }
   requestSellTronium(amount: number): void {
     this.fireEvent(this.modelListeners, 'requestSellTronium', amount);

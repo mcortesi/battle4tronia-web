@@ -93,7 +93,7 @@ export class Orchestrator implements ModelActions {
         this.ui.openTronlinkLoggedOutModal();
         break;
       case GameStatus.NO_CHANNEL_OPENED:
-        this.ui.openConnectModal(this.game.troniumPrice);
+        this.ui.openStoryModal(this.game.troniumPrice);
 
         break;
       case GameStatus.NOT_ENOUGH_BALANCE:
@@ -122,8 +122,17 @@ export class Orchestrator implements ModelActions {
     });
   };
 
-  requestNameChange = (name: string) => {
-    this.game.changeName(name);
+  requestNameChange = async (name: string) => {
+    const player = await this.game.changeName(name);
+    this.gd.playerUpdated(player);
+    if (!this.loggedIn) {
+      await this.goHome();
+    }
+  };
+
+  requestBuyTroniumFromStory = async (amount: number) => {
+    await this.game.buyTronium(amount);
+    this.gd.storyBuySucceed();
   };
 
   requestBuyTronium = async (amount: number) => {
@@ -194,6 +203,10 @@ export class Orchestrator implements ModelActions {
 
   showHowToPlay = () => {
     this.ui.openHowtoPlayModal();
+  };
+
+  openStoryModal = () => {
+    this.ui.openStoryModal(this.game.troniumPrice);
   };
 
   exitBattle = () => this.goHome();
