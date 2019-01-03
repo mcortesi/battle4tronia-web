@@ -76,8 +76,8 @@ export interface MessageDelearClosed {
 
 const config = {
   delearAddress: 'TPL66VK2gCXNCD7EJg9pgJRfqcRazjhUZY',
-  battleForTroniaAddress: 'TDPjWo3YTEZwx86iwZb4Lk2nUW24LhhQEe',
-  apiDomain: 'http://127.0.0.1:8000/api/v1/',
+  battleForTroniaAddress: 'THgLbHhQ3fHXmBAHou4pNRVgp1RBfxW41x',
+  apiDomain: 'http://192.168.1.176:8000/api/v1/',
   apiPlayerEndpoint: 'player/',
   apiGetBattleEndpoint: 'battle/',
   apiGetLastMessageEndpoint: 'message/',
@@ -204,6 +204,7 @@ export async function openChannel(tronWeb: any, trx: number, publicKey: string):
 export async function requestCloseAndOpenChannel(
   playerAddress: Address,
   channelId: number,
+  tronium: number,
   publicKey: string
 ) {
   const resp = await fetch(config.apiDomain + config.apiRequestCloseOpenEndpoint + playerAddress, {
@@ -214,6 +215,7 @@ export async function requestCloseAndOpenChannel(
     },
     body: JSON.stringify({
       channelId,
+      tronium,
       publicKey,
     }),
   });
@@ -227,6 +229,7 @@ export async function requestCloseAndOpenChannel(
 
 export async function closeOpenChannel(
   tronWeb: any,
+  tronium: number,
   publicKey: string,
   trx: number,
   v: number,
@@ -236,10 +239,11 @@ export async function closeOpenChannel(
   return new Promise<boolean>((resolve, reject) => {
     tronWeb.transactionBuilder.triggerSmartContract(
       tronWeb.address.toHex(config.battleForTroniaAddress),
-      'closeAndOpenChannel(address,uint8,bytes32,bytes32)',
+      'closeAndOpenChannel(uint256,address,uint8,bytes32,bytes32)',
       30000000,
       trx * 1000000,
       [
+        { type: 'uint256', value: tronium },
         { type: 'address', value: publicKey },
         { type: 'uint8', value: v },
         { type: 'bytes32', value: '0x' + r },

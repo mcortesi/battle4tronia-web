@@ -34,24 +34,38 @@ export class GameApi implements API {
   private channel: null | utils.Channel;
   private player: null | Player;
   private battle: null | Battle;
+  private emptyBattle = {
+    playerName: '',
+    epicness: 0,
+    troniums: 0,
+    seconds: 0,
+  };
 
   async getTroniumPrice(): Promise<number> {
-    const tronWeb = (window as any).tronWeb;
-    return utils.getTroniumPrice(tronWeb);
+    // TODO: ask for the price after checking that TronLink is installed
+    /*const tronWeb = (window as any).tronWeb;
+    if(!tronWeb || !tronWeb.ready) {
+      throw new Error('TronLink not installed');
+    }
+    return utils.getTroniumPrice(tronWeb);*/
+    return 1.5;
   }
 
-  async getPlayer(): Promise<Player> {
+  async getPlayer(): Promise<null | Player> {
     const tronWeb = (window as any).tronWeb;
+    if (!tronWeb || !tronWeb.ready) {
+      return null;
+    }
     const address = tronWeb.defaultAddress.base58;
     const player = await utils.getPlayer(address);
-    if (!player) {
-      throw new Error('No player');
-    }
     return player;
   }
 
   async getCurrentBattle(): Promise<Battle> {
     const tronWeb = (window as any).tronWeb;
+    if (!tronWeb || !tronWeb.ready) {
+      throw new Error('No battle');
+    }
     const address = tronWeb.defaultAddress.base58;
     const battle = await utils.getBattle(address);
     if (!battle) {
@@ -63,7 +77,6 @@ export class GameApi implements API {
   async getStatus(): Promise<GameStatus> {
     // Checks if everything is correct (conencted, has credit, has a privateKey, etc.)
     const tronWeb = (window as any).tronWeb;
-    const address = tronWeb.defaultAddress.base58;
 
     // 1) Checked tronlink installed
     if (!tronWeb) {
@@ -73,6 +86,8 @@ export class GameApi implements API {
     if (!tronWeb.ready) {
       return GameStatus.LOGIN_TRONLINK;
     }
+
+    const address = tronWeb.defaultAddress.base58;
     // 3) Checked if player has an open channel
     try {
       this.channel = await utils.getCurrentChannel(tronWeb);
@@ -284,7 +299,6 @@ export class GameApi implements API {
       lineResults.push(finalRandom3);
     }
 
-    console.log(lineResults);
     const winnings = winningsFor(bet, lineResults.map(x => Move.fromDice(x)));
     const playerUpdated = game.updatePlayer(this.player!, messagePlayerOpenedSigned.bet, winnings);
 
@@ -316,19 +330,12 @@ export class GameApi implements API {
 
     // TODO:  compare that server returns correct player
 
-    console.log('start compare players');
-    console.log(playerUpdated);
-    console.log(resp.player);
-    console.log('finish compare players');
-
     const spinResult = {
       player: this.player!,
       bet: messagePlayerOpenedSigned.bet,
       result: [finalRandom1, finalRandom2, finalRandom3].filter(el => el !== null) as any,
       currentBattle: this.battle,
     };
-
-    console.log(spinResult);
 
     return spinResult;
   }
@@ -342,6 +349,7 @@ export class GameApi implements API {
       let result = await utils.requestCloseAndOpenChannel(
         address,
         this.channel!.channelId,
+        this.player!.tronium,
         wallet.publicKey
       );
       if (!result) {
@@ -351,6 +359,7 @@ export class GameApi implements API {
       const trx = tronium * price;
       result = await utils.closeOpenChannel(
         tronWeb,
+        this.player!.tronium,
         wallet.publicKey,
         trx,
         result.v,
@@ -404,20 +413,16 @@ export class GameApi implements API {
         allTimeByEpicness: [],
         allTimeByTroniunm: [],
         villainsDefeated: 0,
-        bestFightWeekByEpicness: {
-          playerName: '',
-          epicness: 0,
-          troniums: 0,
-          seconds: 0,
-        },
-        bestFightWeekByTroniunm: {
-          playerName: '',
-          epicness: 0,
-          troniums: 0,
-          seconds: 0,
-        },
+        bestFightWeekByEpicness: this.emptyBattle,
+        bestFightWeekByTroniunm: this.emptyBattle,
       };
     } else {
+      if (!stats.bestFightWeekByEpicness) {
+        stats.bestFightWeekByEpicness = this.emptyBattle;
+      }
+      if (!stats.bestFightWeekByTroniunm) {
+        stats.bestFightWeekByTroniunm = this.emptyBattle;
+      }
       return stats;
     }
   }
@@ -426,23 +431,20 @@ export class GameApi implements API {
     const tronWeb = (window as any).tronWeb;
     const address = tronWeb.defaultAddress.base58;
     const stats = await utils.getPlayerStats(address);
+
     if (stats === null) {
       return {
-        bestFightByEpicness: {
-          playerName: '',
-          epicness: 0,
-          troniums: 0,
-          seconds: 0,
-        },
-        bestFightByTroniums: {
-          playerName: '',
-          epicness: 0,
-          troniums: 0,
-          seconds: 0,
-        },
+        bestFightByEpicness: this.emptyBattle,
+        bestFightByTroniums: this.emptyBattle,
         villainsDefeated: 0,
       };
     } else {
+      if (!stats.bestFightByEpicness) {
+        stats.bestFightByEpicness = this.emptyBattle;
+      }
+      if (!stats.bestFightByEpicness) {
+        stats.bestFightByTroniums = this.emptyBattle;
+      }
       return stats;
     }
   }

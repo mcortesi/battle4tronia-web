@@ -14,13 +14,6 @@ export function createRandom(playerRandom: number, dealerRandomNumber: number): 
 export function updatePlayer(player: Player, bet: Bet, winnings: Winnings): Player {
   const betCost = bet.lines * bet.tronium * bet.level;
 
-  console.log('betCost');
-  console.log(betCost);
-  console.log('payout');
-  console.log(winnings.payout);
-  console.log('epicness');
-  console.log(winnings.epicness);
-
   player.tronium += winnings.payout - betCost;
   player.fame += winnings.epicness;
 
