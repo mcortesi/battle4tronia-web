@@ -75,9 +75,12 @@ export interface MessageDelearClosed {
 }
 
 const config = {
-  delearAddress: 'TPL66VK2gCXNCD7EJg9pgJRfqcRazjhUZY',
-  battleForTroniaAddress: 'THgLbHhQ3fHXmBAHou4pNRVgp1RBfxW41x',
-  apiDomain: 'http://192.168.1.176:8000/api/v1/',
+  // delearAddress: 'TPL66VK2gCXNCD7EJg9pgJRfqcRazjhUZY',
+  delearAddress: 'TWez8ab53FMaqTcCLpnMAUWvrxoYcXyRnq',
+  // battleForTroniaAddress: 'TGMTqqNuiBBtbyCsS3CCsR5SzYrkRS1ZJo',
+  battleForTroniaAddress: 'TUVZkrputmvvmWiptHzEmsF5oDrTs5oLQM',
+  // apiDomain: 'http://localhost:8000/api/v1/',
+  apiDomain: 'https://api.battlefortronia.com/api/v1/',
   apiPlayerEndpoint: 'player/',
   apiGetBattleEndpoint: 'battle/',
   apiGetLastMessageEndpoint: 'message/',
@@ -93,6 +96,18 @@ const config = {
 
 export function getDealearAddress() {
   return config.delearAddress;
+}
+
+export async function getDelearFromSmartContract(tronWeb: any): Promise<Address> {
+  const tx = await tronWeb.transactionBuilder.triggerSmartContract(
+    tronWeb.address.toHex(config.battleForTroniaAddress),
+    'delear()',
+    30000,
+    0,
+    []
+  );
+  const decoded = decodeParameters(['address'], tx.constant_result[0]);
+  return decoded[0];
 }
 
 export function getBalance(tronWeb: any, address: any): Promise<number> {

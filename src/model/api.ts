@@ -34,6 +34,8 @@ export class GameApi implements API {
   private channel: null | utils.Channel;
   private player: null | Player;
   private battle: null | Battle;
+  private address: null | string;
+  private addressChangeEventSet: boolean = false;
   private emptyBattle = {
     playerName: '',
     epicness: 0,
@@ -74,6 +76,16 @@ export class GameApi implements API {
     return battle;
   }
 
+  reload() {
+    const tronWeb = (window as any).tronWeb;
+    const address = tronWeb.defaultAddress.base58;
+    if (this.address && this.address !== address) {
+      (window as any).location.reload();
+    } else {
+      this.address = address;
+    }
+  }
+
   async getStatus(): Promise<GameStatus> {
     // Checks if everything is correct (conencted, has credit, has a privateKey, etc.)
     const tronWeb = (window as any).tronWeb;
@@ -85,6 +97,14 @@ export class GameApi implements API {
     // 2) Checked tronlink loggedin
     if (!tronWeb.ready) {
       return GameStatus.LOGIN_TRONLINK;
+    }
+
+    if (!this.addressChangeEventSet) {
+      const that = this;
+      tronWeb.on('addressChanged', () => {
+        that.reload();
+      });
+      this.addressChangeEventSet = true;
     }
 
     const address = tronWeb.defaultAddress.base58;
