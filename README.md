@@ -1,17 +1,44 @@
-# react-ts boilerplate
+# Battle For Tronia WEB
 
-Boilerplate project with:
+Battle for Tronia is the first slot machine built on TRON where you can have an epic
+experience while you gamble!
 
-- react
-- typescript 3.x
-- webpack 4.x
-- jest
-- prettier
-- precommit hook for linting
-- tslint
+Important technical aspects about the project:
 
-## Commands
+- Built on tron.
+- Provably fair game; with a random number generation protocol
+- Based on an innovative implementation of state channels specifically designed for Tron and gambling.
 
-- `yarn test` Tests
-- `yarn build` Build webpack
-- `yarn start` Webpack dev server
+## Documents
+
+There a public folder with technical and game design documents available on [google drive](https://drive.google.com/drive/u/1/folders/1nY5m6S5j2f7T_pX8j599JyOKNaCc41U7)
+
+## Projects
+
+Battle for tronia is composed of 2 projects:
+
+- this one
+- server: https://github.com/mcortesi/battlefortronia-server
+
+## Main Technologies
+
+- Tron Blockchain
+- TronLink
+- typescript
+- pixi.js (gamedev library for web on canvas/webgl)
+- howler.js (sounds library)
+- tween.js (for animations)
+- webpack (packaging)
+
+## Running in development
+
+Just type:
+
+```
+yarn start
+```
+
+And it will run the client app on localhost.
+
+If you don't have the server running you can append to the url `#papu` and `#notpapu` to play without
+a server running.
