@@ -69,8 +69,6 @@ export function StoryModal({
 
   resetBtnSprite.visible = false;
 
-  let currentValue: null | { tronium: number; trx: number } = null;
-
   const BuyContainerSize = { width: 420, height: 320 };
   const buyContainer = newContainer();
   buyContainer.visible = false;
@@ -78,24 +76,21 @@ export function StoryModal({
   const optionBoxes = createOptionBoxes({
     troniumPrice,
     size: BuyContainerSize,
-    onSelect: value => {
-      btnBuy.disable = false;
-      currentValue = value;
-    },
+    initialValue: 500,
   });
 
   const btnBuySprite = newAnimatedSprite('BtnBuy.png', 'BtnBuyDisabled.png');
 
   centerX(BuyContainerSize.width, btnBuySprite);
   postionOnBottom(BuyContainerSize.height, 10, btnBuySprite);
-  buyContainer.addChild(optionBoxes, btnBuySprite);
+  buyContainer.addChild(optionBoxes.stage, btnBuySprite);
 
-  const btnBuy = Button.from(btnBuySprite, () => {
-    if (currentValue) {
-      gd.requestBuyTroniumFromStory(currentValue.tronium);
+  Button.from(btnBuySprite, () => {
+    if (optionBoxes.getValue()) {
+      gd.requestBuyTroniumFromStory(optionBoxes.getValue());
     }
   });
-  btnBuy.disable = true;
+  // btnBuy.disable = true;
 
   const NameContainerSize = { width: 320, height: 190 };
   const nameContainer = newContainer();
@@ -161,8 +156,7 @@ export function StoryModal({
     buyContainer.visible = storyIndex === 9;
     nameContainer.visible = storyIndex === 10;
     if (storyIndex !== 9) {
-      currentValue = null;
-      btnBuy.disable = true;
+      optionBoxes.selectByValue(500);
     }
     storySprite.gotoAndStop(storyIndex);
   };
@@ -191,17 +185,27 @@ function createOptionBoxes({
   troniumPrice,
   size,
   onSelect,
+  initialValue,
 }: {
   troniumPrice: number;
   size: { width: number; height: number };
-  onSelect: (value: { tronium: number; trx: number }) => void;
+  initialValue: number;
+  onSelect?: (value: { tronium: number; trx: number }) => void;
 }) {
+  let currentValue = initialValue;
   const stage = newContainer();
 
   const select = (i: number) => {
     boxes.forEach(b => b.unselect());
     boxes[i].select();
-    onSelect(boxes[i].value);
+    currentValue = boxes[i].value.tronium;
+    if (onSelect) {
+      onSelect(boxes[i].value);
+    }
+  };
+  const selectByValue = (val: number) => {
+    const i = boxes.findIndex(b => b.value.tronium === val);
+    select(i);
   };
 
   const boxes = [
@@ -225,13 +229,18 @@ function createOptionBoxes({
     }),
   ];
 
+  selectByValue(initialValue);
   distributeEvenlyX(size.width, ...boxes.map(b => b.stage));
 
   boxes.forEach(b => {
     stage.addChild(b.stage);
   });
 
-  return stage;
+  return {
+    stage,
+    getValue: () => currentValue,
+    selectByValue,
+  };
 }
 
 function SelectBox(opts: { tronium: number; icon: string; trx: number; onClick: () => void }) {
