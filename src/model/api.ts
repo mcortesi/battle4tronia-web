@@ -1,4 +1,5 @@
 import * as utils from './utils';
+import { debug } from '../utils/debug';
 import * as game from './helper';
 import { Move, winningsFor } from './reel';
 import { GameStatus, Battle, Bet, SpinResult, Player, PlayerStats, GlobalStats } from './model';
@@ -114,9 +115,9 @@ export class GameApi implements API {
       this.player = await utils.getPlayer(address);
       this.battle = await utils.getBattle(address);
 
-      console.log(this.channel);
-      console.log(this.player);
-      console.log(this.battle);
+      debug(this.channel);
+      debug(this.player);
+      debug(this.battle);
 
       if (!this.channel) {
         // No channel opened

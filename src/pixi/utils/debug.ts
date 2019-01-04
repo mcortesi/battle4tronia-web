@@ -7,7 +7,6 @@ export function drawBorder(container: Container) {
   g.drawRect(0, 0, container.width, container.height);
   // g.moveTo(container.width / 2, 0).lineTo(container.width / 2, container.height);
   container.addChild(g);
-  console.log(container.width);
 }
 
 export function drawRules(horizontal: number[], vertical: number[]) {

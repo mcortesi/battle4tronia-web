@@ -5,6 +5,7 @@ import { genArray, transpose, createTimer } from '../../utils';
 import { Position, UIComponent } from '../commons';
 import SoundManager from '../SoundManager';
 import { newContainer } from '../utils';
+import { debug } from '../../utils/debug';
 
 const AnimatedSprite = extras.AnimatedSprite;
 
@@ -124,8 +125,8 @@ export class ReelsUI extends UIComponent {
     }
     const lastColSymbols = result.reels.map(cps => cps.map(cp => cp.card));
 
-    console.log(result.winnings);
-    console.log(
+    debug(result.winnings);
+    debug(
       transpose(lastColSymbols)
         .map(cs => cs.map(c => c.id.replace('card', '')).join(' '))
         .join('\n')

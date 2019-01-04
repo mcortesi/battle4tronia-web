@@ -2,6 +2,7 @@ import { MoveSound } from '../pixi/SoundManager';
 import { rndElem, shuffle, transpose } from '../utils';
 import { Bet } from './model';
 import { BoostChoice } from './base';
+import { debug } from '../utils/debug';
 
 export const ReelSize = {
   rows: 3,
@@ -356,7 +357,7 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
 
   const featuredMove = getFeaturedMove(combinations);
 
-  console.log('WIN_COMB', combinations.map(c => c.id));
+  debug('WIN_COMB', combinations.map(c => c.id));
   switch (bet.lines) {
     case 1:
       return {
