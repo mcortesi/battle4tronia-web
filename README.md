@@ -18,7 +18,7 @@ There a public folder with technical and game design documents available on [goo
 Battle for tronia is composed of 2 projects:
 
 - this one
-- server: https://github.com/mcortesi/battlefortronia-server
+- server: https://github.com/mcortesi/battle4tronia-server
 
 ## Main Technologies
 
