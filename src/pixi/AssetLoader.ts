@@ -10,8 +10,9 @@ const ResouceMap = {
   // sprites
   ui: '/assets/spriteUI.json',
   cards: '/assets/spriteCards.json',
-  characters1: '/assets/characters1.json',
-  characters2: '/assets/characters2.json',
+  characters0: '/assets/Characters-0.json',
+  characters1: '/assets/Characters-1.json',
+  characters2: '/assets/Characters-2.json',
   story1: '/assets/TroniaStory-1.json',
   story2: '/assets/TroniaStory-2.json',
   story3: '/assets/TroniaStory-3.json',

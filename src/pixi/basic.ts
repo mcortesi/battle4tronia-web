@@ -132,11 +132,11 @@ export function ToBattleBtn(
 }
 
 export function HowtoPlayBtn(onClick: () => void) {
-  const btn = newSprite('BtnHowtoPlay.png', { position: new Point(1202, 376) });
+  const btn = newSprite('BtnHowtoPlay.png', { position: new Point(1202, 412) });
   return Button.from(btn, onClick);
 }
 
 export function WatchStoryBtn(onClick: () => void) {
-  const btn = newSprite('BtnStory.png', { position: new Point(1067, 358) });
+  const btn = newSprite('BtnStory.png', { position: new Point(1067, 412) });
   return Button.from(btn, onClick);
 }

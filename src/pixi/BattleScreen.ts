@@ -272,13 +272,16 @@ function Hero(parentSize: Dimension) {
 }
 
 function createVillainLayers() {
+  const z4 = rndInt(1, 15).toString();
+  const layer4 = newSprite(`z04${z4.length === 2 ? z4 : '0' + z4}.png`);
   const layer3 = newSprite(`z030${rndInt(1, 6)}.png`);
   const layer2 = newSprite(`z020${rndInt(1, 8)}.png`);
   const layer1 = newSprite(`z010${rndInt(1, 8)}.png`);
-  return [layer3, layer2, layer1];
+  return [layer4, layer3, layer2, layer1];
 }
+
 function Villain(parentSize: Dimension) {
-  const baseLayer = newSprite('z04.png');
+  let layers = createVillainLayers();
 
   const puff = new extras.AnimatedSprite(loader.resources.characters1.spritesheet!.animations.puff);
   puff.animationSpeed = 1 / 8;
@@ -286,12 +289,12 @@ function Villain(parentSize: Dimension) {
 
   const villain = newContainer();
   const stage = newContainer(
-    parentSize.width - baseLayer.width,
-    parentSize.height - baseLayer.height
+    parentSize.width - layers[0].width,
+    parentSize.height - layers[0].height
   );
   puff.visible = false;
 
-  villain.addChild(baseLayer, ...createVillainLayers());
+  villain.addChild(...layers);
   stage.addChild(villain, puff);
 
   return {
@@ -310,10 +313,11 @@ function Villain(parentSize: Dimension) {
       puff.gotoAndStop(0);
     },
     createNew: async () => {
-      villain.removeChildren(1);
-      villain.addChild(...createVillainLayers());
+      layers = createVillainLayers();
+      villain.removeChildren(0);
+      villain.addChild(...layers);
       villain.alpha = 1;
-      villain.x = baseLayer.width; // out of the screen
+      villain.x = layers[0].width; // out of the screen
 
       const t = new Tween(villain).to({ x: 0 }, 1500).start();
       await Promise.all([
