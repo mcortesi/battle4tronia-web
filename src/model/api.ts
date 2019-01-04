@@ -158,6 +158,8 @@ export class GameApi implements API {
             if (!ok) {
               return false;
             }
+            await utils.waitForOpenChannel(20000, tronWeb);
+            this.channel = await utils.getCurrentChannel(tronWeb);
             break;
           }
           case GameStatus.UNKNOWN_CHANNEL_OPENED: {
@@ -169,7 +171,6 @@ export class GameApi implements API {
             break;
           }
         }
-        this.channel = await utils.getCurrentChannel(tronWeb);
         this.player = await utils.getPlayer(address);
         this.battle = await utils.getBattle(address);
         return true;
@@ -398,6 +399,7 @@ export class GameApi implements API {
       if (!result) {
         return false;
       }
+      await utils.waitForCloseAndOpenChannel(this.channel!.channelId, 20000, tronWeb);
       this.channel = null;
       return true;
     } else {
@@ -428,6 +430,7 @@ export class GameApi implements API {
       if (!result) {
         return false;
       }
+      await utils.waitForCloseChannel(20000, tronWeb);
       this.channel = null;
       return true;
     } else {

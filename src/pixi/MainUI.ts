@@ -15,7 +15,7 @@ import debounce from 'lodash.debounce';
 import { AddMoreModal } from './AddMoreModal';
 import { CashOutModal } from './CashOutModal';
 import SoundManager from './SoundManager';
-import { ErrorModal, GetTronlinkModal, TronlinkLoggedOutModal } from './basicModals';
+import { ErrorModal, GetTronlinkModal, TronlinkLoggedOutModal, WaitModal } from './basicModals';
 import { pageView } from '../ga';
 import { HowtoPlayModal } from './Modal';
 import { StoryModal } from './StoryModal';
@@ -139,6 +139,10 @@ export class MainUI {
     );
   }
 
+  openWaitModal(text: string) {
+    this.setModal(WaitModal(text, this.ctx));
+  }
+
   openErrorModal() {
     this.setModal(ErrorModal(this.ctx));
   }
@@ -147,6 +151,13 @@ export class MainUI {
   }
   openTronlinkLoggedOutModal() {
     this.setModal(TronlinkLoggedOutModal(this.ctx));
+  }
+
+  closeModal() {
+    if (this.currentModal) {
+      this.currentModal.dispose();
+      this.currentModal = null;
+    }
   }
 
   private ensureMainBackground() {

@@ -82,7 +82,7 @@ function GeneralRanks(opts: { position: Point; width: number }) {
       const entry = RankEntry({
         idx: i,
         width: opts.width,
-        epicness: fight.troniums,
+        epicness: fight.epicness,
         playerName: fight.playerName,
       });
       entry.y = i * EntryHeight;

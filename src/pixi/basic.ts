@@ -5,6 +5,7 @@ import SoundManager from './SoundManager';
 import { centerX, LayoutOptions, newAnimatedSprite, newSprite, postionOnBottom } from './utils';
 import { Button } from './utils/Button';
 import { FightStatus } from './BattleScreen';
+import { Tween } from '@tweenjs/tween.js';
 
 export type IconName = 'IcoTronium' | 'IcoShield' | 'IcoClose' | 'IcoHowtoPlay' | 'IcoArrow';
 
@@ -139,4 +140,26 @@ export function HowtoPlayBtn(onClick: () => void) {
 export function WatchStoryBtn(onClick: () => void) {
   const btn = newSprite('BtnStory.png', { position: new Point(1067, 412) });
   return Button.from(btn, onClick);
+}
+
+export function Spinner() {
+  const s = newSprite('IcoSpinner.png');
+  s.visible = false;
+  s.scale.set(0.3, 0.3);
+  s.anchor.set(0.5, 0.5);
+  const MAX = Math.PI * 2;
+  const t = new Tween({ x: 1 }).to({ x: 5000 }, 1000000).onUpdate(val => {
+    s.rotation = val.x % MAX;
+  });
+
+  return {
+    stage: s,
+    show: () => {
+      s.visible = true;
+      t.start();
+    },
+    dispose: () => {
+      t.stop();
+    },
+  };
 }

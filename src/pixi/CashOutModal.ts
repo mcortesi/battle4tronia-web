@@ -65,6 +65,7 @@ export function CashOutModal(
   modal.body.addChild(msg1, msg2, msg3, msg4, msg5, msg6, troniumIcon, bottomMsg, btnSellSprite);
 
   const sellBtn = Button.from(btnSellSprite, () => {
+    sellBtn.disable = true;
     opts.gd.requestSellTronium(10);
   });
 

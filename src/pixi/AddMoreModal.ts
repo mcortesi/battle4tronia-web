@@ -31,9 +31,11 @@ export function AddMoreModal(opts: ScreenContext & { troniumPrice: number }): Di
 
   const btnBuy = Button.from(btnBuySprite, () => {
     if (currentValue) {
+      btnBuy.disable = true;
       opts.gd.requestBuyTronium(currentValue.tronium);
     }
   });
+
   btnBuy.disable = true;
 
   const optionBoxes = createOptionBoxes({

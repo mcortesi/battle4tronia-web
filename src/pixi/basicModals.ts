@@ -1,9 +1,7 @@
 import { Point } from 'pixi.js';
 import { Disposable, ScreenContext } from './MainUI';
 import { Modal } from './Modal';
-import { centerX, newContainer, newText } from './utils';
-
-// screen: { width: 1366, height: 688 },
+import { centerX, newContainer, newText, centerY } from './utils';
 
 function centeredParagraph(width: number, msg: string) {
   const stage = newContainer();
@@ -17,6 +15,30 @@ function centeredParagraph(width: number, msg: string) {
   }
   return stage;
 }
+
+export const WaitModal = (text: string, opts: ScreenContext): Disposable => {
+  const Padding = 40;
+
+  const modal = Modal({
+    scale: new Point(1, 0.7),
+    screenSize: opts.size,
+    screenStage: opts.parent,
+    closeable: false,
+  });
+
+  const titleText = newText('Working...', 'BlackH2');
+
+  titleText.y = Padding;
+  centerX(modal.bodySize.width, titleText);
+
+  const p = centeredParagraph(modal.bodySize.width, text);
+  centerY(modal.bodySize.height, p);
+  p.y = titleText.y + titleText.height + Padding * 1.7;
+
+  modal.body.addChild(titleText, p);
+
+  return modal;
+};
 
 const MessageModal = (title: string, msg: string) => (opts: ScreenContext): Disposable => {
   const Padding = 40;

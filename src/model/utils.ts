@@ -209,6 +209,21 @@ export async function openChannel(tronWeb: any, trx: number, publicKey: string):
   });
 }
 
+export async function waitForOpenChannel(timeout: number = 5000, tronWeb: any): Promise<any> {
+  return pollTimeout(
+    async () => {
+      const channel = await getCurrentChannel(tronWeb);
+      if (channel) {
+        return { ok: true, value: channel };
+      } else {
+        return { ok: false };
+      }
+    },
+    timeout,
+    Math.min(timeout / 10, 500)
+  );
+}
+
 export async function requestCloseAndOpenChannel(
   playerAddress: Address,
   channelId: number,
@@ -280,6 +295,25 @@ export async function closeOpenChannel(
   });
 }
 
+export async function waitForCloseAndOpenChannel(
+  channelId: number,
+  timeout: number = 5000,
+  tronWeb: any
+): Promise<any> {
+  return pollTimeout(
+    async () => {
+      const channel = await getCurrentChannel(tronWeb);
+      if (channel && channel.channelId !== channelId) {
+        return { ok: true, value: channel };
+      } else {
+        return { ok: false };
+      }
+    },
+    timeout,
+    Math.min(timeout / 10, 500)
+  );
+}
+
 export async function requestCloseChannel(
   playerAddress: Address,
   channelId: number,
@@ -344,6 +378,27 @@ export async function closeChannel(
       }
     );
   });
+}
+
+export async function waitForCloseChannel(timeout: number = 5000, tronWeb: any): Promise<any> {
+  return pollTimeout(
+    async () => {
+      const channel = await getCurrentChannel(tronWeb);
+      if (!channel) {
+        const address = tronWeb.defaultAddress.base58;
+        const player = await getPlayer(address);
+        if (player && player.tronium === 0) {
+          return { ok: true, value: channel };
+        } else {
+          return { ok: false };
+        }
+      } else {
+        return { ok: false };
+      }
+    },
+    timeout,
+    Math.min(timeout / 10, 500)
+  );
 }
 
 ///////////////////////////////////////////// WALLET AND SIGN

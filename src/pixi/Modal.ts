@@ -16,9 +16,10 @@ interface ModalOpts {
   screenSize: Dimension;
   scale?: Point;
   decorator?: string;
+  closeable?: boolean;
 }
 
-export function Modal({ scale, screenSize, screenStage, decorator }: ModalOpts) {
+export function Modal({ scale, screenSize, screenStage, decorator, closeable = true }: ModalOpts) {
   const bodySize = {
     width: 510 * (scale ? scale.x : 1),
     height: 460 * (scale ? scale.y : 1),
@@ -54,32 +55,33 @@ export function Modal({ scale, screenSize, screenStage, decorator }: ModalOpts) 
   body.interactive = true;
   body.defaultCursor = 'default';
 
-  const closeBtnSprite = bigIcon('IcoClose');
-  closeBtnSprite.tint = 0x000000;
-
-  postionOnRight(bodySize.width, 10, closeBtnSprite);
-  closeBtnSprite.y = 10;
-  body.addChild(closeBtnSprite);
-
   stage.addChild(body);
 
+  let escListener: (e: KeyboardEvent) => void;
   const dispose = () => {
     body.removeChildren();
     screenStage.removeChild(stage);
     stage.destroy();
-    document.body.removeEventListener('keypress', dispose);
-  };
-
-  Button.from(closeBtnSprite, dispose, { soundId: 'btnNegative' });
-
-  const escListener = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      dispose();
+    if (closeable) {
+      document.body.removeEventListener('keypress', escListener);
     }
   };
 
-  document.body.addEventListener('keydown', escListener);
-  darkShadow.on('click', dispose);
+  if (closeable) {
+    const closeBtnSprite = bigIcon('IcoClose');
+    closeBtnSprite.tint = 0x000000;
+    postionOnRight(bodySize.width, 10, closeBtnSprite);
+    closeBtnSprite.y = 10;
+    body.addChild(closeBtnSprite);
+    Button.from(closeBtnSprite, dispose, { soundId: 'btnNegative' });
+    darkShadow.on('click', dispose);
+    escListener = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        dispose();
+      }
+    };
+    document.body.addEventListener('keydown', escListener);
+  }
 
   return {
     stage,

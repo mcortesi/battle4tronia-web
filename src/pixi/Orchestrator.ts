@@ -131,13 +131,18 @@ export class Orchestrator implements ModelActions {
   };
 
   requestBuyTroniumFromStory = async (amount: number) => {
+    this.ui.openWaitModal('Minting those troniums\nfor you');
     await this.game.buyTronium(amount);
+    this.ui.closeModal();
+    this.openStoryModal();
     this.gd.storyBuySucceed();
   };
 
   requestBuyTronium = async (amount: number) => {
-    await this.game.buyTronium(amount);
     this.gd.closeAddMoreModal();
+    this.ui.openWaitModal('Minting those troniums\nfor you');
+    await this.game.buyTronium(amount);
+    this.ui.closeModal();
 
     if (this.game.player == null) {
       this.freezeGame();
@@ -155,9 +160,11 @@ export class Orchestrator implements ModelActions {
       this.freezeGame();
       return;
     }
-    await this.game.sellTronium(amount);
-    this.gd.playerUpdated(this.game.player);
     this.gd.closeCashOutModal();
+    this.ui.openWaitModal('Working on your order...');
+    await this.game.sellTronium(amount);
+    this.ui.closeModal();
+    this.gd.playerUpdated(this.game.player);
   };
 
   requestSpin = async () => {

@@ -39,12 +39,14 @@ export class FakeApi implements API {
     return this.status;
   }
   async openChannel(tronium: number): Promise<boolean> {
+    await wait(5000);
     this.loggedOut = false;
     this.status = GameStatus.READY;
     this.player.tronium += tronium;
     return true;
   }
   async addTronium(tronium: number): Promise<boolean> {
+    await wait(5000);
     this.player.tronium += tronium;
     return true;
   }
@@ -86,6 +88,7 @@ export class FakeApi implements API {
     return cloneBattle(this.battle);
   }
   async closeChannel(): Promise<boolean> {
+    await wait(5000);
     this.status = GameStatus.NO_CHANNEL_OPENED;
     this.player.tronium = 0; // CASH OUT
     return true;
