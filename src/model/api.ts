@@ -153,14 +153,22 @@ export class GameApi implements API {
           case GameStatus.NO_CHANNEL_OPENED: {
             const price = await utils.getTroniumPrice(tronWeb);
             const trx = tronium * price;
-            this.channel = await utils.openChannel(tronWeb, trx, wallet.publicKey);
+            const ok = await utils.openChannel(tronWeb, trx, wallet.publicKey);
+            if (!ok) {
+              return false;
+            }
             break;
           }
           case GameStatus.UNKNOWN_CHANNEL_OPENED: {
             // TODO this.channel = await utils.closeOpenChannel(tronWeb, tronium, wallet.publicKey);
+            // const ok = await this.addTronium(0);
+            /*if(!ok) {
+              return false;
+            }*/
             break;
           }
         }
+        this.channel = await utils.getCurrentChannel(tronWeb);
         this.player = await utils.getPlayer(address);
         this.battle = await utils.getBattle(address);
         return true;

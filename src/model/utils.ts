@@ -178,8 +178,8 @@ export async function getCurrentChannel(tronWeb: any): Promise<Channel | null> {
   }
 }
 
-export async function openChannel(tronWeb: any, trx: number, publicKey: string): Promise<Channel> {
-  return new Promise<Channel>((resolve, reject) => {
+export async function openChannel(tronWeb: any, trx: number, publicKey: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
     tronWeb.transactionBuilder.triggerSmartContract(
       tronWeb.address.toHex(config.battleForTroniaAddress),
       'openChannel(address)',
@@ -189,7 +189,7 @@ export async function openChannel(tronWeb: any, trx: number, publicKey: string):
       async (err: string, res: any) => {
         if (err) {
           console.log(err);
-          return reject(null);
+          return reject(false);
         }
         const signedTransaction = await tronWeb.trx.sign(res.transaction);
 
@@ -198,17 +198,10 @@ export async function openChannel(tronWeb: any, trx: number, publicKey: string):
           async (sendError: string, result: any) => {
             if (sendError) {
               console.log(sendError);
-              return reject(null);
+              return reject(false);
             }
 
-            const txInfo = await waitForTx(signedTransaction.txID, 1800000, tronWeb);
-
-            if (!txInfo.receipt || txInfo.receipt.result !== 'SUCCESS') {
-              return reject('There was a problem approving the transaction');
-            } else {
-              const channel = await getCurrentChannel(tronWeb);
-              resolve(channel!);
-            }
+            return resolve(true);
           }
         );
       }
@@ -279,15 +272,7 @@ export async function closeOpenChannel(
               return resolve(false);
             }
 
-            const txInfo = await waitForTx(signedTransaction.txID, 1800000, tronWeb);
-
-            console.log(txInfo);
-
-            if (!txInfo.receipt || txInfo.receipt.result !== 'SUCCESS') {
-              return resolve(false);
-            } else {
-              resolve(true);
-            }
+            return resolve(true);
           }
         );
       }
@@ -353,15 +338,7 @@ export async function closeChannel(
               return resolve(false);
             }
 
-            const txInfo = await waitForTx(signedTransaction.txID, 1800000, tronWeb);
-
-            console.log(txInfo);
-
-            if (!txInfo.receipt || txInfo.receipt.result !== 'SUCCESS') {
-              return resolve(false);
-            } else {
-              resolve(true);
-            }
+            return resolve(true);
           }
         );
       }
