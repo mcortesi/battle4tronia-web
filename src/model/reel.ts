@@ -3,6 +3,7 @@ import { rndElem, shuffle, transpose } from '../utils';
 import { Bet } from './model';
 import { BoostChoice } from './base';
 import { debug } from '../utils/debug';
+import { Config } from '../config';
 
 export const ReelSize = {
   rows: 3,
@@ -385,42 +386,85 @@ export function toBetResult(bet: Bet, combinations: Move[]): BetResult {
       throw new Error('Illegal bet lines ' + bet.lines);
   }
 }
-
 // prettier-ignore
-const MovesTable: Array<[string, number, number, number, number, () => CardPosition[], SoundPlayer, string | null]> = [
-  // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
-  ['1S4*'	      , 0.0015 , 30	  , 45   , 333   , scatter                             , MoveSound.scatter    , "Wizards weren't joking with this!"    ],
-  ['3A2T'	      , 0.0600 , 0.5  , 4	   , 8     , b3of(Card.Punch)                    , MoveSound.punch      , "Eat it grunt!"                        ],
-  ['3B2T'	      , 0.0500 , 0.7  , 7    , 10    , b3of(Card.Sword)                    , MoveSound.sword      , "Taste my steel"                       ],
-  ['3C2T'	      , 0.0400 , 1.2  , 14   , 13    , b3of(Card.Boomerang)                , MoveSound.boomerang  , "Swift Troomerang!"                    ],
-  ['3D2T'	      , 0.0080 , 7.7  , 29   , 63    , b3of(Card.Tronium)                  , MoveSound.tronium    , "I found Tronium!"                     ],
-  ['4A1T'	      , 0.0312 , 1	  , 5    , 16    , b4of(Card.Punch)                    , MoveSound.punch      , "Squishy sand bag!"                    ],
-  ['4B1T'	      , 0.0260 , 1.4  , 9	   , 19    , b4of(Card.Sword)                    , MoveSound.sword      , "I'm gonna chop you!"                  ],
-  ['4C1T'	      , 0.0208 , 2.4  , 19	 , 24    , b4of(Card.Boomerang)                , MoveSound.boomerang  , "Twisted just like you grunts!"        ],
-  ['4D1T'	      , 0.0042 , 15.4	, 38	 , 120   , b4of(Card.Tronium)                  , MoveSound.tronium    , "I'm the tronium hunter"               ],
-  ['5A'	        , 0.0150 , 2.5	, 6	   , 33    , b5of(Card.Punch)                    , MoveSound.punch      , "Somersault and punch!"                ],
-  ['5B'	        , 0.0125 , 3.5	, 12.5 , 40    , b5of(Card.Sword)                    , MoveSound.sword      , "Chop chop chop potato"                ],
-  ['5C'	        , 0.0100 , 18	  , 25	 , 50    , b5of(Card.Boomerang)                , MoveSound.boomerang  , "and that my friends.. is a headshot!" ],
-  ['5D'	        , 0.0020 , 50	  , 50	 , 250   , b5of(Card.Tronium)                  , MoveSound.tronium    , "Tronia wants me to win!"              ],
-  ['3A2B'	      , 0.0080 , 0.9	, 9	   , 63    , b3and2(Card.Punch, Card.Sword)      , MoveSound.punch      , "You won't escape this!"               ],
-  ['3A2C'	      , 0.0072 , 1.1	, 15	 , 69    , b3and2(Card.Punch, Card.Boomerang)  , MoveSound.punch      , "and that my friends.. is a headshot!" ],
-  ['3A2D'	      , 0.0065 , 4.4	, 26	 , 77    , b3and2(Card.Punch, Card.Tronium)    , MoveSound.punch      , "Tronium overcharge!"                  ],
-  ['3B2A'	      , 0.0067 , 1	  , 10	 , 75    , b3and2(Card.Sword, Card.Punch)      , MoveSound.sword      , "Steady blade!"                        ],
-  ['3B2C'	      , 0.0060 , 1.3	, 18	 , 83    , b3and2(Card.Sword, Card.Boomerang)  , MoveSound.sword      , "Hits like an eagle with steel claws!" ],
-  ['3B2D'	      , 0.0054 , 4.6	, 29	 , 93    , b3and2(Card.Sword, Card.Tronium)    , MoveSound.sword      , "Tronium overcharge!"                  ],
-  ['3C2A'	      , 0.0053 , 1.5	, 17	 , 94    , b3and2(Card.Boomerang, Card.Punch)  , MoveSound.boomerang  , "Take that you grunt!"                 ],
-  ['3C2B'	      , 0.0048 , 1.6	, 19	 , 104   , b3and2(Card.Boomerang, Card.Sword)  , MoveSound.boomerang  , "Gonna chop you like a chainsaw!"      ],
-  ['3C2D'	      , 0.0043 , 5.1	, 36	 , 116   , b3and2(Card.Boomerang, Card.Tronium), MoveSound.boomerang  , "Tronium overcharge!"                  ],
-  ['3D2A'	      , 0.0011 , 8	  , 32	 , 469   , b3and2(Card.Tronium, Card.Punch)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
-  ['3D2B'	      , 0.0010 , 8.1	, 34	 , 521   , b3and2(Card.Tronium, Card.Sword)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
-  ['3D2C'	      , 0.0009 , 8.3	, 40	 , 579   , b3and2(Card.Tronium, Card.Boomerang), MoveSound.tronium    , "Tronium overcharge!"                  ],
-  ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 100   , b3ABCD1SN1T                         , MoveSound.block      , "Enemy dodge"                          ],
-  ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 150   , b4ABCD1SN                           , MoveSound.block      , "Enemy dodge"                          ],
-  ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0     , b2ABCD3T                            , MoveSound.trash      , "Almost hit"                           ],
-  ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0     , b1ABCD4T                            , MoveSound.trash      , "He blocked the attacks!"              ],
-  ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD1NP2T                         , MoveSound.trash      , "Very close"                           ],
-  ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD2NP1T                         , MoveSound.trash      , "Darn lizard!"                         ],
-  ['5T'	        , 0.2116 , 0	  , 0	   , 0     , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
-]
+let MovesTable: Array<[string, number, number, number, number, () => CardPosition[], SoundPlayer, string | null]>;
 
+if (Config.model === 1) {
+  // prettier-ignore
+  MovesTable  = [
+    // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
+    ['1S4*'	      , 0.0015 , 30	  , 45   , 333   , scatter                             , MoveSound.scatter    , "Wizards weren't joking with this!"    ],
+    ['3A2T'	      , 0.0600 , 0.5  , 4	   , 8     , b3of(Card.Punch)                    , MoveSound.punch      , "Eat it grunt!"                        ],
+    ['3B2T'	      , 0.0500 , 0.7  , 7    , 10    , b3of(Card.Sword)                    , MoveSound.sword      , "Taste my steel"                       ],
+    ['3C2T'	      , 0.0400 , 1.2  , 14   , 13    , b3of(Card.Boomerang)                , MoveSound.boomerang  , "Swift Troomerang!"                    ],
+    ['3D2T'	      , 0.0080 , 7.7  , 29   , 63    , b3of(Card.Tronium)                  , MoveSound.tronium    , "I found Tronium!"                     ],
+    ['4A1T'	      , 0.0312 , 1	  , 5    , 16    , b4of(Card.Punch)                    , MoveSound.punch      , "Squishy sand bag!"                    ],
+    ['4B1T'	      , 0.0260 , 1.4  , 9	   , 19    , b4of(Card.Sword)                    , MoveSound.sword      , "I'm gonna chop you!"                  ],
+    ['4C1T'	      , 0.0208 , 2.4  , 19	 , 24    , b4of(Card.Boomerang)                , MoveSound.boomerang  , "Twisted just like you grunts!"        ],
+    ['4D1T'	      , 0.0042 , 15.4	, 38	 , 120   , b4of(Card.Tronium)                  , MoveSound.tronium    , "I'm the tronium hunter"               ],
+    ['5A'	        , 0.0150 , 2.5	, 6	   , 33    , b5of(Card.Punch)                    , MoveSound.punch      , "Somersault and punch!"                ],
+    ['5B'	        , 0.0125 , 3.5	, 12.5 , 40    , b5of(Card.Sword)                    , MoveSound.sword      , "Chop chop chop potato"                ],
+    ['5C'	        , 0.0100 , 18	  , 25	 , 50    , b5of(Card.Boomerang)                , MoveSound.boomerang  , "and that my friends.. is a headshot!" ],
+    ['5D'	        , 0.0020 , 50	  , 50	 , 250   , b5of(Card.Tronium)                  , MoveSound.tronium    , "Tronia wants me to win!"              ],
+    ['3A2B'	      , 0.0080 , 0.9	, 9	   , 63    , b3and2(Card.Punch, Card.Sword)      , MoveSound.punch      , "You won't escape this!"               ],
+    ['3A2C'	      , 0.0072 , 1.1	, 15	 , 69    , b3and2(Card.Punch, Card.Boomerang)  , MoveSound.punch      , "and that my friends.. is a headshot!" ],
+    ['3A2D'	      , 0.0065 , 4.4	, 26	 , 77    , b3and2(Card.Punch, Card.Tronium)    , MoveSound.punch      , "Tronium overcharge!"                  ],
+    ['3B2A'	      , 0.0067 , 1	  , 10	 , 75    , b3and2(Card.Sword, Card.Punch)      , MoveSound.sword      , "Steady blade!"                        ],
+    ['3B2C'	      , 0.0060 , 1.3	, 18	 , 83    , b3and2(Card.Sword, Card.Boomerang)  , MoveSound.sword      , "Hits like an eagle with steel claws!" ],
+    ['3B2D'	      , 0.0054 , 4.6	, 29	 , 93    , b3and2(Card.Sword, Card.Tronium)    , MoveSound.sword      , "Tronium overcharge!"                  ],
+    ['3C2A'	      , 0.0053 , 1.5	, 17	 , 94    , b3and2(Card.Boomerang, Card.Punch)  , MoveSound.boomerang  , "Take that you grunt!"                 ],
+    ['3C2B'	      , 0.0048 , 1.6	, 19	 , 104   , b3and2(Card.Boomerang, Card.Sword)  , MoveSound.boomerang  , "Gonna chop you like a chainsaw!"      ],
+    ['3C2D'	      , 0.0043 , 5.1	, 36	 , 116   , b3and2(Card.Boomerang, Card.Tronium), MoveSound.boomerang  , "Tronium overcharge!"                  ],
+    ['3D2A'	      , 0.0011 , 8	  , 32	 , 469   , b3and2(Card.Tronium, Card.Punch)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2B'	      , 0.0010 , 8.1	, 34	 , 521   , b3and2(Card.Tronium, Card.Sword)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2C'	      , 0.0009 , 8.3	, 40	 , 579   , b3and2(Card.Tronium, Card.Boomerang), MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3ABCD1SN1T'	, 0.1000 , 0	  , 0	   , 100   , b3ABCD1SN1T                         , MoveSound.block      , "Enemy dodge"                          ],
+    ['4ABCD1SN'	  , 0.0500 , 0	  , 0	   , 150   , b4ABCD1SN                           , MoveSound.block      , "Enemy dodge"                          ],
+    ['2ABCD3T'	  , 0.1000 , 0	  , 0	   , 0     , b2ABCD3T                            , MoveSound.trash      , "Almost hit"                           ],
+    ['1ABCD4T'	  , 0.1000 , 0	  , 0	   , 0     , b1ABCD4T                            , MoveSound.trash      , "He blocked the attacks!"              ],
+    ['2ABCD1NP2T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD1NP2T                         , MoveSound.trash      , "Very close"                           ],
+    ['2ABCD2NP1T'	, 0.0500 , 0	  , 0	   , 0     , b2ABCD2NP1T                         , MoveSound.trash      , "Darn lizard!"                         ],
+    ['5T'	        , 0.2116 , 0	  , 0	   , 0     , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
+  ]
+} else if (Config.model === 2) {
+  console.log('model 2');
+  // prettier-ignore
+  MovesTable  = [
+    // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
+    ['1S4*'	      , 0.0015 , 15   , 45  , 333  , scatter                             , MoveSound.scatter    , "Wizards weren't joking with this!"    ],
+    ['3A2T'	      , 0.0500 , 0.7  , 6   , 10   , b3of(Card.Punch)                    , MoveSound.punch      , "Eat it grunt!"                        ],
+    ['3B2T'	      , 0.0400 , 1    , 11  , 13   , b3of(Card.Sword)                    , MoveSound.sword      , "Taste my steel"                       ],
+    ['3C2T'	      , 0.0300 , 2    , 23  , 17   , b3of(Card.Boomerang)                , MoveSound.boomerang  , "Swift Troomerang!"                    ],
+    ['3D2T'	      , 0.0100 , 5    , 45  , 50   , b3of(Card.Tronium)                  , MoveSound.tronium    , "I found Tronium!"                     ],
+    ['4A1T'	      , 0.0200 , 3.5  , 8   , 25   , b4of(Card.Punch)                    , MoveSound.punch      , "Squishy sand bag!"                    ],
+    ['4B1T'	      , 0.0160 , 5    , 15  , 31   , b4of(Card.Sword)                    , MoveSound.sword      , "I'm gonna chop you!"                  ],
+    ['4C1T'	      , 0.0120 , 10   , 30  , 42   , b4of(Card.Boomerang)                , MoveSound.boomerang  , "Twisted just like you grunts!"        ],
+    ['4D1T'	      , 0.0040 , 25   , 60  , 125  , b4of(Card.Tronium)                  , MoveSound.tronium    , "I'm the tronium hunter"               ],
+    ['5A'	        , 0.0050 , 7    , 10  , 100  , b5of(Card.Punch)                    , MoveSound.punch      , "Somersault and punch!"                ],
+    ['5B'	        , 0.0040 , 10   , 20  , 125  , b5of(Card.Sword)                    , MoveSound.sword      , "Chop chop chop potato"                ],
+    ['5C'	        , 0.0030 , 20   , 40  , 167  , b5of(Card.Boomerang)                , MoveSound.boomerang  , "and that my friends.. is a headshot!" ],
+    ['5D'	        , 0.0010 , 50   , 80  , 500  , b5of(Card.Tronium)                  , MoveSound.tronium    , "Tronia wants me to win!"              ],
+    ['3A2B'	      , 0.0042 , 2.8  , 12  , 40   , b3and2(Card.Punch, Card.Sword)      , MoveSound.punch      , "You won't escape this!"               ],
+    ['3A2C'	      , 0.0031 , 3.8  , 18  , 53   , b3and2(Card.Punch, Card.Boomerang)  , MoveSound.punch      , "and that my friends.. is a headshot!" ],
+    ['3A2D'	      , 0.0023 , 6.8  , 29  , 71   , b3and2(Card.Punch, Card.Tronium)    , MoveSound.punch      , "Tronium overcharge!"                  ],
+    ['3B2A'	      , 0.0033 , 3.2  , 14  , 50   , b3and2(Card.Sword, Card.Punch)      , MoveSound.sword      , "Steady blade!"                        ],
+    ['3B2C'	      , 0.0025 , 4.5  , 23  , 67   , b3and2(Card.Sword, Card.Boomerang)  , MoveSound.sword      , "Hits like an eagle with steel claws!" ],
+    ['3B2D'	      , 0.0019 , 7.5  , 34  , 89   , b3and2(Card.Sword, Card.Tronium)    , MoveSound.sword      , "Tronium overcharge!"                  ],
+    ['3C2A'	      , 0.0025 , 5.7  , 26  , 67   , b3and2(Card.Boomerang, Card.Punch)  , MoveSound.boomerang  , "Take that you grunt!"                 ],
+    ['3C2B'	      , 0.0019 , 6    , 29  , 89   , b3and2(Card.Boomerang, Card.Sword)  , MoveSound.boomerang  , "Gonna chop you like a chainsaw!"      ],
+    ['3C2D'	      , 0.0014 , 10   , 46  , 119  , b3and2(Card.Boomerang, Card.Tronium), MoveSound.boomerang  , "Tronium overcharge!"                  ],
+    ['3D2A'	      , 0.0008 , 13.2 , 48  , 200  , b3and2(Card.Tronium, Card.Punch)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2B'	      , 0.0006 , 13.5 , 51  , 267  , b3and2(Card.Tronium, Card.Sword)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2C'	      , 0.0005 , 14.5 , 57  , 356  , b3and2(Card.Tronium, Card.Boomerang), MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3ABCD1SN1T'	, 0.1000 , 0    , 0   , 100  , b3ABCD1SN1T                         , MoveSound.block      , "Enemy dodge"                          ],
+    ['4ABCD1SN'	  , 0.0500 , 0    , 0   , 150  , b4ABCD1SN                           , MoveSound.block      , "Enemy dodge"                          ],
+    ['2ABCD3T'	  , 0.1000 , 0    , 0   , 0    , b2ABCD3T                            , MoveSound.trash      , "Almost hit"                           ],
+    ['1ABCD4T'	  , 0.1000 , 0    , 0   , 0    , b1ABCD4T                            , MoveSound.trash      , "He blocked the attacks!"              ],
+    ['2ABCD1NP2T'	, 0.0500 , 0    , 0   , 0    , b2ABCD1NP2T                         , MoveSound.trash      , "Very close"                           ],
+    ['2ABCD2NP1T'	, 0.0500 , 0    , 0   , 0    , b2ABCD2NP1T                         , MoveSound.trash      , "Darn lizard!"                         ],
+    ['5T'	        , 0.3284 , 0    , 0   , 0    , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
+  ]
+} else {
+  throw new Error('Invalid Config');
+}
 Move.createAll(MovesTable);

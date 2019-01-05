@@ -1,11 +1,25 @@
 import { winningsFor, Move } from '../model/reel';
 import { Bet } from '../model/model';
 import { genArray } from '../utils';
+import Table from 'cli-table';
 
 function spin(bet: Bet) {
   const lineResults = genArray(bet.lines, () => Math.random());
   const winnings = winningsFor(bet, lineResults.map(x => Move.fromDice(x)));
   return winnings;
+}
+
+// @ts-ignore
+function printResults<K>(...results: K[]) {
+  const keys = Object.keys(results[0]);
+
+  const table = new Table({ head: keys });
+
+  results.forEach(r => {
+    table.push(keys.map(k => r[k]));
+  });
+
+  console.log(table.toString());
 }
 
 // @ts-ignore
@@ -27,6 +41,7 @@ function runRTPSimulation(name: string, iterations: number, bet: Bet) {
   }
 
   const results = {
+    name,
     winProb: loopData.wins / iterations,
     totalCost: loopData.totalCost,
     rtp: loopData.totalPayout / loopData.totalCost,
@@ -34,7 +49,7 @@ function runRTPSimulation(name: string, iterations: number, bet: Bet) {
   };
 
   console.timeEnd(name);
-  console.log(JSON.stringify(results, null, 2));
+  return results;
 }
 
 // @ts-ignore
@@ -55,7 +70,7 @@ function runPlayerSimulation(
   const name = `SIM: maxspins: ${maxSpins} startsWith: ${initialBalance} bets: ${bet.tronium} x ${
     bet.lines
   }`;
-  console.time(name);
+  // console.time(name);
   for (let i = 1; i <= iterations; i++) {
     let balance = initialBalance;
     let spins = 0;
@@ -76,6 +91,7 @@ function runPlayerSimulation(
   const avgBalance = loopData.totalBalance / iterations;
   const avgSpins = loopData.totalSpins / iterations;
   const results = {
+    name,
     dvtBalance: Math.sqrt(loopData.totalBalance2 / iterations - avgBalance * avgBalance).toFixed(2),
     avgBalance: avgBalance.toFixed(2),
     avgSpins,
@@ -85,32 +101,42 @@ function runPlayerSimulation(
     probBankrupt: (1 - loopData.canKeepPlaying / iterations) * 100,
   };
 
-  console.timeEnd(name);
-  console.log(JSON.stringify(results, null, 2));
+  // console.timeEnd(name);
+  return results;
 }
 
+// const RTPSSamples = 1e7;
+// printResults(
+//   runRTPSimulation('bet 10x1', RTPSSamples, { lines: 1, tronium: 10, level: 1 }),
+//   runRTPSimulation('bet 10x1', RTPSSamples * 3, { lines: 1, tronium: 10, level: 1 }),
+//   runRTPSimulation('bet 10x3', RTPSSamples, { lines: 3, tronium: 10, level: 1 })
+// );
+
 const Samples = 1e4;
-
-// runRTPSimulation('bet 10x1', Samples, { lines: 1, tronium: 10, level: 1 });
-// runRTPSimulation('bet 10x1', Samples * 3, { lines: 1, tronium: 10, level: 1 });
-// runRTPSimulation('bet 10x3', Samples, { lines: 3, tronium: 10, level: 1 });
-
 const simBet: Bet = { lines: 2, tronium: 10, level: 1 };
-// runPlayerSimulation(Samples, 500, { lines: 3, tronium: 10, level: 1 }, 1000);
-// runPlayerSimulation(Samples, 500, { lines: 1, tronium: 10, level: 1 }, 1000);
-// runPlayerSimulation(Samples, 1000, { lines: 3, tronium: 10, level: 1 }, 1000);
-// runPlayerSimulation(Samples, 1000, { lines: 1, tronium: 10, level: 1 }, 1000);
 
-// runPlayerSimulation(Samples, 1000, simBet, 50);
-// runPlayerSimulation(Samples, 1000, simBet, 100);
-runPlayerSimulation(Samples, 100, simBet, 100000);
-runPlayerSimulation(Samples, 500, simBet, 100000);
-runPlayerSimulation(Samples, 1000, simBet, 100000);
-runPlayerSimulation(Samples, 2000, simBet, 100000);
+console.log('Players: Average Spins / deposit');
+printResults(
+  runPlayerSimulation(Samples, 100, simBet, 100000),
+  runPlayerSimulation(Samples, 500, simBet, 100000),
+  runPlayerSimulation(Samples, 1000, simBet, 100000),
+  runPlayerSimulation(Samples, 2000, simBet, 100000)
+);
 
-// runPlayerSimulation(Samples, 500, simBet, 50);
-// runPlayerSimulation(Samples, 500, simBet, 100);
-// runPlayerSimulation(Samples, 500, simBet, 1000);
+console.log('Players: Changing Bets');
+printResults(
+  runPlayerSimulation(Samples, 500, { lines: 1, tronium: 10, level: 1 }, 1000),
+  runPlayerSimulation(Samples, 500, { lines: 3, tronium: 10, level: 1 }, 1000),
+  runPlayerSimulation(Samples, 1000, { lines: 1, tronium: 10, level: 1 }, 1000),
+  runPlayerSimulation(Samples, 1000, { lines: 3, tronium: 10, level: 1 }, 1000)
+);
+
+console.log('Players: Winnings at different rounds');
+printResults(
+  runPlayerSimulation(Samples, 500, simBet, 50),
+  runPlayerSimulation(Samples, 500, simBet, 100),
+  runPlayerSimulation(Samples, 500, simBet, 1000)
+);
 
 // runPlayerSimulation(Samples, 1000, { lines: 3, tronium: 10, level: 1 }, 100);
 // runPlayerSimulation(Samples, 1000, { lines: 1, tronium: 10, level: 1 }, 100);

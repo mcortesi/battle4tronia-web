@@ -5,12 +5,13 @@ import { API, GameApi } from './model/api';
 import { FakeApi } from './model/FakeApi';
 import { GameStatus } from './model/model';
 import { GameClient } from './model/game';
+import { Config } from './config';
 
 export async function startApp() {
   let api: API;
-  if (window.location.hash === '#papu') {
+  if (Config.fake && Config.logged) {
     api = new FakeApi();
-  } else if (window.location.hash === '#notpapu') {
+  } else if (Config.fake) {
     api = new FakeApi(GameStatus.NO_CHANNEL_OPENED, true);
   } else {
     api = new GameApi();
