@@ -64,7 +64,7 @@ export function StoryModal({
   prevBtnSprite.x = bodyFrame.x + bodyFrame.width - prevBtnSprite.width / 2;
 
   nextBtnSprite.y = bodyFrame.y + (bodyFrame.height - nextBtnSprite.height) / 2;
-  resetBtnSprite.y = bodyFrame.y + (bodyFrame.height - resetBtnSprite.height) / 2;
+  resetBtnSprite.y = nextBtnSprite.y - resetBtnSprite.height;
   postionAfterY(nextBtnSprite, prevBtnSprite, 0);
 
   resetBtnSprite.visible = false;
