@@ -427,7 +427,7 @@ if (Config.model === 1) {
     ['5T'	        , 0.2116 , 0	  , 0	   , 0     , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
   ]
 } else if (Config.model === 2) {
-  console.log('model 2');
+  console.log('model', Config.model);
   // prettier-ignore
   MovesTable  = [
     // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
@@ -463,6 +463,44 @@ if (Config.model === 1) {
     ['2ABCD1NP2T'	, 0.0500 , 0    , 0   , 0    , b2ABCD1NP2T                         , MoveSound.trash      , "Very close"                           ],
     ['2ABCD2NP1T'	, 0.0500 , 0    , 0   , 0    , b2ABCD2NP1T                         , MoveSound.trash      , "Darn lizard!"                         ],
     ['5T'	        , 0.3284 , 0    , 0   , 0    , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
+  ]
+} else if (Config.model === 3) {
+  console.log('model', Config.model);
+  // prettier-ignore
+  MovesTable  = [
+    // ID          PROB    PAYOUT DAMAGE FAME      MOVE GENERATOR                         SOUND PLAYER            WIN MSG
+    ['1S4*'	      , 0.0015 , 25   , 45    , 333  , scatter                             , MoveSound.scatter    , "Wizards weren't joking with this!"    ],
+    ['3A2T'	      , 0.0650 , 0.5  , 6     , 8    , b3of(Card.Punch)                    , MoveSound.punch      , "Eat it grunt!"                        ],
+    ['3B2T'	      , 0.0550 , 0.8  , 8     , 9    , b3of(Card.Sword)                    , MoveSound.sword      , "Taste my steel"                       ],
+    ['3C2T'	      , 0.0300 , 2    , 17    , 17   , b3of(Card.Boomerang)                , MoveSound.boomerang  , "Swift Troomerang!"                    ],
+    ['3D2T'	      , 0.0100 , 5    , 33    , 50   , b3of(Card.Tronium)                  , MoveSound.tronium    , "I found Tronium!"                     ],
+    ['4A1T'	      , 0.0390 , 1.5  , 7     , 13   , b4of(Card.Punch)                    , MoveSound.punch      , "Squishy sand bag!"                    ],
+    ['4B1T'	      , 0.0330 , 2.4  , 10    , 15   , b4of(Card.Sword)                    , MoveSound.sword      , "I'm gonna chop you!"                  ],
+    ['4C1T'	      , 0.0180 , 6    , 21    , 28   , b4of(Card.Boomerang)                , MoveSound.boomerang  , "Twisted just like you grunts!"        ],
+    ['4D1T'	      , 0.0060 , 15   , 41    , 83   , b4of(Card.Tronium)                  , MoveSound.tronium    , "I'm the tronium hunter"               ],
+    ['5A'	        , 0.0065 , 4.5  , 9     , 77   , b5of(Card.Punch)                    , MoveSound.punch      , "Somersault and punch!"                ],
+    ['5B'	        , 0.0055 , 7.2  , 13.75 , 91   , b5of(Card.Sword)                    , MoveSound.sword      , "Chop chop chop potato"                ],
+    ['5C'	        , 0.0030 , 18   , 27.5  , 167  , b5of(Card.Boomerang)                , MoveSound.boomerang  , "and that my friends.. is a headshot!" ],
+    ['5D'	        , 0.0010 , 45   , 55    , 500  , b5of(Card.Tronium)                  , MoveSound.tronium    , "Tronia wants me to win!"              ],
+    ['3A2B'	      , 0.0065 , 1.7  , 12    , 26   , b3and2(Card.Punch, Card.Sword)      , MoveSound.punch      , "You won't escape this!"               ],
+    ['3A2C'	      , 0.0059 , 2.6  , 18    , 28   , b3and2(Card.Punch, Card.Boomerang)  , MoveSound.punch      , "and that my friends.. is a headshot!" ],
+    ['3A2D'	      , 0.0053 , 5    , 29    , 32   , b3and2(Card.Punch, Card.Tronium)    , MoveSound.punch      , "Tronium overcharge!"                  ],
+    ['3B2A'	      , 0.0055 , 2    , 12.2  , 30   , b3and2(Card.Sword, Card.Punch)      , MoveSound.sword      , "Steady blade!"                        ],
+    ['3B2C'	      , 0.0050 , 3.2  , 20    , 34   , b3and2(Card.Sword, Card.Boomerang)  , MoveSound.sword      , "Hits like an eagle with steel claws!" ],
+    ['3B2D'	      , 0.0045 , 5.6  , 31    , 37   , b3and2(Card.Sword, Card.Tronium)    , MoveSound.sword      , "Tronium overcharge!"                  ],
+    ['3C2A'	      , 0.0030 , 4.4  , 21    , 56   , b3and2(Card.Boomerang, Card.Punch)  , MoveSound.boomerang  , "Take that you grunt!"                 ],
+    ['3C2B'	      , 0.0027 , 4.7  , 23    , 62   , b3and2(Card.Boomerang, Card.Sword)  , MoveSound.boomerang  , "Gonna chop you like a chainsaw!"      ],
+    ['3C2D'	      , 0.0024 , 8    , 40    , 69   , b3and2(Card.Boomerang, Card.Tronium), MoveSound.boomerang  , "Tronium overcharge!"                  ],
+    ['3D2A'	      , 0.0010 , 10.4 , 37.2  , 167  , b3and2(Card.Tronium, Card.Punch)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2B'	      , 0.0009 , 10.7 , 39    , 185  , b3and2(Card.Tronium, Card.Sword)    , MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3D2C'	      , 0.0008 , 11.6 , 45    , 206  , b3and2(Card.Tronium, Card.Boomerang), MoveSound.tronium    , "Tronium overcharge!"                  ],
+    ['3ABCD1SN1T'	, 0.1000 , 0    , 0     , 100  , b3ABCD1SN1T                         , MoveSound.block      , "Enemy dodge"                          ],
+    ['4ABCD1SN'	  , 0.0500 , 0    , 0     , 150  , b4ABCD1SN                           , MoveSound.block      , "Enemy dodge"                          ],
+    ['2ABCD3T'	  , 0.1000 , 0    , 0     , 0    , b2ABCD3T                            , MoveSound.trash      , "Almost hit"                           ],
+    ['1ABCD4T'	  , 0.1000 , 0    , 0     , 0    , b1ABCD4T                            , MoveSound.trash      , "He blocked the attacks!"              ],
+    ['2ABCD1NP2T'	, 0.0500 , 0    , 0     , 0    , b2ABCD1NP2T                         , MoveSound.trash      , "Very close"                           ],
+    ['2ABCD2NP1T'	, 0.0500 , 0    , 0     , 0    , b2ABCD2NP1T                         , MoveSound.trash      , "Darn lizard!"                         ],
+    ['5T'	        , 0.2330 , 0    , 0     , 0    , b5T                                 , MoveSound.trash      , "That grunt threw dust at my face"     ],
   ]
 } else {
   throw new Error('Invalid Config');
