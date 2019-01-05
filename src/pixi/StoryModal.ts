@@ -124,7 +124,7 @@ export function StoryModal({
     unregister();
     screenStage.removeChild(stage);
     stage.destroy();
-    document.body.removeEventListener('keypress', dispose);
+    document.body.removeEventListener('keypress', escListener);
   };
 
   let storyIndex = 0;

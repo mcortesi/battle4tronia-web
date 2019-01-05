@@ -1,15 +1,8 @@
-import { Container, Texture, Point } from 'pixi.js';
-import { Dimension } from './commons';
-import {
-  centerX,
-  centerY,
-  newContainer,
-  newSprite,
-  postionOnBottom,
-  postionOnRight,
-} from './utils';
-import { Button } from './utils/Button';
+import { Container, Point, Texture } from 'pixi.js';
 import { bigIcon } from './basic';
+import { Dimension } from './commons';
+import { centerX, centerY, newContainer, newSprite, postionOnRight } from './utils';
+import { Button } from './utils/Button';
 
 interface ModalOpts {
   screenStage: Container;
@@ -122,8 +115,9 @@ export function HowtoPlayModal({
 
   const btnSprite = newSprite('BtnGotIt.png');
 
-  centerX(bodyFrame.width, btnSprite);
-  postionOnBottom(bodyFrame.height, 25, btnSprite);
+  // centerX(bodyFrame.width, btnSprite);
+  // postionOnBottom(bodyFrame.height, 25, btnSprite);
+  btnSprite.position.set(286, 468);
   bodyFrame.addChild(btnSprite);
 
   stage.addChild(darkShadow, bodyFrame);
